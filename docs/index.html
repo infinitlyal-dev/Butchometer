@@ -2,210 +2,668 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Butchometer - Test Your Butch Cred</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>BUTCHOMETER - Test Your Butch Cred</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Crimson+Text&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: linear-gradient(135deg, #2F3D15, #3E2723, #2C2416);
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { 
+      font-family: 'Crimson Text', serif;
+      background: linear-gradient(180deg, #1a1410 0%, #2d1f1a 50%, #1a1410 100%);
       min-height: 100vh;
+      overflow-x: hidden;
     }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(720deg); } }
-    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-    .animate-spin-slow { animation: spin 5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
-    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-    .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+    .title-font { font-family: 'Oswald', sans-serif; }
+    
+    /* Rusted steel background */
+    .steel-bg {
+      background: linear-gradient(135deg, #3d3d3d 0%, #2a2a2a 25%, #1f1f1f 50%, #2a2a2a 75%, #3d3d3d 100%);
+      position: relative;
+    }
+    .steel-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* Glowing title */
+    .glow-title {
+      text-shadow: 0 0 10px #ff6b35, 0 0 20px #ff6b35, 0 0 40px #ff4500, 0 0 80px #ff4500;
+      animation: titlePulse 2s ease-in-out infinite;
+    }
+    @keyframes titlePulse {
+      0%, 100% { text-shadow: 0 0 10px #ff6b35, 0 0 20px #ff6b35, 0 0 40px #ff4500; }
+      50% { text-shadow: 0 0 20px #ff6b35, 0 0 40px #ff6b35, 0 0 60px #ff4500, 0 0 100px #ff4500; }
+    }
+
+    /* Metal buttons */
+    .metal-btn {
+      background: linear-gradient(180deg, #5a5a5a 0%, #3d3d3d 50%, #2a2a2a 100%);
+      border: 3px solid #ff6b35;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .metal-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,107,53,0.3), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s;
+    }
+    .metal-btn:hover::after { transform: translateX(100%); }
+    .metal-btn:hover { 
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+    }
+    .metal-btn:active { transform: scale(0.98); }
+    .metal-btn-green { border-color: #4a7c23; box-shadow: 0 4px 15px rgba(74, 124, 35, 0.4); }
+    .metal-btn-green:hover { box-shadow: 0 6px 25px rgba(74, 124, 35, 0.6); }
+
+    /* Spark particles */
+    .spark {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #ff6b35;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #ff6b35, 0 0 12px #ff4500;
+      animation: sparkFloat 3s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes sparkFloat {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-100px) scale(0); }
+    }
+
+    /* Flame border */
+    .flame-border {
+      position: relative;
+    }
+    .flame-border::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(90deg, #ff4500, #ff6b35, #ffa500, #ff6b35, #ff4500);
+      background-size: 200% 100%;
+      animation: flameBorder 2s linear infinite;
+      border-radius: inherit;
+      z-index: -1;
+    }
+    @keyframes flameBorder { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+    /* Progress bar ember */
+    .ember-fill {
+      background: linear-gradient(90deg, #ff4500, #ff6b35, #ffa500);
+      box-shadow: 0 0 10px #ff4500, 0 0 20px #ff6b35;
+      animation: emberGlow 1s ease-in-out infinite;
+    }
+    @keyframes emberGlow {
+      0%, 100% { box-shadow: 0 0 10px #ff4500, 0 0 20px #ff6b35; }
+      50% { box-shadow: 0 0 15px #ff4500, 0 0 30px #ff6b35, 0 0 40px #ffa500; }
+    }
+
+    /* Wheel spin */
+    .wheel-spin { animation: wheelSpin 5s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards; }
+    @keyframes wheelSpin { from { transform: rotate(0deg); } to { transform: rotate(1800deg); } }
+
+    /* Fade/slide animations */
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .slide-up { animation: slideUp 0.4s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Question card */
+    .question-card {
+      background: linear-gradient(180deg, #4a4a4a 0%, #3d3d3d 50%, #2d2d2d 100%);
+      border: 2px solid #666;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    /* Answer buttons */
+    .answer-btn {
+      background: linear-gradient(180deg, #4a4a4a 0%, #3a3a3a 100%);
+      border: 2px solid #555;
+      transition: all 0.2s;
+    }
+    .answer-btn:hover {
+      border-color: #ff6b35;
+      box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
+    }
+    .answer-c { border-color: #4a7c23; }
+    .answer-c:hover { border-color: #6ba32e; box-shadow: 0 0 15px rgba(74, 124, 35, 0.5); }
+
+    /* Leaderboard plaque */
+    .plaque {
+      background: linear-gradient(180deg, #5a4a3a 0%, #4a3a2a 50%, #3a2a1a 100%);
+      border: 3px solid #8b7355;
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #ff6b35;
+      animation: confettiFall 3s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Smoke effect */
+    .smoke {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
+      background: linear-gradient(to top, rgba(50,40,30,0.4), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Input styling */
+    .leather-input {
+      background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
+      border: 3px solid #8b5a2b;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .leather-input:focus {
+      border-color: #cd853f;
+      outline: none;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 0 10px rgba(205, 133, 63, 0.3);
+    }
+
+    /* Category badge */
+    .category-badge {
+      background: linear-gradient(180deg, #5a5a5a, #3a3a3a);
+      border: 2px solid #ff6b35;
+      box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+    }
   </style>
 </head>
-<body class="antialiased">
-  <div id="app"></div>
-  <script>
-    const questions = [
-      { id: "l1_001", text: "You wake up to that familiar coffee urge kickin' in—how're you handlin' it?", options: { A: { text: "Brew somethin' elaborate with froth and flavors like it's a damn ceremony", points: 1 }, B: { text: "Pour straight black from the drip pot, simple and strong", points: 2 }, C: { text: "Mix instant in yesterday's mug, zap it hot, and make it so thick the spoon don't budge—who's got time for fresh grounds?", points: 3 } }, category: "morning" },
-      { id: "l1_002", text: "The doorknob on your bedroom door has been loose for about a week now. What's your move?", options: { A: { text: "Call a handyman because you don't trust yourself with tools", points: 1 }, B: { text: "Grab a screwdriver and tighten it up yourself—takes two minutes", points: 2 }, C: { text: "Rip the whole door off the hinges—who needs privacy when you've got confidence?", points: 3 } }, category: "home" },
-      { id: "l1_003", text: "You're at the movies and someone behind you won't stop talking. How do you handle it?", options: { A: { text: "Suffer in silence and complain about it later to your friends", points: 1 }, B: { text: "Turn around and politely ask them to keep it down", points: 2 }, C: { text: "Turn around, lock eyes, and stare in complete silence until they shut up", points: 3 } }, category: "social" },
-      { id: "l1_004", text: "Grocery shopping time—how do you approach the list situation?", options: { A: { text: "Organize by aisle with coupons clipped and a meal plan color-coded", points: 1 }, B: { text: "Mental list of the basics, grab what looks good, get out quick", points: 2 }, C: { text: "What list? Walk in hungry and leave with whatever your gut tells you", points: 3 } }, category: "errands" },
-      { id: "l1_005", text: "Your car makes a weird noise. First instinct?", options: { A: { text: "Panic, pull over immediately, and call roadside assistance", points: 1 }, B: { text: "Pop the hood, take a look around, see if anything is loose", points: 2 }, C: { text: "Turn the radio up louder—if you can't hear it, it ain't a problem", points: 3 } }, category: "vehicle" },
-      { id: "l1_006", text: "You spot a harmless spider against your wall—do you:", options: { A: { text: "Scream and hide like the spider has a personal vendetta against you", points: 1 }, B: { text: "Trap it in a cup and rush outside to release it", points: 2 }, C: { text: "Squish it with your shoe as a lesson to all the other spiders", points: 3 } }, category: "home" },
-      { id: "l1_007", text: "Someone asks you to help them move apartments. Your response?", options: { A: { text: "Agree then fake an illness the morning of", points: 1 }, B: { text: "Show up with work gloves and a good attitude", points: 2 }, C: { text: "Show up with your own truck and take charge of the whole operation", points: 3 } }, category: "social" },
-      { id: "l1_008", text: "It's raining and you need to check the mail. What's your approach?", options: { A: { text: "Wait until the rain stops completely—mail can wait", points: 1 }, B: { text: "Grab an umbrella and make a quick trip", points: 2 }, C: { text: "Walk out like the rain is personally afraid to touch you", points: 3 } }, category: "weather" },
-      { id: "l1_009", text: "The power goes out in your house. First move?", options: { A: { text: "Panic and check if your phone has enough charge to survive", points: 1 }, B: { text: "Light some candles, check the breaker box, wait it out", points: 2 }, C: { text: "Welcome the darkness and continue by firelight like your ancestors", points: 3 } }, category: "home" },
-      { id: "l1_010", text: "You're assembling furniture from a flat pack. How does this go?", options: { A: { text: "Read every instruction twice, watch YouTube tutorials", points: 1 }, B: { text: "Skim the pictures, use common sense, finish in reasonable time", points: 2 }, C: { text: "Instructions are for people who lack spatial reasoning—build by instinct", points: 3 } }, category: "home" },
-      { id: "l1_011", text: "Your friend suggests going camping this weekend. Your gut reaction?", options: { A: { text: "Only if there's a cabin with running water and electricity", points: 1 }, B: { text: "Sounds fun—pack the tent and rough it for a night", points: 2 }, C: { text: "Leave the tent at home—sleep under the stars with just a knife", points: 3 } }, category: "outdoors" },
-      { id: "l1_012", text: "You burn dinner pretty badly. Now what?", options: { A: { text: "Order takeout immediately and pretend this never happened", points: 1 }, B: { text: "Scrape off the burnt parts, salvage what you can, eat it anyway", points: 2 }, C: { text: "Eat it burnt—carbon builds character", points: 3 } }, category: "food" },
-      { id: "l1_013", text: "Someone cuts you off in traffic aggressively. How do you respond?", options: { A: { text: "Gasp dramatically and tell everyone about it for weeks", points: 1 }, B: { text: "Brief annoyance, maybe a horn tap, then let it go", points: 2 }, C: { text: "Give them a slow, disappointed head shake", points: 3 } }, category: "driving" },
-      { id: "l1_014", text: "Your restaurant order comes out wrong. What's your play?", options: { A: { text: "Eat it anyway while silently fuming", points: 1 }, B: { text: "Politely flag down the server and ask them to fix it", points: 2 }, C: { text: "Eat whatever they brought—food is fuel, not a personality", points: 3 } }, category: "food" },
-      { id: "l1_015", text: "The sink drain is clogged. Your approach?", options: { A: { text: "Call a plumber immediately", points: 1 }, B: { text: "Try some drain cleaner first, maybe a plunger", points: 2 }, C: { text: "Reach your bare hand down there and pull out whatever's blocking it", points: 3 } }, category: "home" },
-      { id: "l1_016", text: "You're invited to a party where you only know one person. How do you feel?", options: { A: { text: "Dread it for days and stick to your one friend like glue", points: 1 }, B: { text: "A little nervous but good chance to meet new people", points: 2 }, C: { text: "Walk in like you own the place—strangers are just friends who don't know you yet", points: 3 } }, category: "social" },
-      { id: "l1_017", text: "Your phone dies and you're nowhere near a charger. What now?", options: { A: { text: "Experience genuine anxiety until you can find power", points: 1 }, B: { text: "Shrug it off—you'll survive a few hours unplugged", points: 2 }, C: { text: "Feel liberated—finally free from the electronic leash", points: 3 } }, category: "technology" },
-      { id: "l1_018", text: "Someone asks your opinion on their bad haircut. What do you say?", options: { A: { text: "Lie enthusiastically and tell them it looks amazing", points: 1 }, B: { text: "Find something genuinely nice to say", points: 2 }, C: { text: "Tell them the truth—real friends don't let friends walk around confused", points: 3 } }, category: "social" },
-      { id: "l1_019", text: "You have to give a toast at a friend's wedding. How do you prepare?", options: { A: { text: "Write it word for word and practice in the mirror for days", points: 1 }, B: { text: "Jot down bullet points and wing the rest", points: 2 }, C: { text: "Prepare nothing—pure unfiltered truth is your gift", points: 3 } }, category: "social" },
-      { id: "l1_020", text: "Weather forecast says storms but your outdoor plans are set. Decision:", options: { A: { text: "Cancel everything—you can't risk wet clothes", points: 1 }, B: { text: "Pack a rain jacket and proceed with the plan", points: 2 }, C: { text: "Weather forecasts are suggestions—the sky can do what it wants", points: 3 } }, category: "weather" }
-    ];
+<body class="text-gray-100">
+  <!-- Smoke effect -->
+  <div class="smoke"></div>
+  
+  <!-- Spark container -->
+  <div id="sparks" class="fixed inset-0 pointer-events-none z-50"></div>
+  
+  <div id="app" class="relative z-10"></div>
 
-    const resultLines = {
-      low: ["You're so unbutch, you make flower arranging look rugged.", "Somewhere, a throw pillow claimed you as its soulmate.", "Your idea of roughing it is when the hotel has no room service.", "Even your shadow asks permission before following you.", "A gentle breeze once made you reconsider your life choices."],
-      mid: ["You're butch-adjacent. Not quite there, but you can see it from where you're standing.", "You've got one foot in the rugged world and the other in a sensible shoe.", "Neither fish nor fowl, neither flannel nor fleece.", "You've mastered the art of being perfectly adequate.", "Consistent, predictable, steady—all the exciting adjectives."],
-      high: ["For a beginner quiz, you showed some real grit.", "Not bad for the kiddie pool. Ready for sharks?", "You've earned your calluses. Time to earn some scars.", "You handled mild situations with unreasonable confidence. Impressive.", "Solid start, but starting is the easy part."]
+  <script>
+    // Sound effects
+    const sounds = {
+      sparkle: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'], volume: 0.3 }),
+      clang: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2441/2441-preview.mp3'], volume: 0.4 }),
+      bang: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2620/2620-preview.mp3'], volume: 0.5 }),
+      whoosh: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2617/2617-preview.mp3'], volume: 0.4 }),
+      fanfare: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3'], volume: 0.5 }),
+      click: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'], volume: 0.2 })
     };
 
-    let state = { screen: 'home', mode: null, players: [], playerNames: [''], currentPlayerIndex: 0, currentQuestionIndex: 0, sessionQuestions: [], isSpinning: false, showResult: false };
+    // Create sparks
+    function createSpark(x, y, count = 5) {
+      const container = document.getElementById('sparks');
+      for (let i = 0; i < count; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'spark';
+        spark.style.left = (x + Math.random() * 40 - 20) + 'px';
+        spark.style.top = (y + Math.random() * 40 - 20) + 'px';
+        spark.style.animationDelay = (Math.random() * 0.3) + 's';
+        spark.style.background = ['#ff6b35', '#ffa500', '#ff4500', '#ffcc00'][Math.floor(Math.random() * 4)];
+        container.appendChild(spark);
+        setTimeout(() => spark.remove(), 3000);
+      }
+    }
 
-    function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5).slice(0, 10); }
-    function getLine(score) { return score <= 10 ? resultLines.low : score <= 20 ? resultLines.mid : resultLines.high; }
-    function render() { document.getElementById('app').innerHTML = screens[state.screen](); }
+    // Confetti burst
+    function confettiBurst() {
+      const colors = ['#ff6b35', '#ffa500', '#ff4500', '#ffcc00', '#4a7c23', '#6ba32e'];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        confetti.style.width = (Math.random() * 10 + 5) + 'px';
+        confetti.style.height = (Math.random() * 10 + 5) + 'px';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+      }
+    }
+
+    // Background sparks
+    function backgroundSparks() {
+      setInterval(() => {
+        if (Math.random() > 0.7) {
+          createSpark(Math.random() * window.innerWidth, window.innerHeight - 50, 2);
+        }
+      }, 500);
+    }
+    backgroundSparks();
+
+    // Questions Database - Progressive Difficulty
+    const mildQuestions = [
+      { id: 'm1', text: "You wake up to that familiar coffee urge kickin' in—how're you handlin' it?", options: { A: { text: "Brew somethin' elaborate with froth and flavors like it's a damn ceremony", points: 1 }, B: { text: "Pour straight black from the drip pot, simple and strong", points: 2 }, C: { text: "Mix instant in yesterday's mug, zap it hot, and make it so thick the spoon don't budge—who's got time for fresh grounds?", points: 3 } }, category: "MORNING" },
+      { id: 'm2', text: "Settlin' in for movie time, remote in hand—what's your pick?", options: { A: { text: "A rom-com that'll tug at the strings and maybe bring a tear", points: 1 }, B: { text: "An action-packed thriller with chases and blasts", points: 2 }, C: { text: "A quiet Western where talk's minimal and stares say it all—who needs dialogue when silence speaks volumes?", points: 3 } }, category: "LEISURE" },
+      { id: 'm3', text: "Headin' out for groceries, cart waitin'—your approach?", options: { A: { text: "List it all out detailed with coupons to save every penny", points: 1 }, B: { text: "Grab the necessities without much thought", points: 2 }, C: { text: "Stroll in with no plan, take what's handy, forget the rest—survival ain't about lists", points: 3 } }, category: "ERRANDS" },
+      { id: 'm4', text: "That doorknob's rattlin' loose again—time to fix?", options: { A: { text: "Call someone who knows what they're doin'", points: 1 }, B: { text: "Pull up a YouTube video and tighten it with a screwdriver", points: 2 }, C: { text: "Give the door a solid slam till it holds—who bothers with tools for a wiggle?", points: 3 } }, category: "HOME" },
+      { id: 'm5', text: "Weekend's free and clear—what's on the docket?", options: { A: { text: "Pamper yourself with a relaxin' spa session", points: 1 }, B: { text: "Take a light hike through the park", points: 2 }, C: { text: "Tackle the yard with tools in hand—downtime's for gettin' things done", points: 3 } }, category: "LEISURE" },
+      { id: 'm6', text: "You turn the corner in your house and spot a harmless spider against your wall—do you:", options: { A: { text: "Scream and hide like you think the spider has a personal vendetta against you", points: 1 }, B: { text: "Trap it in a cup and rush outside to release it while squealing", points: 2 }, C: { text: "Squish it with your shoe and walk around with its remains as a lesson to all other spiders", points: 3 } }, category: "HOME" },
+      { id: 'm7', text: "Gettin' dressed for a quick run out—your choice?", options: { A: { text: "Put together a matched set of comfortable gear", points: 1 }, B: { text: "Jeans and a shirt that fit the bill", points: 2 }, C: { text: "Whatever's lyin' around from the pile—who worries about looks on errands?", points: 3 } }, category: "STYLE" },
+      { id: 'm8', text: "Takeout lands on the table, ready to eat—how you divin' in?", options: { A: { text: "Use plates and utensils to keep it tidy", points: 1 }, B: { text: "Eat with hands but have napkins close", points: 2 }, C: { text: "Dig straight from the box, no mind to the mess—food's for eatin', not fussin'", points: 3 } }, category: "FOOD" },
+      { id: 'm9', text: "Thinkin' on that bucket list item—what's yours?", options: { A: { text: "A guided tour through wine country with tastings", points: 1 }, B: { text: "A drive with stops along the way", points: 2 }, C: { text: "Camp alone in the wilderness, no backup—who needs company in the wild?", points: 3 } }, category: "DREAMS" },
+      { id: 'm10', text: "Facin' a height like changin' a bulb up high—your take?", options: { A: { text: "Steer clear and find another way", points: 1 }, B: { text: "Climb careful if you have to", points: 2 }, C: { text: "Hop right up without a second thought—falls are for the faint", points: 3 } }, category: "PHOBIA" },
+      { id: 'm11', text: "Tire goes flat out on the road—next step?", options: { A: { text: "Phone for help to come sort it", points: 1 }, B: { text: "Follow a video guide to change it", points: 2 }, C: { text: "Swap it out quick like it's routine—tires don't dictate the day", points: 3 } }, category: "VEHICLE" },
+      { id: 'm12', text: "Laundry's pilin' up high—your method?", options: { A: { text: "Separate by type and wash careful", points: 1 }, B: { text: "Throw it all in together", points: 2 }, C: { text: "Let the wrinkles be—who irons in real life?", points: 3 } }, category: "CHORES" },
+      { id: 'm13', text: "At a gatherin', mixin' with folks—your style?", options: { A: { text: "Share personal stories and emotions", points: 1 }, B: { text: "Tell a few jokes or anecdotes", points: 2 }, C: { text: "Start an arm-wrestle contest—words are fine, but actions prove", points: 3 } }, category: "SOCIAL" },
+      { id: 'm14', text: "Rain's comin' down steady—your day?", options: { A: { text: "Stay put with warm drinks", points: 1 }, B: { text: "Run the essentials quick", points: 2 }, C: { text: "Head out anyway, splashin' through—who lets weather call shots?", points: 3 } }, category: "WEATHER" },
+      { id: 'm15', text: "Dishes from the meal sittin' there—clean up?", options: { A: { text: "Wash 'em right then and there", points: 1 }, B: { text: "Leave to soak overnight", points: 2 }, C: { text: "Stack for later—dishes wait", points: 3 } }, category: "CHORES" },
+      { id: 'm16', text: "Power flickers off sudden—your move?", options: { A: { text: "Set up candles for light", points: 1 }, B: { text: "Use the phone beam", points: 2 }, C: { text: "Keep grillin' outside—dark ain't an issue", points: 3 } }, category: "HOME" },
+      { id: 'm17', text: "Grass is gettin' tall—mow time?", options: { A: { text: "Pay someone to handle it", points: 1 }, B: { text: "Cut it even and clean", points: 2 }, C: { text: "Let it grow its way—who fights nature?", points: 3 } }, category: "YARD" },
+      { id: 'm18', text: "Keys gone missin'—search?", options: { A: { text: "Trace steps in a panic", points: 1 }, B: { text: "Check spots again", points: 2 }, C: { text: "Force the lock open—keys are optional", points: 3 } }, category: "DAILY" }
+    ];
+
+    const mediumQuestions = [
+      { id: 'md1', text: "Step into the bar, throat dry—your order?", options: { A: { text: "Somethin' mixed with fruit and a little umbrella", points: 1 }, B: { text: "Whiskey straight up, no questions", points: 2 }, C: { text: "Hardest shot available, no mixer—who dilutes strength?", points: 3 } }, category: "BAR" },
+      { id: 'md2', text: "Hittin' the weights at the gym—your session?", options: { A: { text: "Stick to stretchin' routines", points: 1 }, B: { text: "Lift steady sets with good form", points: 2 }, C: { text: "Push heavy with grunts—weakness leaves in sweat", points: 3 } }, category: "FITNESS" },
+      { id: 'md3', text: "Driver cuts you off sharp—your reaction?", options: { A: { text: "Let it pass without word", points: 1 }, B: { text: "Give a warnin' beep", points: 2 }, C: { text: "Signal back bold with a stare—who owns the road?", points: 3 } }, category: "DRIVING" },
+      { id: 'md4', text: "Pipe's leakin' steady—repair approach?", options: { A: { text: "Patch with tape for now", points: 1 }, B: { text: "Seal with compound after checkin' how", points: 2 }, C: { text: "Yank and replace the whole thing—who fixes small?", points: 3 } }, category: "HOME" },
+      { id: 'md5', text: "Games at the party—your suggestion?", options: { A: { text: "Act out clues quiet like charades", points: 1 }, B: { text: "Toss balls in cups for laughs", points: 2 }, C: { text: "Wrestle for real stakes—who competes cute?", points: 3 } }, category: "SOCIAL" },
+      { id: 'md6', text: "Bee comes buzzin' close—deal with it?", options: { A: { text: "Run off wavin' arms frantically", points: 1 }, B: { text: "Brush it away careful and slow", points: 2 }, C: { text: "Grab it by hand—bugs respect grip", points: 3 } }, category: "NATURE" },
+      { id: 'md7', text: "Dressin' for the evenin' out—your outfit?", options: { A: { text: "Shirt with fancy extras and accessories", points: 1 }, B: { text: "Flannel that's functional and clean", points: 2 }, C: { text: "Jacket tough, no add-ons—who dresses fancy?", points: 3 } }, category: "STYLE" },
+      { id: 'md8', text: "Hot wings served up—eat style?", options: { A: { text: "Cut with fork and knife proper", points: 1 }, B: { text: "Hands with cleanup napkins ready", points: 2 }, C: { text: "Clean the bones lickin'—sauce ain't waste", points: 3 } }, category: "FOOD" },
+      { id: 'md9', text: "Snake crosses your path—handle it?", options: { A: { text: "Call out for aid immediately", points: 1 }, B: { text: "Step back slow and careful", points: 2 }, C: { text: "Pick up and move it—who fears crawlers?", points: 3 } }, category: "NATURE" },
+      { id: 'md10', text: "Someone skips ahead in line—your call?", options: { A: { text: "Say nothin' and wait patient", points: 1 }, B: { text: "Point it out mild and polite", points: 2 }, C: { text: "Give the hard stare—who waits weak?", points: 3 } }, category: "SOCIAL" },
+      { id: 'md11', text: "Vehicle's dirty from use—clean it?", options: { A: { text: "Pay for the auto wash service", points: 1 }, B: { text: "Spray it down at home yourself", points: 2 }, C: { text: "Scrub in the storm—who waits for clear?", points: 3 } }, category: "VEHICLE" },
+      { id: 'md12', text: "Night falls dark around you—your comfort level?", options: { A: { text: "Keep all lights blazin' bright", points: 1 }, B: { text: "Use a small lamp for ambiance", points: 2 }, C: { text: "Walk out in it—who hides from shadow?", points: 3 } }, category: "PHOBIA" },
+      { id: 'md13', text: "Waiter messes up your order—your word?", options: { A: { text: "Leave extra tip anyway", points: 1 }, B: { text: "Mention it soft and gentle", points: 2 }, C: { text: "Call the boss over—who accepts poor?", points: 3 } }, category: "DINING" },
+      { id: 'md14', text: "Trash out to the curb—hands after?", options: { A: { text: "Wash thorough with soap", points: 1 }, B: { text: "Wipe brief on pants", points: 2 }, C: { text: "Leave as is—grime toughens skin", points: 3 } }, category: "CHORES" }
+    ];
+
+    const extremeQuestions = [
+      { id: 'e1', text: "Dry as dust, need a drink—your choice?", options: { A: { text: "Light wine mix with bubbles", points: 1 }, B: { text: "Beer from tap, cold and simple", points: 2 }, C: { text: "Raw spirit from the still—who weakens it?", points: 3 } }, category: "EXTREME" },
+      { id: 'e2', text: "Body work time—your effort level?", options: { A: { text: "Easy bends and stretches", points: 1 }, B: { text: "Group drills with instruction", points: 2 }, C: { text: "Split wood for sets—who goes light?", points: 3 } }, category: "FITNESS" },
+      { id: 'e3', text: "Fight's brewin' nearby—your stand?", options: { A: { text: "Step aside quick and quiet", points: 1 }, B: { text: "Talk tough to defuse it", points: 2 }, C: { text: "Swing in the dirt—who verbalizes?", points: 3 } }, category: "CONFLICT" },
+      { id: 'e4', text: "Beast barges into your space—confront?", options: { A: { text: "Summon help immediately", points: 1 }, B: { text: "Drive it off with noise", points: 2 }, C: { text: "Takedown hands-on—who flees fangs?", points: 3 } }, category: "DANGER" },
+      { id: 'e5', text: "Meat on bone—how you consume?", options: { A: { text: "Slice proper with utensils", points: 1 }, B: { text: "Bite careful with napkins", points: 2 }, C: { text: "Shred savage with teeth—who tidies eats?", points: 3 } }, category: "FOOD" },
+      { id: 'e6', text: "Life goal extreme—your quest?", options: { A: { text: "View from afar at a distance", points: 1 }, B: { text: "Drop tied with safety gear", points: 2 }, C: { text: "Tussle swamp kings barehanded—who observes?", points: 3 } }, category: "DREAMS" },
+      { id: 'e7', text: "Water threat lurkin'—swim approach?", options: { A: { text: "Shore safe, no swimming", points: 1 }, B: { text: "Wade wary with caution", points: 2 }, C: { text: "Approach close and fearless—who dreads depths?", points: 3 } }, category: "DANGER" },
+      { id: 'e8', text: "Chaos erupts in the joint—your part?", options: { A: { text: "Find cover immediately", points: 1 }, B: { text: "Halt the mess with words", points: 2 }, C: { text: "Ignite more chaos—who cowers?", points: 3 } }, category: "CONFLICT" },
+      { id: 'e9', text: "Predator paths cross yours—your pose?", options: { A: { text: "Freeze flat and still", points: 1 }, B: { text: "Withdraw wise and slow", points: 2 }, C: { text: "Challenge its gaze—who submits?", points: 3 } }, category: "DANGER" },
+      { id: 'e10', text: "Blaze builds before you—how brave?", options: { A: { text: "Douse from a distance", points: 1 }, B: { text: "Cook over it careful", points: 2 }, C: { text: "Tread the embers barefoot—who flames from flame?", points: 3 } }, category: "EXTREME" },
+      { id: 'e11', text: "Undead approach in your nightmare—act?", options: { A: { text: "Hole up and hide", points: 1 }, B: { text: "Wall strong with barriers", points: 2 }, C: { text: "Pursue the pack—who holes up?", points: 3 } }, category: "FANTASY" },
+      { id: 'e12', text: "Beast battle calls—how you buck?", options: { A: { text: "Train tame and gentle", points: 1 }, B: { text: "Ring ride with gear", points: 2 }, C: { text: "Wild wrangle bare—who trains?", points: 3 } }, category: "EXTREME" }
+    ];
+
+    // Sassy result lines
+    const resultLines = {
+      low: [
+        "You're so unbutch, you make brunch look rugged.",
+        "Somewhere, a decorative throw pillow just adopted you.",
+        "Your idea of roughing it is medium roast coffee.",
+        "You treat mild salsa like a personal attack.",
+        "Even your shadow files complaints about overtime.",
+        "You've apologized to furniture you bumped into.",
+        "A stiff breeze would be your arch-nemesis.",
+        "Your survival instinct is calling customer service.",
+        "You're the reason bubble wrap has warnings.",
+        "Kittens intimidate you and that's okay.",
+        "You'd lose a staring contest with a goldfish.",
+        "Your comfort zone has its own comfort zone.",
+        "You make chamomile tea look hardcore.",
+        "Even decaf coffee thinks you're too mild.",
+        "Your battle cry is 'let's discuss this calmly.'",
+        "You've been outmaneuvered by fitted sheets.",
+        "Slightly aggressive houseplants concern you.",
+        "Your spirit animal is a nervous chihuahua.",
+        "You bring a pillow to camping—for emotional support.",
+        "Drizzle makes you reconsider life choices."
+      ],
+      mid: [
+        "Mildly butchy—tough enough for craft beer, soft enough for a hug.",
+        "You're butch-adjacent. Not quite there, but you can see it.",
+        "You've got one foot in rugged and one in sensible shoes.",
+        "Neither fish nor fowl, neither flannel nor fleece.",
+        "You've mastered the art of being perfectly adequate.",
+        "Middle of the pack—where most mammals thrive.",
+        "Practical, reasonable, balanced—and utterly forgettable.",
+        "You're Switzerland with slightly better fashion sense.",
+        "Your ancestors survived ice ages for you to be... fine.",
+        "You could go either way, which means you'll go nowhere fast.",
+        "You're like a participation trophy for butchness.",
+        "Tough when necessary, soft when convenient.",
+        "You've achieved peak mediocrity. Congratulations?",
+        "Not bad, not great—the human equivalent of room temperature.",
+        "You're the Switzerland of butchness: aggressively neutral.",
+        "Straddling the fence so long you've gotten comfortable.",
+        "Half-rugged, half-reasonable—fully forgettable.",
+        "You've proven you can handle mild discomfort. Hero.",
+        "Average with aspirations. At least the aspirations exist.",
+        "You're the background character of your own action movie."
+      ],
+      high: [
+        "Butch legend: You wrestle storms and win.",
+        "You've reached peak rugged. Mountains are jealous.",
+        "Your calluses have calluses. Respect.",
+        "You make lumberjacks look like librarians.",
+        "Legends will be written. Probably by you. In blood.",
+        "You've proven butchness isn't a phase—it's a lifestyle.",
+        "Even your reflection knows not to make eye contact.",
+        "You've earned your scars and they're scared of you.",
+        "The wilderness sends you thank-you cards.",
+        "You're what happens when tough love meets tougher genes.",
+        "Grizzly bears ask you for survival tips.",
+        "Your morning routine violates several safety codes.",
+        "You don't fear the reaper—the reaper fears your schedule.",
+        "Nature itself steps aside when you hike.",
+        "You sneeze sawdust and sweat diesel.",
+        "Even your shadow lifts weights.",
+        "You've reached levels of butch science can't explain.",
+        "Your spirit animal is a chainsaw.",
+        "You wrestle doubt and win before breakfast.",
+        "Butch incarnate. The prophecy was about you."
+      ]
+    };
+
+    // Game state
+    let state = {
+      screen: 'home',
+      mode: null,
+      players: [],
+      playerNames: [''],
+      currentPlayerIndex: 0,
+      currentQuestionIndex: 0,
+      sessionQuestions: [],
+      isSpinning: false,
+      showResult: false
+    };
+
+    // Shuffle and pick questions (4 mild, 3 medium, 3 extreme)
+    function pickQuestions() {
+      const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+      const mild = shuffle(mildQuestions).slice(0, 4);
+      const medium = shuffle(mediumQuestions).slice(0, 3);
+      const extreme = shuffle(extremeQuestions).slice(0, 3);
+      return [...mild, ...medium, ...extreme];
+    }
+
+    function getResultLine(score) {
+      const lines = score <= 10 ? resultLines.low : score <= 20 ? resultLines.mid : resultLines.high;
+      return lines[Math.floor(Math.random() * lines.length)];
+    }
+
+    function render() {
+      document.getElementById('app').innerHTML = screens[state.screen]();
+      // Reattach event listeners after render
+      document.querySelectorAll('[data-sound]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const sound = e.currentTarget.dataset.sound;
+          if (sounds[sound]) sounds[sound].play();
+          createSpark(e.clientX, e.clientY, 8);
+        });
+      });
+    }
 
     const screens = {
       home: () => `
-        <div class="min-h-screen flex flex-col items-center justify-center p-6">
-          <div class="text-center mb-12">
-            <h1 class="text-5xl md:text-6xl font-black text-[#BF8C60] tracking-wider mb-4 drop-shadow-lg">BUTCHOMETER</h1>
-            <div class="w-32 h-1 bg-[#BF8C60] mx-auto rounded mb-6"></div>
-            <p class="text-lg text-[#F5F0E6] opacity-90 max-w-md mx-auto">Test your butch cred with fun quizzes—how rugged are you, really?</p>
+        <div class="min-h-screen flex flex-col items-center justify-center p-6 relative">
+          <div class="text-center mb-10">
+            <h1 class="title-font text-5xl md:text-7xl font-bold text-orange-500 glow-title tracking-wider mb-3">BUTCHOMETER</h1>
+            <div class="w-40 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto mb-6"></div>
+            <p class="text-lg text-gray-300 max-w-md mx-auto leading-relaxed">Test your butch cred with fun quizzes—how rugged are you, really?</p>
           </div>
-          <div class="flex flex-col gap-4 w-full max-w-sm">
-            <button onclick="selectMode('single')" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-lg hover:scale-[1.02] transition-all">SINGLE PLAYER<span class="block text-sm font-normal opacity-80 mt-1">Test yourself solo</span></button>
-            <button onclick="selectMode('multiplayer')" class="bg-gradient-to-r from-[#5D4037] to-[#3E2723] text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-lg hover:scale-[1.02] transition-all">MULTIPLAYER<span class="block text-sm font-normal opacity-80 mt-1">2-6 players, sequential turns</span></button>
+          <div class="flex flex-col gap-5 w-full max-w-sm">
+            <button onclick="selectMode('single')" data-sound="clang" class="metal-btn metal-btn-green text-white py-5 px-8 rounded-xl title-font text-xl tracking-wide">
+              <span class="flex items-center justify-center gap-3">
+                <span class="text-2xl">🔨</span> SINGLE PLAYER
+              </span>
+              <span class="block text-sm font-normal opacity-70 mt-1 font-serif">Test yourself solo</span>
+            </button>
+            <button onclick="selectMode('multiplayer')" data-sound="clang" class="metal-btn text-white py-5 px-8 rounded-xl title-font text-xl tracking-wide">
+              <span class="flex items-center justify-center gap-3">
+                <span class="text-2xl">🔧</span> MULTIPLAYER
+              </span>
+              <span class="block text-sm font-normal opacity-70 mt-1 font-serif">2-6 players, take turns</span>
+            </button>
           </div>
-          <p class="text-sm text-[#F5F0E6] opacity-60 text-center mt-12 max-w-md italic">This is all tongue-in-cheek fun; stereotypes are silly, and butchness is whatever you make it. Play nice!</p>
+          <p class="text-xs text-gray-500 text-center mt-12 max-w-md italic px-4">This is all tongue-in-cheek fun; stereotypes are silly, and butchness is whatever you make it. Play nice!</p>
+          <div class="absolute bottom-0 left-0 right-0 bg-gray-800/50 py-2 text-center text-xs text-gray-500">Ad Space</div>
         </div>`,
-      disclaimer: () => `
-        <div class="min-h-screen flex items-center justify-center p-6 cursor-pointer" onclick="dismissDisclaimer()">
-          <div class="bg-white rounded-3xl p-8 max-w-md shadow-2xl">
-            <h2 class="text-2xl font-bold text-[#2C2416] text-center mb-6">Before You Begin...</h2>
-            <div class="text-[#5D5449] space-y-4 mb-6">
-              <p>This quiz is lighthearted, satirical fun exploring "rugged" stereotypes.</p>
-              <p class="font-semibold text-[#2C2416]">Remember:</p>
-              <ul class="space-y-2 list-disc list-inside text-sm">
-                <li>No results define your worth or identity</li>
-                <li>"Butchness" here is playful, not serious</li>
-                <li>Everyone's valid regardless of score</li>
-                <li>The exaggerated responses are parody, not life advice</li>
-              </ul>
-            </div>
-            <div class="border-t pt-4"><p class="text-center text-[#8B8378] text-sm">Tap anywhere to continue</p></div>
-          </div>
-        </div>`,
+
       setup: () => `
-        <div class="min-h-screen p-6">
-          <div class="max-w-md mx-auto">
-            <button onclick="goHome()" class="text-[#F5F0E6] mb-6 hover:opacity-80">← Back</button>
-            <h2 class="text-2xl font-bold text-[#F5F0E6] mb-8">${state.mode === 'single' ? 'Single Player' : 'Multiplayer'} Setup</h2>
-            <div class="bg-white rounded-2xl p-6 mb-6 shadow-lg">
-              <h3 class="font-semibold text-[#2C2416] mb-2">${state.mode === 'single' ? 'Your Name' : 'Player Names'}</h3>
-              <p class="text-sm text-[#8B8378] mb-4">${state.mode === 'single' ? 'Optional - or play as "Player 1"' : 'Enter 2-6 player names'}</p>
-              ${state.playerNames.map((n, i) => `<div class="flex gap-2 mb-3"><input type="text" value="${n}" onchange="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-[#4A5D23] outline-none" maxlength="20">${state.mode === 'multiplayer' && state.playerNames.length > 2 ? `<button onclick="removePlayer(${i})" class="text-red-500 px-3 hover:bg-red-50 rounded-xl">✕</button>` : ''}</div>`).join('')}
-              ${state.mode === 'multiplayer' && state.playerNames.length < 6 ? `<button onclick="addPlayer()" class="w-full border-2 border-dashed border-[#4A5D23] text-[#4A5D23] py-3 rounded-xl font-semibold hover:bg-[#4A5D23]/5">+ Add Player</button>` : ''}
+        <div class="min-h-screen p-6 steel-bg">
+          <div class="max-w-md mx-auto relative z-10">
+            <button onclick="goHome()" data-sound="click" class="text-orange-400 mb-6 hover:text-orange-300 flex items-center gap-2 title-font">← BACK</button>
+            <h2 class="title-font text-3xl font-bold text-orange-500 glow-title mb-8">${state.mode === 'single' ? 'SINGLE PLAYER' : 'MULTIPLAYER'}</h2>
+            <div class="question-card rounded-2xl p-6 mb-6 flame-border">
+              <h3 class="title-font text-xl text-orange-400 mb-2">${state.mode === 'single' ? 'YOUR NAME' : 'PLAYER NAMES'}</h3>
+              <p class="text-sm text-gray-400 mb-4 font-serif">${state.mode === 'single' ? 'Optional - or play as "Player 1"' : 'Enter 2-6 player names'}</p>
+              <div id="nameInputs">
+                ${state.playerNames.map((n, i) => `
+                  <div class="flex gap-2 mb-3">
+                    <input type="text" value="${n}" oninput="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="leather-input flex-1 rounded-xl px-4 py-3 text-white placeholder-gray-500" maxlength="15">
+                    ${state.mode === 'multiplayer' && state.playerNames.length > 2 ? `<button onclick="removePlayer(${i})" data-sound="click" class="text-red-500 px-3 hover:text-red-400 text-xl">🔧✕</button>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+              ${state.mode === 'multiplayer' && state.playerNames.length < 6 ? `<button onclick="addPlayer()" data-sound="click" class="w-full border-2 border-dashed border-orange-500/50 text-orange-400 py-3 rounded-xl title-font hover:border-orange-400 hover:bg-orange-500/10 transition-all">🔧 ADD PLAYER</button>` : ''}
             </div>
-            <div class="bg-[#4A5D23]/20 rounded-2xl p-4 mb-6"><p class="text-[#F5F0E6] text-sm">ℹ️ Each player gets 10 unique questions!</p></div>
-            <button onclick="startGame()" class="w-full bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl">START QUIZ →</button>
+            <button onclick="startGame()" data-sound="bang" class="metal-btn metal-btn-green w-full text-white py-4 rounded-xl title-font text-xl tracking-wide">
+              <span class="flex items-center justify-center gap-2">START QUIZ 🔥</span>
+            </button>
           </div>
+          <div class="absolute bottom-0 left-0 right-0 bg-gray-800/50 py-2 text-center text-xs text-gray-500">Ad Space</div>
         </div>`,
+
       quiz: () => {
         const q = state.sessionQuestions[state.currentQuestionIndex];
         const p = state.players[state.currentPlayerIndex];
+        const progress = ((state.currentQuestionIndex + 1) / 10) * 100;
+        const difficulty = state.currentQuestionIndex < 4 ? 'MILD' : state.currentQuestionIndex < 7 ? 'MEDIUM' : 'EXTREME';
         return `
-        <div class="min-h-screen p-4 md:p-6">
-          <div class="max-w-2xl mx-auto">
-            <div class="flex justify-between items-center mb-4">
-              <div><h3 class="text-xl font-bold text-[#F5F0E6]">${p?.name}</h3><p class="text-sm text-[#F5F0E6] opacity-70">Butch'ish Level</p></div>
-              <div class="text-3xl font-black text-[#F5F0E6]">${state.currentQuestionIndex + 1}/10</div>
+        <div class="min-h-screen p-4 md:p-6 steel-bg">
+          <div class="max-w-2xl mx-auto relative z-10">
+            <div class="flex justify-between items-center mb-3">
+              <div>
+                <h3 class="title-font text-xl text-orange-400">${p?.name}</h3>
+                <p class="text-xs text-gray-500">${difficulty}</p>
+              </div>
+              <div class="title-font text-3xl text-orange-500 glow-title">${state.currentQuestionIndex + 1}/10</div>
             </div>
-            <div class="h-1 bg-white/20 rounded-full mb-6"><div class="h-full bg-[#BF8C60] rounded-full transition-all" style="width:${((state.currentQuestionIndex + 1) / 10) * 100}%"></div></div>
-            <div class="bg-white rounded-3xl p-6 mb-6 shadow-lg animate-slide-in">
-              <span class="inline-block bg-[#4A5D23] text-white text-xs font-bold px-3 py-1 rounded-lg mb-4 uppercase">${q?.category}</span>
-              <p class="text-lg text-[#2C2416] leading-relaxed">${q?.text}</p>
+            <div class="h-3 bg-gray-700 rounded-full mb-6 overflow-hidden border border-gray-600">
+              <div class="h-full ember-fill rounded-full transition-all duration-500" style="width:${progress}%"></div>
+            </div>
+            <div class="question-card rounded-2xl p-6 mb-6 slide-up">
+              <div class="category-badge inline-block px-3 py-1 rounded-lg mb-4">
+                <span class="title-font text-xs text-orange-400 tracking-wider">${q?.category}</span>
+              </div>
+              <p class="text-lg text-gray-100 leading-relaxed font-serif">${q?.text}</p>
             </div>
             <div class="space-y-3">
-              ${['A','B','C'].map(o => `<button onclick="answer('${o}')" class="w-full bg-white/95 rounded-2xl p-4 text-left shadow-md hover:shadow-lg hover:scale-[1.01] transition-all flex items-start gap-4"><span class="w-8 h-8 bg-[#4A5D23] text-white rounded-full flex items-center justify-center font-bold shrink-0">${o}</span><span class="text-[#2C2416]">${q?.options[o].text}</span></button>`).join('')}
+              <button onclick="answer('A')" data-sound="sparkle" class="answer-btn w-full rounded-xl p-4 text-left flex items-start gap-4 slide-up" style="animation-delay:0.1s">
+                <span class="w-10 h-10 bg-gray-600 text-gray-300 rounded-full flex items-center justify-center title-font shrink-0 border-2 border-gray-500">A</span>
+                <span class="text-gray-200 font-serif">${q?.options.A.text}</span>
+              </button>
+              <button onclick="answer('B')" data-sound="clang" class="answer-btn w-full rounded-xl p-4 text-left flex items-start gap-4 slide-up" style="animation-delay:0.2s">
+                <span class="w-10 h-10 bg-gray-600 text-gray-300 rounded-full flex items-center justify-center title-font shrink-0 border-2 border-gray-500">B</span>
+                <span class="text-gray-200 font-serif">${q?.options.B.text}</span>
+              </button>
+              <button onclick="answer('C')" data-sound="bang" class="answer-btn answer-c w-full rounded-xl p-4 text-left flex items-start gap-4 slide-up" style="animation-delay:0.3s">
+                <span class="w-10 h-10 bg-green-800 text-green-300 rounded-full flex items-center justify-center title-font shrink-0 border-2 border-green-600">C</span>
+                <span class="text-gray-200 font-serif">${q?.options.C.text}</span>
+              </button>
             </div>
           </div>
+          <div class="absolute bottom-0 left-0 right-0 bg-gray-800/50 py-2 text-center text-xs text-gray-500">Ad Space</div>
         </div>`;
       },
+
       results: () => {
         const p = state.players[state.currentPlayerIndex];
         const score = p?.score || 0;
-        const bracket = score <= 10 ? 'Unbutch Territory' : score <= 20 ? 'Middle Ground' : 'Butch Status';
-        const color = score <= 10 ? 'bg-red-500' : score <= 20 ? 'bg-yellow-500' : 'bg-green-500';
+        const bracket = score <= 10 ? 'UNBUTCH' : score <= 20 ? 'BUTCH-ISH' : 'BUTCH LEGEND';
+        const bracketColor = score <= 10 ? 'from-red-600 to-red-800' : score <= 20 ? 'from-yellow-600 to-yellow-800' : 'from-green-600 to-green-800';
         return `
-        <div class="min-h-screen flex flex-col items-center justify-center p-6">
-          <h2 class="text-2xl font-bold text-[#F5F0E6] mb-8">${p?.name}'s Results</h2>
-          <div class="relative w-64 h-64 mb-8">
-            <div class="w-full h-full rounded-full border-8 border-[#BF8C60] bg-gradient-to-br from-[#BF8C60] via-[#5D4037] to-[#4A5D23] shadow-2xl ${state.isSpinning ? 'animate-spin-slow' : ''}"></div>
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2"><div class="w-0 h-0 border-l-[15px] border-r-[15px] border-t-[25px] border-l-transparent border-r-transparent border-t-[#BF8C60]"></div></div>
-            ${!state.isSpinning ? `<div class="absolute inset-0 flex items-center justify-center animate-fade-in"><div class="bg-black/80 rounded-full w-32 h-32 flex flex-col items-center justify-center"><span class="text-4xl font-black text-[#BF8C60]">${score}</span><span class="text-lg text-white">/30</span></div></div>` : ''}
+        <div class="min-h-screen flex flex-col items-center justify-center p-6 steel-bg">
+          <h2 class="title-font text-2xl text-orange-400 mb-6">${p?.name}'S RESULTS</h2>
+          <div class="relative w-64 h-64 mb-6">
+            <div class="w-full h-full rounded-full border-8 border-orange-600 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 shadow-2xl ${state.isSpinning ? 'wheel-spin' : ''}" style="box-shadow: 0 0 40px rgba(255,107,53,0.5), inset 0 0 30px rgba(0,0,0,0.5)">
+              <div class="absolute inset-4 rounded-full bg-gradient-to-br from-orange-600 via-orange-700 to-red-800"></div>
+              <div class="absolute inset-8 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                <span class="title-font text-4xl text-orange-500">🔥</span>
+              </div>
+            </div>
+            <div class="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
+              <div class="w-0 h-0 border-l-[15px] border-r-[15px] border-t-[25px] border-l-transparent border-r-transparent border-t-orange-500" style="filter: drop-shadow(0 0 10px rgba(255,107,53,0.8))"></div>
+            </div>
+            ${!state.isSpinning ? `
+            <div class="absolute inset-0 flex items-center justify-center fade-in">
+              <div class="bg-black/90 rounded-full w-36 h-36 flex flex-col items-center justify-center border-4 border-orange-600" style="box-shadow: 0 0 30px rgba(255,107,53,0.6)">
+                <span class="title-font text-5xl text-orange-500 glow-title">${score}</span>
+                <span class="text-lg text-gray-400">/30</span>
+              </div>
+            </div>` : ''}
           </div>
           ${state.showResult ? `
-          <div class="animate-fade-in text-center max-w-md">
-            <div class="inline-block px-4 py-2 rounded-full mb-4 ${color}"><span class="text-white font-semibold">${bracket}</span></div>
-            <div class="bg-white/10 rounded-2xl p-6 mb-8"><p class="text-[#F5F0E6] text-lg italic">"${p?.resultLine}"</p></div>
-            <div class="flex gap-4 justify-center">
-              ${state.mode === 'multiplayer' && state.currentPlayerIndex < state.players.length - 1 
-                ? `<button onclick="nextPlayer()" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-3 px-8 rounded-xl font-bold shadow-lg">Next Player →</button>`
-                : state.mode === 'multiplayer' 
-                ? `<button onclick="showLeaderboard()" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-3 px-8 rounded-xl font-bold shadow-lg">See Leaderboard 🏆</button>`
-                : `<button onclick="goHome()" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-3 px-8 rounded-xl font-bold shadow-lg">Play Again</button>`}
+          <div class="fade-in text-center max-w-md px-4">
+            <div class="inline-block px-6 py-2 rounded-full mb-4 bg-gradient-to-r ${bracketColor} border-2 border-opacity-50" style="border-color: rgba(255,255,255,0.2)">
+              <span class="title-font text-white tracking-wider">${bracket}</span>
             </div>
-          </div>` : `<p class="text-[#F5F0E6] text-lg italic opacity-80">Measuring your butchness...</p>`}
+            <div class="question-card rounded-2xl p-6 mb-6 relative">
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-gray-700 rotate-45 border-l-2 border-t-2 border-gray-600"></div>
+              <p class="text-gray-200 text-lg italic font-serif">"${p?.resultLine}"</p>
+            </div>
+            <div class="flex gap-4 justify-center flex-wrap">
+              ${state.mode === 'multiplayer' && state.currentPlayerIndex < state.players.length - 1 
+                ? `<button onclick="nextPlayer()" data-sound="clang" class="metal-btn metal-btn-green text-white py-3 px-6 rounded-xl title-font">NEXT PLAYER →</button>`
+                : state.mode === 'multiplayer' 
+                ? `<button onclick="showLeaderboard()" data-sound="fanfare" class="metal-btn metal-btn-green text-white py-3 px-6 rounded-xl title-font">🏆 LEADERBOARD</button>`
+                : `<button onclick="goHome()" data-sound="clang" class="metal-btn metal-btn-green text-white py-3 px-6 rounded-xl title-font">🔨 PLAY AGAIN</button>`}
+            </div>
+          </div>` : `<p class="title-font text-xl text-orange-400 animate-pulse">MEASURING BUTCHNESS...</p>`}
+          <div class="absolute bottom-0 left-0 right-0 bg-gray-800/50 py-2 text-center text-xs text-gray-500">Ad Space</div>
         </div>`;
       },
+
       leaderboard: () => {
         const sorted = [...state.players].sort((a, b) => b.score - a.score);
         return `
-        <div class="min-h-screen p-6">
-          <div class="max-w-md mx-auto text-center">
-            <div class="text-5xl mb-4">🏆</div>
-            <h2 class="text-3xl font-black text-[#F5F0E6] mb-2">Session Complete!</h2>
-            <p class="text-[#F5F0E6] opacity-70 mb-8">Butch'ish • ${state.players.length} Players</p>
-            <div class="bg-white rounded-3xl p-6 mb-8 shadow-lg">
-              <h3 class="text-sm font-bold text-[#8B8378] tracking-widest mb-4">LEADERBOARD</h3>
+        <div class="min-h-screen p-6 steel-bg">
+          <div class="max-w-md mx-auto text-center relative z-10">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="title-font text-4xl text-orange-500 glow-title mb-2">COMPLETE!</h2>
+            <p class="text-gray-400 mb-8">${state.players.length} Players</p>
+            <div class="space-y-4 mb-8">
               ${sorted.map((p, i) => `
-                <div class="flex items-center py-4 border-b last:border-b-0">
-                  <div class="w-12 h-12 rounded-full flex items-center justify-center mr-4 ${i === 0 ? 'bg-yellow-400' : i === 1 ? 'bg-gray-300' : i === 2 ? 'bg-amber-600' : 'bg-gray-100'}">
-                    <span class="text-lg">${i === 0 ? '🏆' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</span>
+                <div class="plaque rounded-xl p-4 flex items-center gap-4 ${i === 0 ? 'border-yellow-500' : i === 1 ? 'border-gray-400' : i === 2 ? 'border-orange-700' : ''}">
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl ${i === 0 ? 'bg-yellow-600' : i === 1 ? 'bg-gray-500' : i === 2 ? 'bg-orange-800' : 'bg-gray-700'}">
+                    ${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
                   </div>
                   <div class="flex-1 text-left">
-                    <p class="font-bold text-[#2C2416]">${p.name}</p>
-                    <p class="text-sm text-[#8B8378] italic truncate">"${p.resultLine}"</p>
+                    <p class="title-font text-lg text-orange-400">${p.name}</p>
+                    <p class="text-xs text-gray-500 italic truncate font-serif">"${p.resultLine}"</p>
                   </div>
                   <div class="text-right">
-                    <span class="text-2xl font-black text-[#4A5D23]">${p.score}</span><span class="text-sm text-[#8B8378]">/30</span>
+                    <span class="title-font text-3xl text-orange-500">${p.score}</span>
+                    <span class="text-gray-500">/30</span>
                   </div>
                 </div>
               `).join('')}
             </div>
-            <button onclick="goHome()" class="w-full bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-4 rounded-2xl font-bold text-lg shadow-lg">New Game</button>
+            <button onclick="goHome()" data-sound="clang" class="metal-btn metal-btn-green w-full text-white py-4 rounded-xl title-font text-xl">🔨 NEW GAME</button>
           </div>
+          <div class="absolute bottom-0 left-0 right-0 bg-gray-800/50 py-2 text-center text-xs text-gray-500">Ad Space</div>
         </div>`;
       }
     };
 
-    function selectMode(mode) { state.mode = mode; state.playerNames = mode === 'multiplayer' ? ['', ''] : ['']; state.screen = 'disclaimer'; render(); }
-    function dismissDisclaimer() { state.screen = 'setup'; render(); }
-    function goHome() { state = { screen: 'home', mode: null, players: [], playerNames: [''], currentPlayerIndex: 0, currentQuestionIndex: 0, sessionQuestions: [], isSpinning: false, showResult: false }; render(); }
+    // Game functions
+    function selectMode(mode) {
+      state.mode = mode;
+      state.playerNames = mode === 'multiplayer' ? ['', ''] : [''];
+      state.screen = 'setup';
+      render();
+    }
+
+    function goHome() {
+      state = { screen: 'home', mode: null, players: [], playerNames: [''], currentPlayerIndex: 0, currentQuestionIndex: 0, sessionQuestions: [], isSpinning: false, showResult: false };
+      render();
+    }
+
     function updateName(i, val) { state.playerNames[i] = val; }
     function addPlayer() { if (state.playerNames.length < 6) { state.playerNames.push(''); render(); } }
     function removePlayer(i) { if (state.playerNames.length > 2) { state.playerNames.splice(i, 1); render(); } }
-    function startGame() { 
-      state.players = state.playerNames.map((n, i) => ({ id: i, name: n || `Player ${i+1}`, score: 0, answers: [], resultLine: '' }));
-      state.currentPlayerIndex = 0; state.currentQuestionIndex = 0; state.sessionQuestions = shuffle(questions); state.screen = 'quiz'; render();
+
+    function startGame() {
+      const names = state.mode === 'multiplayer' ? state.playerNames.filter(n => n.trim() || true) : state.playerNames;
+      if (state.mode === 'multiplayer' && names.length < 2) { alert('Need at least 2 players!'); return; }
+      state.players = names.map((n, i) => ({ id: i, name: n.trim() || `Player ${i+1}`, score: 0, answers: [], resultLine: '' }));
+      state.currentPlayerIndex = 0;
+      state.currentQuestionIndex = 0;
+      state.sessionQuestions = pickQuestions();
+      state.screen = 'quiz';
+      render();
     }
+
     function answer(a) {
       const q = state.sessionQuestions[state.currentQuestionIndex];
       state.players[state.currentPlayerIndex].score += q.options[a].points;
       state.players[state.currentPlayerIndex].answers.push({ q: q.id, a, p: q.options[a].points });
-      if (state.currentQuestionIndex < 9) { state.currentQuestionIndex++; render(); }
-      else {
-        const lines = getLine(state.players[state.currentPlayerIndex].score);
-        state.players[state.currentPlayerIndex].resultLine = lines[Math.floor(Math.random() * lines.length)];
-        state.isSpinning = true; state.showResult = false; state.screen = 'results'; render();
-        setTimeout(() => { state.isSpinning = false; render(); setTimeout(() => { state.showResult = true; render(); }, 300); }, 5000);
+      
+      // Vibrate on C answer (mobile)
+      if (a === 'C' && navigator.vibrate) navigator.vibrate(100);
+      
+      if (state.currentQuestionIndex < 9) {
+        state.currentQuestionIndex++;
+        render();
+      } else {
+        state.players[state.currentPlayerIndex].resultLine = getResultLine(state.players[state.currentPlayerIndex].score);
+        state.isSpinning = true;
+        state.showResult = false;
+        state.screen = 'results';
+        render();
+        sounds.whoosh.play();
+        setTimeout(() => {
+          state.isSpinning = false;
+          render();
+          setTimeout(() => {
+            state.showResult = true;
+            render();
+            sounds.fanfare.play();
+            if (state.players[state.currentPlayerIndex].score > 20) confettiBurst();
+          }, 400);
+        }, 5000);
       }
     }
-    function nextPlayer() { state.currentPlayerIndex++; state.currentQuestionIndex = 0; state.sessionQuestions = shuffle(questions); state.isSpinning = false; state.showResult = false; state.screen = 'quiz'; render(); }
-    function showLeaderboard() { state.screen = 'leaderboard'; render(); }
 
+    function nextPlayer() {
+      state.currentPlayerIndex++;
+      state.currentQuestionIndex = 0;
+      state.sessionQuestions = pickQuestions();
+      state.isSpinning = false;
+      state.showResult = false;
+      state.screen = 'quiz';
+      render();
+    }
+
+    function showLeaderboard() {
+      state.screen = 'leaderboard';
+      render();
+      confettiBurst();
+    }
+
+    // Initial render
     render();
   </script>
 </body>
