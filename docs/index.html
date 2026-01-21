@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Butchometer - Test Your Butch Cred</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #2F3D15, #3E2723, #2C2416);
+      min-height: 100vh;
+    }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(720deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    .animate-spin-slow { animation: spin 5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+  </style>
+</head>
+<body class="antialiased">
+  <div id="app"></div>
+  <script>
+    const questions = [
+      { id: "l1_001", text: "You wake up to that familiar coffee urge kickin' in—how're you handlin' it?", options: { A: { text: "Brew somethin' elaborate with froth and flavors like it's a damn ceremony", points: 1 }, B: { text: "Pour straight black from the drip pot, simple and strong", points: 2 }, C: { text: "Mix instant in yesterday's mug, zap it hot, and make it so thick the spoon don't budge—who's got time for fresh grounds?", points: 3 } }, category: "morning" },
+      { id: "l1_002", text: "The doorknob on your bedroom door has been loose for about a week now. What's your move?", options: { A: { text: "Call a handyman because you don't trust yourself with tools", points: 1 }, B: { text: "Grab a screwdriver and tighten it up yourself—takes two minutes", points: 2 }, C: { text: "Rip the whole door off the hinges—who needs privacy when you've got confidence?", points: 3 } }, category: "home" },
+      { id: "l1_003", text: "You're at the movies and someone behind you won't stop talking. How do you handle it?", options: { A: { text: "Suffer in silence and complain about it later to your friends", points: 1 }, B: { text: "Turn around and politely ask them to keep it down", points: 2 }, C: { text: "Turn around, lock eyes, and stare in complete silence until they shut up", points: 3 } }, category: "social" },
+      { id: "l1_004", text: "Grocery shopping time—how do you approach the list situation?", options: { A: { text: "Organize by aisle with coupons clipped and a meal plan color-coded", points: 1 }, B: { text: "Mental list of the basics, grab what looks good, get out quick", points: 2 }, C: { text: "What list? Walk in hungry and leave with whatever your gut tells you", points: 3 } }, category: "errands" },
+      { id: "l1_005", text: "Your car makes a weird noise. First instinct?", options: { A: { text: "Panic, pull over immediately, and call roadside assistance", points: 1 }, B: { text: "Pop the hood, take a look around, see if anything is loose", points: 2 }, C: { text: "Turn the radio up louder—if you can't hear it, it ain't a problem", points: 3 } }, category: "vehicle" },
+      { id: "l1_006", text: "You spot a harmless spider against your wall—do you:", options: { A: { text: "Scream and hide like the spider has a personal vendetta against you", points: 1 }, B: { text: "Trap it in a cup and rush outside to release it", points: 2 }, C: { text: "Squish it with your shoe as a lesson to all the other spiders", points: 3 } }, category: "home" },
+      { id: "l1_007", text: "Someone asks you to help them move apartments. Your response?", options: { A: { text: "Agree then fake an illness the morning of", points: 1 }, B: { text: "Show up with work gloves and a good attitude", points: 2 }, C: { text: "Show up with your own truck and take charge of the whole operation", points: 3 } }, category: "social" },
+      { id: "l1_008", text: "It's raining and you need to check the mail. What's your approach?", options: { A: { text: "Wait until the rain stops completely—mail can wait", points: 1 }, B: { text: "Grab an umbrella and make a quick trip", points: 2 }, C: { text: "Walk out like the rain is personally afraid to touch you", points: 3 } }, category: "weather" },
+      { id: "l1_009", text: "The power goes out in your house. First move?", options: { A: { text: "Panic and check if your phone has enough charge to survive", points: 1 }, B: { text: "Light some candles, check the breaker box, wait it out", points: 2 }, C: { text: "Welcome the darkness and continue by firelight like your ancestors", points: 3 } }, category: "home" },
+      { id: "l1_010", text: "You're assembling furniture from a flat pack. How does this go?", options: { A: { text: "Read every instruction twice, watch YouTube tutorials", points: 1 }, B: { text: "Skim the pictures, use common sense, finish in reasonable time", points: 2 }, C: { text: "Instructions are for people who lack spatial reasoning—build by instinct", points: 3 } }, category: "home" },
+      { id: "l1_011", text: "Your friend suggests going camping this weekend. Your gut reaction?", options: { A: { text: "Only if there's a cabin with running water and electricity", points: 1 }, B: { text: "Sounds fun—pack the tent and rough it for a night", points: 2 }, C: { text: "Leave the tent at home—sleep under the stars with just a knife", points: 3 } }, category: "outdoors" },
+      { id: "l1_012", text: "You burn dinner pretty badly. Now what?", options: { A: { text: "Order takeout immediately and pretend this never happened", points: 1 }, B: { text: "Scrape off the burnt parts, salvage what you can, eat it anyway", points: 2 }, C: { text: "Eat it burnt—carbon builds character", points: 3 } }, category: "food" },
+      { id: "l1_013", text: "Someone cuts you off in traffic aggressively. How do you respond?", options: { A: { text: "Gasp dramatically and tell everyone about it for weeks", points: 1 }, B: { text: "Brief annoyance, maybe a horn tap, then let it go", points: 2 }, C: { text: "Give them a slow, disappointed head shake", points: 3 } }, category: "driving" },
+      { id: "l1_014", text: "Your restaurant order comes out wrong. What's your play?", options: { A: { text: "Eat it anyway while silently fuming", points: 1 }, B: { text: "Politely flag down the server and ask them to fix it", points: 2 }, C: { text: "Eat whatever they brought—food is fuel, not a personality", points: 3 } }, category: "food" },
+      { id: "l1_015", text: "The sink drain is clogged. Your approach?", options: { A: { text: "Call a plumber immediately", points: 1 }, B: { text: "Try some drain cleaner first, maybe a plunger", points: 2 }, C: { text: "Reach your bare hand down there and pull out whatever's blocking it", points: 3 } }, category: "home" },
+      { id: "l1_016", text: "You're invited to a party where you only know one person. How do you feel?", options: { A: { text: "Dread it for days and stick to your one friend like glue", points: 1 }, B: { text: "A little nervous but good chance to meet new people", points: 2 }, C: { text: "Walk in like you own the place—strangers are just friends who don't know you yet", points: 3 } }, category: "social" },
+      { id: "l1_017", text: "Your phone dies and you're nowhere near a charger. What now?", options: { A: { text: "Experience genuine anxiety until you can find power", points: 1 }, B: { text: "Shrug it off—you'll survive a few hours unplugged", points: 2 }, C: { text: "Feel liberated—finally free from the electronic leash", points: 3 } }, category: "technology" },
+      { id: "l1_018", text: "Someone asks your opinion on their bad haircut. What do you say?", options: { A: { text: "Lie enthusiastically and tell them it looks amazing", points: 1 }, B: { text: "Find something genuinely nice to say", points: 2 }, C: { text: "Tell them the truth—real friends don't let friends walk around confused", points: 3 } }, category: "social" },
+      { id: "l1_019", text: "You have to give a toast at a friend's wedding. How do you prepare?", options: { A: { text: "Write it word for word and practice in the mirror for days", points: 1 }, B: { text: "Jot down bullet points and wing the rest", points: 2 }, C: { text: "Prepare nothing—pure unfiltered truth is your gift", points: 3 } }, category: "social" },
+      { id: "l1_020", text: "Weather forecast says storms but your outdoor plans are set. Decision:", options: { A: { text: "Cancel everything—you can't risk wet clothes", points: 1 }, B: { text: "Pack a rain jacket and proceed with the plan", points: 2 }, C: { text: "Weather forecasts are suggestions—the sky can do what it wants", points: 3 } }, category: "weather" }
+    ];
+
+    const resultLines = {
+      low: ["You're so unbutch, you make flower arranging look rugged.", "Somewhere, a throw pillow claimed you as its soulmate.", "Your idea of roughing it is when the hotel has no room service.", "Even your shadow asks permission before following you.", "A gentle breeze once made you reconsider your life choices."],
+      mid: ["You're butch-adjacent. Not quite there, but you can see it from where you're standing.", "You've got one foot in the rugged world and the other in a sensible shoe.", "Neither fish nor fowl, neither flannel nor fleece.", "You've mastered the art of being perfectly adequate.", "Consistent, predictable, steady—all the exciting adjectives."],
+      high: ["For a beginner quiz, you showed some real grit.", "Not bad for the kiddie pool. Ready for sharks?", "You've earned your calluses. Time to earn some scars.", "You handled mild situations with unreasonable confidence. Impressive.", "Solid start, but starting is the easy part."]
+    };
+
+    let state = { screen: 'home', mode: null, players: [], playerNames: [''], currentPlayerIndex: 0, currentQuestionIndex: 0, sessionQuestions: [], isSpinning: false, showResult: false };
+
+    function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5).slice(0, 10); }
+    function getLine(score) { return score <= 10 ? resultLines.low : score <= 20 ? resultLines.mid : resultLines.high; }
+    function render() { document.getElementById('app').innerHTML = screens[state.screen](); }
+
+    const screens = {
+      home: () => `
+        <div class="min-h-screen flex flex-col items-center justify-center p-6">
+          <div class="text-center mb-12">
+            <h1 class="text-5xl md:text-6xl font-black text-[#BF8C60] tracking-wider mb-4 drop-shadow-lg">BUTCHOMETER</h1>
+            <div class="w-32 h-1 bg-[#BF8C60] mx-auto rounded mb-6"></div>
+            <p class="text-lg text-[#F5F0E6] opacity-90 max-w-md mx-auto">Test your butch cred with fun quizzes—how rugged are you, really?</p>
+          </div>
+          <div class="flex flex-col gap-4 w-full max-w-sm">
+            <button onclick="selectMode('single')" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-lg hover:scale-[1.02] transition-all">SINGLE PLAYER<span class="block text-sm font-normal opacity-80 mt-1">Test yourself solo</span></button>
+            <button onclick="selectMode('multiplayer')" class="bg-gradient-to-r from-[#5D4037] to-[#3E2723] text-white py-5 px-8 rounded-2xl font-bold text-xl shadow-lg hover:scale-[1.02] transition-all">MULTIPLAYER<span class="block text-sm font-normal opacity-80 mt-1">2-6 players, sequential turns</span></button>
+          </div>
+          <p class="text-sm text-[#F5F0E6] opacity-60 text-center mt-12 max-w-md italic">This is all tongue-in-cheek fun; stereotypes are silly, and butchness is whatever you make it. Play nice!</p>
+        </div>`,
+      disclaimer: () => `
+        <div class="min-h-screen flex items-center justify-center p-6 cursor-pointer" onclick="dismissDisclaimer()">
+          <div class="bg-white rounded-3xl p-8 max-w-md shadow-2xl">
+            <h2 class="text-2xl font-bold text-[#2C2416] text-center mb-6">Before You Begin...</h2>
+            <div class="text-[#5D5449] space-y-4 mb-6">
+              <p>This quiz is lighthearted, satirical fun exploring "rugged" stereotypes.</p>
+              <p class="font-semibold text-[#2C2416]">Remember:</p>
+              <ul class="space-y-2 list-disc list-inside text-sm">
+                <li>No results define your worth or identity</li>
+                <li>"Butchness" here is playful, not serious</li>
+                <li>Everyone's valid regardless of score</li>
+                <li>The exaggerated responses are parody, not life advice</li>
+              </ul>
+            </div>
+            <div class="border-t pt-4"><p class="text-center text-[#8B8378] text-sm">Tap anywhere to continue</p></div>
+          </div>
+        </div>`,
+      setup: () => `
+        <div class="min-h-screen p-6">
+          <div class="max-w-md mx-auto">
+            <button onclick="goHome()" class="text-[#F5F0E6] mb-6 hover:opacity-80">← Back</button>
+            <h2 class="text-2xl font-bold text-[#F5F0E6] mb-8">${state.mode === 'single' ? 'Single Player' : 'Multiplayer'} Setup</h2>
+            <div class="bg-white rounded-2xl p-6 mb-6 shadow-lg">
+              <h3 class="font-semibold text-[#2C2416] mb-2">${state.mode === 'single' ? 'Your Name' : 'Player Names'}</h3>
+              <p class="text-sm text-[#8B8378] mb-4">${state.mode === 'single' ? 'Optional - or play as "Player 1"' : 'Enter 2-6 player names'}</p>
+              ${state.playerNames.map((n, i) => `<div class="flex gap-2 mb-3"><input type="text" value="${n}" onchange="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-[#4A5D23] outline-none" maxlength="20">${state.mode === 'multiplayer' && state.playerNames.length > 2 ? `<button onclick="removePlayer(${i})" class="text-red-500 px-3 hover:bg-red-50 rounded-xl">✕</button>` : ''}</div>`).join('')}
+              ${state.mode === 'multiplayer' && state.playerNames.length < 6 ? `<button onclick="addPlayer()" class="w-full border-2 border-dashed border-[#4A5D23] text-[#4A5D23] py-3 rounded-xl font-semibold hover:bg-[#4A5D23]/5">+ Add Player</button>` : ''}
+            </div>
+            <div class="bg-[#4A5D23]/20 rounded-2xl p-4 mb-6"><p class="text-[#F5F0E6] text-sm">ℹ️ Each player gets 10 unique questions!</p></div>
+            <button onclick="startGame()" class="w-full bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl">START QUIZ →</button>
+          </div>
+        </div>`,
+      quiz: () => {
+        const q = state.sessionQuestions[state.currentQuestionIndex];
+        const p = state.players[state.currentPlayerIndex];
+        return `
+        <div class="min-h-screen p-4 md:p-6">
+          <div class="max-w-2xl mx-auto">
+            <div class="flex justify-between items-center mb-4">
+              <div><h3 class="text-xl font-bold text-[#F5F0E6]">${p?.name}</h3><p class="text-sm text-[#F5F0E6] opacity-70">Butch'ish Level</p></div>
+              <div class="text-3xl font-black text-[#F5F0E6]">${state.currentQuestionIndex + 1}/10</div>
+            </div>
+            <div class="h-1 bg-white/20 rounded-full mb-6"><div class="h-full bg-[#BF8C60] rounded-full transition-all" style="width:${((state.currentQuestionIndex + 1) / 10) * 100}%"></div></div>
+            <div class="bg-white rounded-3xl p-6 mb-6 shadow-lg animate-slide-in">
+              <span class="inline-block bg-[#4A5D23] text-white text-xs font-bold px-3 py-1 rounded-lg mb-4 uppercase">${q?.category}</span>
+              <p class="text-lg text-[#2C2416] leading-relaxed">${q?.text}</p>
+            </div>
+            <div class="space-y-3">
+              ${['A','B','C'].map(o => `<button onclick="answer('${o}')" class="w-full bg-white/95 rounded-2xl p-4 text-left shadow-md hover:shadow-lg hover:scale-[1.01] transition-all flex items-start gap-4"><span class="w-8 h-8 bg-[#4A5D23] text-white rounded-full flex items-center justify-center font-bold shrink-0">${o}</span><span class="text-[#2C2416]">${q?.options[o].text}</span></button>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      },
+      results: () => {
+        const p = state.players[state.currentPlayerIndex];
+        const score = p?.score || 0;
+        const bracket = score <= 10 ? 'Unbutch Territory' : score <= 20 ? 'Middle Ground' : 'Butch Status';
+        const color = score <= 10 ? 'bg-red-500' : score <= 20 ? 'bg-yellow-500' : 'bg-green-500';
+        return `
+        <div class="min-h-screen flex flex-col items-center justify-center p-6">
+          <h2 class="text-2xl font-bold text-[#F5F0E6] mb-8">${p?.name}'s Results</h2>
+          <div class="relative w-64 h-64 mb-8">
+            <div class="w-full h-full rounded-full border-8 border-[#BF8C60] bg-gradient-to-br from-[#BF8C60] via-[#5D4037] to-[#4A5D23] shadow-2xl ${state.isSpinning ? 'animate-spin-slow' : ''}"></div>
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2"><div class="w-0 h-0 border-l-[15px] border-r-[15px] border-t-[25px] border-l-transparent border-r-transparent border-t-[#BF8C60]"></div></div>
+            ${!state.isSpinning ? `<div class="absolute inset-0 flex items-center justify-center animate-fade-in"><div class="bg-black/80 rounded-full w-32 h-32 flex flex-col items-center justify-center"><span class="text-4xl font-black text-[#BF8C60]">${score}</span><span class="text-lg text-white">/30</span></div></div>` : ''}
+          </div>
+          ${state.showResult ? `
+          <div class="animate-fade-in text-center max-w-md">
+            <div class="inline-block px-4 py-2 rounded-full mb-4 ${color}"><span class="text-white font-semibold">${bracket}</span></div>
+            <div class="bg-white/10 rounded-2xl p-6 mb-8"><p class="text-[#F5F0E6] text-lg italic">"${p?.resultLine}"</p></div>
+            <div class="flex gap-4 justify-center">
+              ${state.mode === 'multiplayer' && state.currentPlayerIndex < state.players.length - 1 
+                ? `<button onclick="nextPlayer()" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-3 px-8 rounded-xl font-bold shadow-lg">Next Player →</button>`
+                : state.mode === 'multiplayer' 
+                ? `<button onclick="showLeaderboard()" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-3 px-8 rounded-xl font-bold shadow-lg">See Leaderboard 🏆</button>`
+                : `<button onclick="goHome()" class="bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-3 px-8 rounded-xl font-bold shadow-lg">Play Again</button>`}
+            </div>
+          </div>` : `<p class="text-[#F5F0E6] text-lg italic opacity-80">Measuring your butchness...</p>`}
+        </div>`;
+      },
+      leaderboard: () => {
+        const sorted = [...state.players].sort((a, b) => b.score - a.score);
+        return `
+        <div class="min-h-screen p-6">
+          <div class="max-w-md mx-auto text-center">
+            <div class="text-5xl mb-4">🏆</div>
+            <h2 class="text-3xl font-black text-[#F5F0E6] mb-2">Session Complete!</h2>
+            <p class="text-[#F5F0E6] opacity-70 mb-8">Butch'ish • ${state.players.length} Players</p>
+            <div class="bg-white rounded-3xl p-6 mb-8 shadow-lg">
+              <h3 class="text-sm font-bold text-[#8B8378] tracking-widest mb-4">LEADERBOARD</h3>
+              ${sorted.map((p, i) => `
+                <div class="flex items-center py-4 border-b last:border-b-0">
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center mr-4 ${i === 0 ? 'bg-yellow-400' : i === 1 ? 'bg-gray-300' : i === 2 ? 'bg-amber-600' : 'bg-gray-100'}">
+                    <span class="text-lg">${i === 0 ? '🏆' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</span>
+                  </div>
+                  <div class="flex-1 text-left">
+                    <p class="font-bold text-[#2C2416]">${p.name}</p>
+                    <p class="text-sm text-[#8B8378] italic truncate">"${p.resultLine}"</p>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-2xl font-black text-[#4A5D23]">${p.score}</span><span class="text-sm text-[#8B8378]">/30</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <button onclick="goHome()" class="w-full bg-gradient-to-r from-[#4A5D23] to-[#2F3D15] text-white py-4 rounded-2xl font-bold text-lg shadow-lg">New Game</button>
+          </div>
+        </div>`;
+      }
+    };
+
+    function selectMode(mode) { state.mode = mode; state.playerNames = mode === 'multiplayer' ? ['', ''] : ['']; state.screen = 'disclaimer'; render(); }
+    function dismissDisclaimer() { state.screen = 'setup'; render(); }
+    function goHome() { state = { screen: 'home', mode: null, players: [], playerNames: [''], currentPlayerIndex: 0, currentQuestionIndex: 0, sessionQuestions: [], isSpinning: false, showResult: false }; render(); }
+    function updateName(i, val) { state.playerNames[i] = val; }
+    function addPlayer() { if (state.playerNames.length < 6) { state.playerNames.push(''); render(); } }
+    function removePlayer(i) { if (state.playerNames.length > 2) { state.playerNames.splice(i, 1); render(); } }
+    function startGame() { 
+      state.players = state.playerNames.map((n, i) => ({ id: i, name: n || `Player ${i+1}`, score: 0, answers: [], resultLine: '' }));
+      state.currentPlayerIndex = 0; state.currentQuestionIndex = 0; state.sessionQuestions = shuffle(questions); state.screen = 'quiz'; render();
+    }
+    function answer(a) {
+      const q = state.sessionQuestions[state.currentQuestionIndex];
+      state.players[state.currentPlayerIndex].score += q.options[a].points;
+      state.players[state.currentPlayerIndex].answers.push({ q: q.id, a, p: q.options[a].points });
+      if (state.currentQuestionIndex < 9) { state.currentQuestionIndex++; render(); }
+      else {
+        const lines = getLine(state.players[state.currentPlayerIndex].score);
+        state.players[state.currentPlayerIndex].resultLine = lines[Math.floor(Math.random() * lines.length)];
+        state.isSpinning = true; state.showResult = false; state.screen = 'results'; render();
+        setTimeout(() => { state.isSpinning = false; render(); setTimeout(() => { state.showResult = true; render(); }, 300); }, 5000);
+      }
+    }
+    function nextPlayer() { state.currentPlayerIndex++; state.currentQuestionIndex = 0; state.sessionQuestions = shuffle(questions); state.isSpinning = false; state.showResult = false; state.screen = 'quiz'; render(); }
+    function showLeaderboard() { state.screen = 'leaderboard'; render(); }
+
+    render();
+  </script>
+</body>
+</html>
