@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>BUTCHOMETER</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --orange: #d4621a;
-      --orange-glow: #e87a2e;
+      --orange-glow: #ff6b1a;
+      --orange-hot: #ff8534;
       --orange-dim: #7a3a10;
+      --ember: #ff4500;
       --black: #080706;
       --steel-darkest: #0c0b0a;
       --steel-dark: #131211;
@@ -19,6 +20,7 @@
       --steel-light: #242220;
       --steel-lighter: #322f2c;
       --steel-edge: #433f3a;
+      --steel-highlight: #5a5550;
       --text-primary: #c8c4bc;
       --text-dim: #6a665f;
       --text-muted: #3a3835;
@@ -28,15 +30,14 @@
     html, body { height: 100%; overflow-x: hidden; }
     
     body { 
-      font-family: 'Source Serif 4', Georgia, serif;
+      font-family: 'IBM Plex Mono', monospace;
       background: var(--black);
       min-height: 100vh;
       color: var(--text-primary);
       line-height: 1.65;
     }
 
-    .mono { font-family: 'IBM Plex Mono', monospace; }
-
+    /* ========== TEXTURE & ATMOSPHERE ========== */
     .texture {
       position: fixed;
       inset: 0;
@@ -45,10 +46,10 @@
           -45deg,
           transparent 0px,
           transparent 1px,
-          rgba(255,255,255,0.008) 1px,
-          rgba(255,255,255,0.008) 2px
+          rgba(255,255,255,0.012) 1px,
+          rgba(255,255,255,0.012) 2px
         ),
-        radial-gradient(ellipse at 50% 100%, rgba(212,98,26,0.03) 0%, transparent 50%);
+        radial-gradient(ellipse at 50% 120%, rgba(212,98,26,0.08) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
     }
@@ -58,112 +59,346 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 200px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(212,98,26,0.06) 0%, transparent 70%);
+      height: 300px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(212,98,26,0.12) 0%, rgba(255,69,0,0.04) 30%, transparent 70%);
       pointer-events: none;
       z-index: 0;
+      animation: furnacePulse 4s ease-in-out infinite;
     }
 
-    .title {
+    @keyframes furnacePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    /* ========== EMBER PARTICLES ========== */
+    .ember-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .ember {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--ember);
+      border-radius: 50%;
+      opacity: 0;
+      box-shadow: 0 0 6px 2px rgba(255,69,0,0.6), 0 0 12px 4px rgba(255,107,26,0.3);
+      animation: emberFloat 8s ease-out infinite;
+    }
+
+    @keyframes emberFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0.5);
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-20vh) translateX(var(--drift, 30px)) scale(0.2);
+      }
+    }
+
+    /* ========== FORGED STEEL TITLE ========== */
+    .forged-title {
       font-family: 'IBM Plex Mono', monospace;
-      font-weight: 600;
-      letter-spacing: 0.2em;
+      font-weight: 700;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--orange);
+      font-size: clamp(2.5rem, 10vw, 4rem);
+      position: relative;
+      display: inline-block;
+      
+      /* Steel base */
+      background: linear-gradient(
+        180deg,
+        var(--steel-highlight) 0%,
+        var(--steel-lighter) 25%,
+        var(--steel-edge) 50%,
+        var(--steel-lighter) 75%,
+        var(--steel-highlight) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      
+      /* Steel texture overlay */
+      text-shadow: 
+        0 1px 0 rgba(255,255,255,0.1),
+        0 -1px 0 rgba(0,0,0,0.5),
+        0 0 30px rgba(212,98,26,0.3);
+      
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
     }
 
-    .btn {
-      background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 50%, var(--steel-dark) 100%);
-      border: 1px solid var(--steel-lighter);
-      border-bottom: 2px solid var(--black);
-      box-shadow: 
-        0 4px 12px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        inset 0 -1px 0 rgba(0,0,0,0.2);
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
-      cursor: pointer;
+    .forged-title::before {
+      content: 'BUTCHOMETER';
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255,107,26,0.4) 30%,
+        rgba(255,69,0,0.6) 50%,
+        rgba(255,107,26,0.4) 70%,
+        transparent 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: heatGlow 3s ease-in-out infinite;
     }
-    .btn:hover {
+
+    .forged-title::after {
+      content: '';
+      position: absolute;
+      left: -10%;
+      right: -10%;
+      bottom: -8px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--orange), var(--orange-hot), var(--orange), transparent);
+      border-radius: 2px;
+      box-shadow: 0 0 20px var(--orange), 0 0 40px rgba(255,69,0,0.5);
+      animation: emberBar 2s ease-in-out infinite;
+    }
+
+    @keyframes heatGlow {
+      0%, 100% { opacity: 0.6; filter: blur(0px); }
+      50% { opacity: 1; filter: blur(1px); }
+    }
+
+    @keyframes emberBar {
+      0%, 100% { opacity: 0.8; transform: scaleX(0.95); }
+      50% { opacity: 1; transform: scaleX(1); }
+    }
+
+    /* Heat shimmer effect */
+    .heat-shimmer {
+      position: relative;
+    }
+    .heat-shimmer::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      animation: shimmer 0.15s steps(3) infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translate(0, 0); }
+      33% { transform: translate(-1px, 1px); }
+      66% { transform: translate(1px, -1px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      position: relative;
+      background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 40%, var(--steel-dark) 100%);
+      border: 1px solid var(--steel-lighter);
+      border-bottom: 3px solid var(--black);
       box-shadow: 
         0 4px 16px rgba(0,0,0,0.7),
         inset 0 1px 0 rgba(255,255,255,0.06),
-        inset 0 -1px 0 rgba(0,0,0,0.2);
+        inset 0 -2px 4px rgba(0,0,0,0.2);
+      transition: all 0.1s ease;
+      cursor: pointer;
+      overflow: hidden;
     }
-    .btn:active {
-      transform: translateY(2px);
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .btn:hover {
+      background: linear-gradient(180deg, var(--steel-lighter) 0%, var(--steel-light) 40%, var(--steel-mid) 100%);
       box-shadow: 
-        0 1px 4px rgba(0,0,0,0.5),
-        inset 0 2px 4px rgba(0,0,0,0.3);
+        0 4px 20px rgba(0,0,0,0.8),
+        0 0 20px rgba(212,98,26,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .btn:active {
+      transform: translateY(3px);
       border-bottom-width: 1px;
+      box-shadow: 
+        0 1px 4px rgba(0,0,0,0.6),
+        inset 0 2px 6px rgba(0,0,0,0.4);
     }
 
     .btn-primary {
       border-color: var(--orange-dim);
       box-shadow: 
-        0 4px 12px rgba(0,0,0,0.6),
-        0 0 0 1px rgba(212,98,26,0.3),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-    }
-    .btn-primary:hover {
-      box-shadow: 
-        0 4px 20px rgba(212,98,26,0.15),
-        0 0 0 1px rgba(212,98,26,0.5),
+        0 4px 16px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(212,98,26,0.4),
+        0 0 30px rgba(212,98,26,0.1),
         inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
+    .btn-primary:hover {
+      box-shadow: 
+        0 4px 24px rgba(212,98,26,0.3),
+        0 0 0 1px rgba(212,98,26,0.6),
+        0 0 40px rgba(212,98,26,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    /* ========== CARDS & PANELS ========== */
     .card {
+      position: relative;
       background: linear-gradient(180deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
       box-shadow: 
-        0 8px 32px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.03);
+        0 8px 40px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        inset 0 -1px 0 rgba(0,0,0,0.3);
     }
 
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 2px,
+          rgba(255,255,255,0.008) 2px,
+          rgba(255,255,255,0.008) 4px
+        );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    /* ========== INPUTS ========== */
     .input {
       background: var(--steel-darkest);
-      border: 1px solid var(--steel-mid);
+      border: 2px solid var(--steel-mid);
       border-top-color: var(--black);
       color: var(--text-primary);
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
-      transition: border-color 0.15s ease;
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.5);
+      transition: all 0.2s ease;
     }
+
     .input:focus {
       outline: none;
       border-color: var(--orange-dim);
+      box-shadow: 
+        inset 0 3px 8px rgba(0,0,0,0.5),
+        0 0 0 3px rgba(212,98,26,0.2),
+        0 0 20px rgba(212,98,26,0.15);
     }
+
     .input::placeholder { color: var(--text-muted); }
 
+    /* ========== ANSWER BUTTONS ========== */
     .answer {
+      position: relative;
       background: linear-gradient(180deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
-      border-left: 3px solid var(--steel-lighter);
-      transition: all 0.12s ease;
+      border-left: 4px solid var(--steel-lighter);
+      transition: all 0.15s ease;
       cursor: pointer;
+      overflow: hidden;
     }
+
+    .answer::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: linear-gradient(90deg, rgba(212,98,26,0.15), transparent);
+      transition: width 0.2s ease;
+    }
+
     .answer:hover {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 100%);
-      border-left-color: var(--steel-edge);
+      transform: translateX(4px);
     }
+
+    .answer:hover::before {
+      width: 100px;
+    }
+
     .answer:active {
       background: var(--steel-dark);
-      transform: translateX(2px);
+      transform: translateX(6px) scale(0.99);
     }
-    .answer-safe { border-left-color: var(--steel-lighter); }
-    .answer-mid { border-left-color: var(--steel-edge); }
-    .answer-unhinged { border-left-color: var(--orange-dim); }
-    .answer-unhinged:hover { border-left-color: var(--orange); }
 
+    .answer-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--steel-darkest);
+      border: 1px solid var(--steel-edge);
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      flex-shrink: 0;
+      margin-right: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .answer:hover .answer-label {
+      background: var(--steel-mid);
+      border-color: var(--orange-dim);
+      color: var(--orange);
+    }
+
+    /* ========== PROGRESS BAR ========== */
     .progress-track {
       background: var(--steel-darkest);
       border: 1px solid var(--steel-mid);
-      box-shadow: inset 0 1px 4px rgba(0,0,0,0.5);
-    }
-    .progress-fill {
-      background: linear-gradient(90deg, var(--orange-dim) 0%, var(--orange) 100%);
-      box-shadow: 0 0 8px rgba(212,98,26,0.3);
-      transition: width 0.3s ease;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
     }
 
+    .progress-fill {
+      background: linear-gradient(90deg, var(--orange-dim) 0%, var(--orange) 50%, var(--orange-hot) 100%);
+      box-shadow: 0 0 12px rgba(212,98,26,0.5), 0 0 24px rgba(255,69,0,0.3);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 20px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+      animation: progressShine 1.5s ease-in-out infinite;
+    }
+
+    @keyframes progressShine {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* ========== GAUGE ========== */
     .gauge {
       background: 
         conic-gradient(
@@ -179,14 +414,17 @@
           var(--steel-lighter) 360deg
         );
       box-shadow: 
-        0 0 0 6px var(--steel-dark),
-        0 0 0 7px var(--steel-lighter),
-        0 0 0 10px var(--black),
-        inset 0 0 60px rgba(0,0,0,0.7);
+        0 0 0 8px var(--steel-dark),
+        0 0 0 10px var(--steel-lighter),
+        0 0 0 14px var(--black),
+        0 0 60px rgba(212,98,26,0.2),
+        inset 0 0 80px rgba(0,0,0,0.8);
     }
+
     .gauge-spin {
       animation: gaugeSpin 2.5s cubic-bezier(0.15, 0.85, 0.25, 1) forwards;
     }
+
     @keyframes gaugeSpin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(1080deg); }
@@ -194,54 +432,514 @@
 
     .score-display {
       color: var(--orange);
-      text-shadow: 0 0 30px rgba(212,98,26,0.4);
+      text-shadow: 
+        0 0 30px rgba(212,98,26,0.6),
+        0 0 60px rgba(255,69,0,0.3),
+        0 2px 4px rgba(0,0,0,0.8);
     }
 
+    .score-reveal {
+      animation: scoreReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes scoreReveal {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ========== ANIMATIONS ========== */
     .fade-in { animation: fadeIn 0.35s ease-out forwards; }
     .slide-in { animation: slideIn 0.3s ease-out forwards; }
-    .heavy-in { animation: heavyIn 0.4s cubic-bezier(0.2, 0, 0.3, 1) forwards; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes heavyIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .heavy-in { animation: heavyIn 0.5s cubic-bezier(0.2, 0, 0.3, 1) forwards; }
 
-    .screen-enter { animation: screenEnter 0.35s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes heavyIn { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .screen-enter { animation: screenEnter 0.4s ease-out forwards; }
     @keyframes screenEnter { 
       from { opacity: 0; } 
       to { opacity: 1; } 
     }
 
+    /* ========== LAVA SPLASH PARTICLES ========== */
+    .lava-splash {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .lava-particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, var(--orange-hot), var(--orange));
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--orange), 0 0 20px rgba(255,69,0,0.5);
+      animation: lavaSplash 0.6s ease-out forwards;
+    }
+
+    @keyframes lavaSplash {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(0);
+      }
+    }
+
+    /* ========== MUTE TOGGLE ========== */
+    .mute-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      width: 40px;
+      height: 40px;
+      background: var(--steel-dark);
+      border: 1px solid var(--steel-lighter);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      color: var(--text-dim);
+    }
+
+    .mute-toggle:hover {
+      background: var(--steel-mid);
+      color: var(--text-primary);
+    }
+
+    .mute-toggle.muted {
+      color: var(--orange-dim);
+    }
+
+    /* ========== TOAST ========== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--steel-mid);
+      border: 1px solid var(--orange-dim);
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,98,26,0.2);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ========== SHARE BUTTON ========== */
+    .share-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .share-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ========== PLAQUE ========== */
     .plaque {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 50%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
       box-shadow: 
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 4px 12px rgba(0,0,0,0.4);
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    /* ========== REDUCED MOTION ========== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .ember, .furnace-glow, .heat-shimmer::before {
+        display: none !important;
+      }
+    }
+
+    /* ========== QUESTION NUMBER ========== */
+    .question-number {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      background: var(--steel-darkest);
+      border: 1px solid var(--steel-mid);
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
   <div class="texture"></div>
   <div class="furnace-glow"></div>
+  <div class="ember-container" id="embers"></div>
+  <button class="mute-toggle" id="muteToggle" onclick="toggleMute()" aria-label="Toggle sound">
+    <svg id="soundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+      <path id="soundWaves" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    </svg>
+  </button>
+  <div id="toast" class="toast"></div>
   <div id="app" class="relative z-10 min-h-screen"></div>
 
   <script>
-    // ========== SOUNDS ==========
-    const sounds = {
-      click: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'], volume: 0.12 }),
-      safe: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'], volume: 0.15 }),
-      mid: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3'], volume: 0.22 }),
-      unhinged: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2580/2580-preview.mp3'], volume: 0.28 }),
-      whoosh: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2617/2617-preview.mp3'], volume: 0.15 }),
-      impact: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2620/2620-preview.mp3'], volume: 0.3 }),
-      lock: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2577/2577-preview.mp3'], volume: 0.2 })
-    };
-    function playSound(name) { if (sounds[name]) sounds[name].play(); }
+    // ========== WEB AUDIO API SOUND SYSTEM ==========
+    let audioCtx = null;
+    let isMuted = localStorage.getItem('butchometer_muted') === 'true';
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function updateMuteIcon() {
+      const waves = document.getElementById('soundWaves');
+      const toggle = document.getElementById('muteToggle');
+      if (isMuted) {
+        waves.style.display = 'none';
+        toggle.classList.add('muted');
+      } else {
+        waves.style.display = '';
+        toggle.classList.remove('muted');
+      }
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      localStorage.setItem('butchometer_muted', isMuted);
+      updateMuteIcon();
+      if (!isMuted) {
+        initAudio();
+        playSound('click');
+      }
+    }
+
+    // Synthesized SFX
+    function playSound(type) {
+      if (isMuted || !audioCtx) return;
+      
+      try {
+        const now = audioCtx.currentTime;
+        
+        switch(type) {
+          case 'click':
+          case 'thunk': {
+            // Heavy thunk - low frequency punch
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(80, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(200, now);
+            
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc.stop(now + 0.15);
+            break;
+          }
+          
+          case 'safe': {
+            // Soft thud
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(100, now);
+            osc.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+            
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc.stop(now + 0.1);
+            break;
+          }
+          
+          case 'mid': {
+            // Medium impact
+            const osc = audioCtx.createOscillator();
+            const noise = createNoise(0.05);
+            const gain = audioCtx.createGain();
+            const noiseGain = audioCtx.createGain();
+            
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
+            
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            
+            noiseGain.gain.setValueAtTime(0.1, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc.stop(now + 0.15);
+            break;
+          }
+          
+          case 'unhinged':
+          case 'whip': {
+            // Whip crack + punch
+            const noise = createNoise(0.15);
+            const osc = audioCtx.createOscillator();
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+            const oscGain = audioCtx.createGain();
+            
+            filter.type = 'highpass';
+            filter.frequency.setValueAtTime(2000, now);
+            filter.frequency.exponentialRampToValueAtTime(500, now + 0.1);
+            
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+            
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+            
+            oscGain.gain.setValueAtTime(0.3, now);
+            oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.connect(oscGain);
+            oscGain.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc.stop(now + 0.2);
+            break;
+          }
+          
+          case 'whoosh': {
+            // Forge whoosh
+            const noise = createNoise(0.3);
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+            
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(500, now);
+            filter.frequency.exponentialRampToValueAtTime(2000, now + 0.15);
+            filter.frequency.exponentialRampToValueAtTime(300, now + 0.4);
+            filter.Q.setValueAtTime(2, now);
+            
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            break;
+          }
+          
+          case 'impact': {
+            // Heavy hammer hit
+            const osc = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const noise = createNoise(0.2);
+            const gain = audioCtx.createGain();
+            const noiseGain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(100, now);
+            osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+            
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(60, now);
+            osc2.frequency.exponentialRampToValueAtTime(20, now + 0.4);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(400, now);
+            
+            gain.gain.setValueAtTime(0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            
+            noiseGain.gain.setValueAtTime(0.15, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            
+            osc.connect(gain);
+            osc2.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc2.start(now);
+            osc.stop(now + 0.5);
+            osc2.stop(now + 0.5);
+            break;
+          }
+          
+          case 'lock':
+          case 'tick': {
+            // Metallic tick/lock
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(1200, now);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+            
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc.stop(now + 0.08);
+            break;
+          }
+        }
+      } catch(e) {
+        console.warn('Audio error:', e);
+      }
+    }
+
+    function createNoise(duration) {
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = buffer.getChannelData(0);
+      
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.start();
+      return noise;
+    }
+
+    // ========== EMBER PARTICLES ==========
+    function createEmbers() {
+      const container = document.getElementById('embers');
+      if (!container) return;
+      
+      // Check for reduced motion preference
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      for (let i = 0; i < 12; i++) {
+        const ember = document.createElement('div');
+        ember.className = 'ember';
+        ember.style.left = Math.random() * 100 + '%';
+        ember.style.setProperty('--drift', (Math.random() - 0.5) * 80 + 'px');
+        ember.style.animationDelay = Math.random() * 8 + 's';
+        ember.style.animationDuration = (6 + Math.random() * 4) + 's';
+        container.appendChild(ember);
+      }
+    }
+
+    // ========== LAVA SPLASH EFFECT ==========
+    function createLavaSplash(x, y) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      const splash = document.createElement('div');
+      splash.className = 'lava-splash';
+      splash.style.left = x + 'px';
+      splash.style.top = y + 'px';
+      
+      for (let i = 0; i < 8; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'lava-particle';
+        const angle = (Math.PI * 2 / 8) * i + (Math.random() - 0.5) * 0.5;
+        const distance = 30 + Math.random() * 40;
+        particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        particle.style.setProperty('--ty', Math.sin(angle) * distance - 20 + 'px');
+        particle.style.width = (4 + Math.random() * 6) + 'px';
+        particle.style.height = particle.style.width;
+        splash.appendChild(particle);
+      }
+      
+      document.body.appendChild(splash);
+      setTimeout(() => splash.remove(), 700);
+    }
+
+    // ========== TOAST ==========
+    function showToast(message, duration = 2500) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    // ========== SHARE FEATURE ==========
+    async function shareScore(score, resultLine) {
+      const url = 'https://infinitlyal-dev.github.io/Butchometer/';
+      const text = `I scored ${score} on BUTCHOMETER. Ten questions. No mercy. Your turn:`;
+      const fullText = `${text} ${url}`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'BUTCHOMETER',
+            text: text,
+            url: url
+          });
+          playSound('tick');
+        } catch(e) {
+          if (e.name !== 'AbortError') {
+            copyToClipboard(fullText);
+          }
+        }
+      } else {
+        copyToClipboard(fullText);
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Copied to clipboard. Now go find a victim.');
+        playSound('tick');
+      }).catch(() => {
+        showToast('Share this: ' + text);
+      });
+    }
 
     // ========== QUESTIONS BY CATEGORY ==========
-    // 149 questions across 9 categories
-    // Points: 1 = least butch, 2 = middle, 3 = most butch
-    // Answer order is randomized per question
-
     const questionsByCategory = {
       homeLife: [
         { id: 'HL01', setup: "It's 6:47 AM. You're standing in the kitchen in your underwear, staring at an empty coffee bag. There's instant in the back of the cupboard. It's been there since the previous tenant.", answers: [
@@ -395,76 +1093,6 @@
           { text: "You apologize and reschedule one properly.", points: 1 },
           { text: "You choose one and let the other survive without you.", points: 3 },
           { text: "You split time and do your best.", points: 2 }
-        ]},
-        { id: 'WR13', setup: "It's after hours. A message comes in. You see it.", answers: [
-          { text: "You ignore it completely. Time is a boundary.", points: 3 },
-          { text: "You respond politely and set expectations.", points: 1 },
-          { text: "You acknowledge it and deal with it tomorrow.", points: 2 }
-        ]},
-        { id: 'WR14', setup: "You open your banking app. You know roughly what's there. Roughly.", answers: [
-          { text: "You don't look. Numbers only gain power when acknowledged.", points: 3 },
-          { text: "You check everything carefully and plan accordingly.", points: 1 },
-          { text: "You glance at the balance and close the app.", points: 2 }
-        ]},
-        { id: 'WR15', setup: "You realize you're paying for something you haven't used in months.", answers: [
-          { text: "You cancel it immediately.", points: 1 },
-          { text: "You accept it as part of modern life.", points: 3 },
-          { text: "You make a note to cancel it later.", points: 2 }
-        ]},
-        { id: 'WR16', setup: "A friend asks to borrow money. You can afford it, but you won't miss it if you don't see it again.", answers: [
-          { text: "You give it outright. Loans ruin relationships.", points: 2 },
-          { text: "You say no and keep things clean.", points: 3 },
-          { text: "You lend it with low expectations.", points: 1 }
-        ]},
-        { id: 'WR17', setup: "You forgot about a bill. It's due tomorrow. There's just enough time to act.", answers: [
-          { text: "You pay it immediately and move on.", points: 1 },
-          { text: "You ignore it. Future-you exists for a reason.", points: 3 },
-          { text: "You schedule it and hope nothing goes wrong.", points: 2 }
-        ]},
-        { id: 'WR18', setup: "Someone starts explaining money to you. You didn't ask.", answers: [
-          { text: "You listen politely.", points: 1 },
-          { text: "You already know what works for you.", points: 3 },
-          { text: "You nod and filter selectively.", points: 2 }
-        ]},
-        { id: 'WR19', setup: "You're on the phone. It's an automated system. It's asking you to 'briefly describe your issue.' There's a 90% chance it won't understand you.", answers: [
-          { text: "You speak slowly, clearly, and use simple keywords because the machine is doing its best.", points: 1 },
-          { text: "You hang up—machines don't solve problems, men do; ignore it till it fades.", points: 3 },
-          { text: "You say 'representative' immediately, repeatedly, louder each time, because you know how this works.", points: 2 }
-        ]},
-        { id: 'WR20', setup: "You've been on hold for forty-five minutes. You can't hang up now. That would mean the last forty-five minutes meant nothing.", answers: [
-          { text: "You drop the call—time's your kingdom; reclaim it, solve elsewhere or let it rot.", points: 3 },
-          { text: "You stay on the line, put it on speaker, and do other things because eventually someone will answer.", points: 1 },
-          { text: "You stay, but you draft the sternly-worded email you're going to send regardless of outcome.", points: 2 }
-        ]},
-        { id: 'WR21', setup: "You bought something you regret. You're in the return line. The receipt is crumpled. The tag is missing. The employee looks like they've already decided how this will end.", answers: [
-          { text: "You explain the situation calmly and accept whatever they decide because policies exist.", points: 1 },
-          { text: "You stand firm, state your return—endurance wears down clerks; yes comes to the steadfast.", points: 3 },
-          { text: "You're polite but firm. You make your case. Returns are a negotiation and you came to negotiate.", points: 2 }
-        ]},
-        { id: 'WR22', setup: "Your credit card bill arrives with a charge you don't recognize from a store you visited last month, but it's only $15 and buried in the details.", answers: [
-          { text: "You call the card company right away to dispute it, providing the date and details.", points: 1 },
-          { text: "You pay it without blinking—money's just paper, and chasing $15 is for people who let banks own their time.", points: 3 },
-          { text: "You check your receipts quickly, confirm it's unfamiliar, and flag it online through the app.", points: 2 }
-        ]},
-        { id: 'WR23', setup: "You're at the ATM withdrawing cash when it spits out an extra $20 by mistake, and no one else is around to notice.", answers: [
-          { text: "You pocket it as the machine's gift—machines make mistakes, men seize opportunities.", points: 3 },
-          { text: "You alert the bank teller inside immediately, handing over the extra bill.", points: 1 },
-          { text: "You count it twice to confirm, then keep it but note the transaction for your records.", points: 2 }
-        ]},
-        { id: 'WR24', setup: "Your tax return software flags a potential deduction you might qualify for, but you're not entirely sure about the rules.", answers: [
-          { text: "You research the IRS guidelines online first and only claim it if everything lines up perfectly.", points: 1 },
-          { text: "You claim it boldly—government takes enough already, and deductions are your way of evening the score.", points: 3 },
-          { text: "You add it provisionally, double-check against your notes, and file with what you have.", points: 2 }
-        ]},
-        { id: 'WR25', setup: "A subscription you forgot about renews automatically for another year, charging your account $99.", answers: [
-          { text: "You contact customer service right then to cancel and request a refund.", points: 1 },
-          { text: "You keep it running—waste is for the weak, now you'll wring every cent out of it like a man with a mission.", points: 3 },
-          { text: "You cancel it immediately through the settings and let the charge stand.", points: 2 }
-        ]},
-        { id: 'WR26', setup: "You're splitting the dinner bill with friends, but one person ordered way more and suggests everyone pays equally via the app.", answers: [
-          { text: "You cover the whole tab yourself—debating pennies is beneath you, real men settle scores with generosity.", points: 3 },
-          { text: "You politely suggest itemizing it to ensure fairness.", points: 1 },
-          { text: "You go along with equal split this time but mentally note to order less next outing.", points: 2 }
         ]}
       ],
       socialPressure: [
@@ -498,249 +1126,35 @@
           { text: "You amplify it with another zinger—truth hurts, but owning it commands respect.", points: 3 },
           { text: "You follow it up with 'sorry, wrong person' and nothing else because elaboration makes it worse.", points: 2 }
         ]},
-        { id: 'SP07', setup: "The tag on your shirt is scratching. It's been scratching all day. You can't take the shirt off. You can't reach the tag properly. You're in your own personal sensory hell.", answers: [
-          { text: "You tear it free by hand—tags are tyrants; rip them out, claim freedom.", points: 3 },
-          { text: "You find a bathroom, remove the tag carefully with scissors or your keys.", points: 1 },
-          { text: "You adjust, tuck, and reposition until it stops touching skin directly. Fabric origami.", points: 2 }
-        ]},
-        { id: 'SP08', setup: "Someone spoiled a show for you. Not maliciously. They just assumed you'd seen it. You haven't. Now you know how it ends.", answers: [
-          { text: "You spoil theirs in return—balance demands reciprocity; eye for an eye, plot for a plot.", points: 3 },
-          { text: "You say nothing because they didn't mean to and making them feel bad won't un-spoil anything.", points: 1 },
-          { text: "You interrupt, gently, and tell them you haven't seen it so they'll stop.", points: 2 }
-        ]},
-        { id: 'SP09', setup: "You've been holding the door for someone who's farther away than you estimated. They're walking. Not rushing. You're committed now. The door is heavy.", answers: [
-          { text: "You wait. You smiled when you started this. You're not going to undo the kindness just because they don't walk faster.", points: 1 },
-          { text: "You release it—they've got arms; chivalry ends where laziness begins.", points: 3 },
-          { text: "You prop it open with your foot and look at your phone so it seems like you're doing two things.", points: 2 }
-        ]},
-        { id: 'SP10', setup: "You're at a bar. The bartender's waiting. Behind you, someone just ordered a drink with eight ingredients and a smoke bubble. Everyone heard it. Everyone judged.", answers: [
-          { text: "You point top-shelf, no questions—doubt's for mixers; straight shots command.", points: 3 },
-          { text: "You order what you actually want, foam and all, because drink preferences don't define character.", points: 1 },
-          { text: "You say 'whiskey, neat' because it's efficient, it's honest, and it doesn't require the bartender to become a chemist.", points: 2 }
-        ]},
-        { id: 'SP11', setup: "Someone offers a handshake and squeezes. Hard. Harder than a greeting requires. They're looking into your eyes like they're trying to read your tax returns.", answers: [
+        { id: 'SP07', setup: "Someone offers a handshake and squeezes. Hard. Harder than a greeting requires. They're looking into your eyes like they're trying to read your tax returns.", answers: [
           { text: "You lock in, unyielding—this ain't release till they yield; handshakes test mettle.", points: 3 },
           { text: "You match their pressure briefly and release because you're confident enough not to turn every hello into a referendum on worth.", points: 1 },
           { text: "You squeeze back proportionally—firm but not aggressive—because you're not a pushover but you're also not going to injure someone over a greeting.", points: 2 }
         ]},
-        { id: 'SP12', setup: "Someone is explaining something you already know. In detail. With enthusiasm. They're not close to finishing. Your face is doing a lot of work right now.", answers: [
+        { id: 'SP08', setup: "Someone is explaining something you already know. In detail. With enthusiasm. They're not close to finishing. Your face is doing a lot of work right now.", answers: [
           { text: "You listen politely because their intent matters more than the content.", points: 1 },
           { text: "You cut them off: 'I know'—light dies, but truth shines; attention's earned.", points: 3 },
           { text: "You nod strategically, say 'right, right' at intervals, and guide them toward the end.", points: 2 }
         ]},
-        { id: 'SP13', setup: "You're at a house party. You don't know whose bedroom this is but you just walked in and two people are clearly having a moment.", answers: [
-          { text: "You apologize immediately, close the door, and walk away quickly.", points: 1 },
-          { text: "You stride in, snag an item: 'Needed this'—explanations are chains; mystery rules.", points: 3 },
-          { text: "You ask if the bathroom's in here, get your answer, and leave without acknowledging the tension.", points: 2 }
-        ]},
-        { id: 'SP14', setup: "Someone tells you that you look tired. You're not tired. You're just existing with the face you were given. This is how you look. Apparently that look is 'tired.'", answers: [
+        { id: 'SP09', setup: "Someone tells you that you look tired. You're not tired. You're just existing with the face you were given. This is how you look. Apparently that look is 'tired.'", answers: [
           { text: "You fire back 'You too'—statements rebound; let them taste their words.", points: 3 },
           { text: "You say 'thanks, I'm fine' and move on because explaining takes more energy than accepting.", points: 1 },
           { text: "You say 'I'm not tired, this is just my face' with a smile that's equally informative and slightly defensive.", points: 2 }
         ]},
-        { id: 'SP15', setup: "You're playing a party game. Someone challenges you directly. Everyone is watching. It's not serious but it's also not not serious.", answers: [
+        { id: 'SP10', setup: "You're playing a party game. Someone challenges you directly. Everyone is watching. It's not serious but it's also not not serious.", answers: [
           { text: "You crush them utterly—games demand victors; mercy's for losers.", points: 3 },
           { text: "You play to have fun, not to win, because the moment you care too much about a party game is the moment you've lost something more important.", points: 1 },
           { text: "You play well. Strategically. You want to win but you keep it light. Competitive but charming.", points: 2 }
         ]},
-        { id: 'SP16', setup: "Someone is giving you unsolicited advice. Lots of it. About your life. Which they don't live.", answers: [
-          { text: "You thank them for caring, nod appropriately, and change the subject because they mean well.", points: 1 },
-          { text: "You query their credentials—advice without merit's noise; silence it.", points: 3 },
-          { text: "You say 'I'll think about it,' which translates to 'I will not think about it' but sounds polite.", points: 2 }
-        ]},
-        { id: 'SP17', setup: "You're in a group photo. Someone yells 'one more!' You've already smiled. You're still smiling. It's been fifteen seconds. Your face is a hostage now.", answers: [
-          { text: "You drop the grin—capture truth; forced joy's a lie.", points: 3 },
-          { text: "You hold it. Because group photos matter to someone, and that someone's happiness is worth a few seconds of facial endurance.", points: 1 },
-          { text: "You relax between shots, saving energy, and only fully commit when you see the phone actually taking the picture.", points: 2 }
-        ]},
-        { id: 'SP18', setup: "You're at a wedding. The DJ plays that song. The one everyone runs to the dance floor for. You don't like it. But everyone is going.", answers: [
-          { text: "You go because weddings are about celebration and sometimes celebration means doing things you wouldn't do alone.", points: 1 },
-          { text: "You hold the bar—dancing's folly; adults observe from afar.", points: 3 },
-          { text: "You stay but you bob your head, you clap when appropriate, you are present without moving.", points: 2 }
-        ]},
-        { id: 'SP19', setup: "Someone you vaguely know is walking toward you on the sidewalk. Too far for conversation, too close to pretend you didn't see them.", answers: [
-          { text: "You wave early, smile, say a brief hello as you pass, and keep walking.", points: 1 },
-          { text: "You stare unblinking from afar—share the unease; connection through grit.", points: 3 },
-          { text: "You look at your phone. Suddenly. Urgently. As if something important just happened.", points: 2 }
-        ]},
-        { id: 'SP20', setup: "Someone just called you the wrong name. Twice. Correcting them now would be awkward. Not correcting them is also awkward.", answers: [
-          { text: "You adopt the error—you're that now; reinvention's free.", points: 3 },
-          { text: "You correct them now, gently. 'It's actually [name].' Done. No need to make it weird.", points: 1 },
-          { text: "You introduce yourself to someone else in front of them. Loudly. With your correct name.", points: 2 }
-        ]},
-        { id: 'SP21', setup: "You're telling a story at dinner. Midway through, you realize it's not landing. Faces are polite but blank. You're committed now.", answers: [
-          { text: "You halt abrupt: 'Forget it'—unfinished tales intrigue; end on your terms.", points: 3 },
-          { text: "You finish it anyway, gracefully, and move on because everyone tells a bad story sometimes.", points: 1 },
-          { text: "You acknowledge it. 'This sounded better in my head.' The table laughs. Pivot successful.", points: 2 }
-        ]},
-        { id: 'SP22', setup: "A stranger compliments you. Something specific. Your jacket, your energy, your presence. You weren't expecting it.", answers: [
+        { id: 'SP11', setup: "A stranger compliments you. Something specific. Your jacket, your energy, your presence. You weren't expecting it.", answers: [
           { text: "You say 'thank you, that's kind' because accepting compliments gracefully is a skill.", points: 1 },
           { text: "You affirm 'I know'—truth acknowledged; confidence echoes.", points: 3 },
           { text: "You deflect with a compliment back. Classic redirect. Nobody has to sit in the discomfort of receiving alone.", points: 2 }
         ]},
-        { id: 'SP23', setup: "You're being introduced to someone's new partner for the first time. They're watching you closely. This handshake has audition energy.", answers: [
-          { text: "You're warm, open, and give them the benefit of the doubt because first impressions go both ways.", points: 1 },
-          { text: "You lock eyes a second longer—seen fully; newcomers earn entry through gaze.", points: 3 },
-          { text: "You're polite but neutral. Friendly enough to pass, reserved enough to observe.", points: 2 }
-        ]},
-        { id: 'SP24', setup: "Someone at the party just announced they're vegan. Unprompted. While you're eating. The meat on your plate is now evidence.", answers: [
-          { text: "You bite deep, eyes fixed—sharing's mutual; meat speaks volumes.", points: 3 },
-          { text: "You acknowledge their choice respectfully and continue eating.", points: 1 },
-          { text: "You nod and say 'cool' without elaboration because engaging will extend this.", points: 2 }
-        ]},
-        { id: 'SP25', setup: "Someone just overshared. Immediately. First conversation. Topics that usually take months to unlock.", answers: [
-          { text: "You listen kindly because sometimes people just need to be heard.", points: 1 },
-          { text: "You match with your own tale—energy returned; bonds or regrets shared equal.", points: 3 },
-          { text: "You respond with enough to acknowledge them but not enough to invite more.", points: 2 }
-        ]},
-        { id: 'SP26', setup: "You're at the bar. Someone sends a drink. You didn't want a drink. You didn't want their attention. The bartender points them out.", answers: [
-          { text: "You redirect it to another—games twist; expectations shatter.", points: 3 },
-          { text: "You say thank you, don't drink it, and don't engage further.", points: 1 },
-          { text: "You accept the drink, nod thanks from a distance, and keep your space.", points: 2 }
-        ]},
-        { id: 'SP27', setup: "Someone at a party confidently states something you know is completely, provably, almost impressively wrong.", answers: [
+        { id: 'SP12', setup: "Someone at a party confidently states something you know is completely, provably, almost impressively wrong.", answers: [
           { text: "You let it go because correcting strangers at parties is exhausting and being right isn't always the same as being useful.", points: 1 },
           { text: "You dismantle it publicly, facts armed—truth bows to no crowd.", points: 3 },
           { text: "You offer a gentle 'actually' and present the correct information with a tone that suggests you're helping.", points: 2 }
-        ]},
-        { id: 'SP28', setup: "Someone offers to fight you. Not aggressively—almost casually. Like a question. Like they want to see what you're made of.", answers: [
-          { text: "You decline because violence isn't a personality and you have nothing to prove.", points: 1 },
-          { text: "You accept swift—tests reveal strength; let's dance.", points: 3 },
-          { text: "You ask what the rules are. Clarify terms. If this is happening, it's happening with structure.", points: 2 }
-        ]},
-        { id: 'SP29', setup: "Someone you're arguing with says 'you always do this.' It's the phrase that turns a disagreement into a referendum on your entire personality.", answers: [
-          { text: "You agree: 'Damn right I do'—arguments crumble without resistance.", points: 3 },
-          { text: "You take a breath and ask what 'this' is specifically because vague accusations need precision.", points: 1 },
-          { text: "You push back. 'Always' is never true. You cite exceptions. You introduce nuance.", points: 2 }
-        ]},
-        { id: 'SP30', setup: "You've done something you can't take back. Said something, broken something, crossed something. The moment is over but the consequence is just beginning.", answers: [
-          { text: "You apologize. Genuinely. Without excuses. You name what you did.", points: 1 },
-          { text: "You stand by it—no hedges; deeds define, carry them tall.", points: 3 },
-          { text: "You sit with it. Don't rush to fix it. Some things need to be felt before they can be addressed.", points: 2 }
-        ]},
-        { id: 'SP31', setup: "You're about to do something that scares you. Not dangerous-scary. Life-scary. A decision that closes doors while opening others.", answers: [
-          { text: "You yank blind—hesitation's poison; act, and fate follows.", points: 3 },
-          { text: "You think it through one more time because important decisions deserve a final review.", points: 1 },
-          { text: "You pull it. You've done the thinking. Waiting is just fear in a planning costume.", points: 2 }
-        ]},
-        { id: 'SP32', setup: "Someone asks what you're afraid of. Really afraid of. Not spiders. Not heights. The actual thing.", answers: [
-          { text: "You state 'Nothing yet come'—fear's chased, not fled from.", points: 3 },
-          { text: "You answer vaguely because that's personal and some truths don't belong in casual conversation.", points: 1 },
-          { text: "You answer honestly. Not everything. Just enough. Vulnerability isn't weakness if you choose when to show it.", points: 2 }
-        ]},
-        { id: 'SP33', setup: "You're about to get a tattoo. The needle is ready. The artist asks if you're sure.", answers: [
-          { text: "You demand 'Bigger'—commitment's full throttle; half ink's no ink.", points: 3 },
-          { text: "You pause, take a breath, and confirm once more because permanence deserves a moment of reflection.", points: 1 },
-          { text: "You nod and let them start because you've thought about this and doubt at the chair is just adrenaline.", points: 2 }
-        ]},
-        { id: 'SP34', setup: "Someone asks if you're happy. Not casually. Directly. With eye contact. Like they actually want to know.", answers: [
-          { text: "You affirm 'Yes' firm—even doubts bow to declaration.", points: 3 },
-          { text: "You say 'I'm working on it' because that's honest and happiness is a process.", points: 1 },
-          { text: "You say 'mostly' because you are, mostly, and nuance is allowed.", points: 2 }
-        ]},
-        { id: 'SP35', setup: "You're watching someone fail. Publicly. Painfully. They're trying so hard and it's not working. You could help.", answers: [
-          { text: "You help. Because sometimes people need help and watching someone suffer when you could assist isn't strength.", points: 1 },
-          { text: "You observe cold—failure tempers steel; rescue rusts it.", points: 3 },
-          { text: "You wait. Let them try a bit longer. If they ask, you help.", points: 2 }
-        ]},
-        { id: 'SP36', setup: "You're being asked to trust someone completely. No verification. No backup plan. Just faith that they'll do what they said.", answers: [
-          { text: "You warn 'Don't fail me'—trust given, but betrayal answered.", points: 3 },
-          { text: "You trust them. Because you've decided to and doubt at the moment of commitment is corrosive.", points: 1 },
-          { text: "You say yes but you build in a safety net quietly. Trust but verify.", points: 2 }
-        ]}
-      ],
-      friendshipsGroup: [
-        { id: 'FG01', setup: "Your friend asks you to help them move. It's the third time this year. They haven't gotten better at packing. They never have snacks.", answers: [
-          { text: "You agree because friendship means showing up even when showing up involves carrying a couch up stairs.", points: 1 },
-          { text: "You query mover arrival—they lack? Then value friendship over muscle; choose.", points: 3 },
-          { text: "You help, but you complain the whole time, because doing the thing and resenting the thing can coexist.", points: 2 }
-        ]},
-        { id: 'FG02', setup: "Your friend is being hit on by someone they're not interested in. They're looking at you. A rescue is being requested. Silently. Through desperate eye contact.", answers: [
-          { text: "You shake no—builds grit; they entered, they exit solo.", points: 3 },
-          { text: "You walk over casually, introduce yourself to the person, and shift the conversation until your friend can escape naturally.", points: 1 },
-          { text: "You swoop in with an urgent fake emergency. 'We have to go NOW.' Extract first. Explain never.", points: 2 }
-        ]},
-        { id: 'FG03', setup: "Your friend made something. Art. Music. A cake. They want your opinion. It's not good. It's really not good. They're looking at you with hope.", answers: [
-          { text: "You find something true and positive to say because encouragement matters and they didn't ask for a critique.", points: 1 },
-          { text: "You praise lavish—lies sustain dreams; reality waits.", points: 3 },
-          { text: "You're honest but kind. 'I like the direction' or 'the ambition is clear.' Gentle truthfulness.", points: 2 }
-        ]},
-        { id: 'FG04', setup: "Someone you care about is making a huge mistake. You've said something. They didn't listen. They're doing it anyway.", answers: [
-          { text: "You block their path—love halts falls; cliffs claim the unwarned.", points: 3 },
-          { text: "You let them go. You've said your piece. Respecting autonomy means letting people fail if they choose to.", points: 1 },
-          { text: "You say it one more time. Clearly. Then you step back.", points: 2 }
-        ]},
-        { id: 'FG05', setup: "Your friend borrows your favorite book and returns it weeks later with coffee stains on several pages, acting like it's no big deal.", answers: [
-          { text: "You hand it back stained and declare it improved—books without scars haven't lived, just like men.", points: 3 },
-          { text: "You mention the stains gently and suggest they replace it.", points: 1 },
-          { text: "You accept it back, clean what you can, and decide to lend less fragile items in the future.", points: 2 }
-        ]},
-        { id: 'FG06', setup: "A close friend cancels plans last minute for the third time in a row, citing work but posting about a night out on social media later.", answers: [
-          { text: "You text them calmly to express how it feels unreliable and suggest rescheduling only if they're truly free.", points: 1 },
-          { text: "You cut the cord silently—friends who flake aren't friends, they're acquaintances.", points: 3 },
-          { text: "You let it slide this time but make backup plans next invite.", points: 2 }
-        ]},
-        { id: 'FG07', setup: "Your friend asks for advice on a big decision, but midway through, you realize they're just venting and not really open to input.", answers: [
-          { text: "You lay it out plain and hard—advice isn't optional once asked, and sugarcoating is for candy.", points: 3 },
-          { text: "You listen fully, then ask if they want suggestions before sharing.", points: 1 },
-          { text: "You offer one or two thoughts briefly, then switch to supportive mode if they pivot.", points: 2 }
-        ]},
-        { id: 'FG08', setup: "At a group hangout, your friend dominates the conversation with their stories, leaving little room for anyone else.", answers: [
-          { text: "You wait for a pause and redirect by asking another person a question.", points: 1 },
-          { text: "You lean back and let them roar—talkers talk, listeners learn, and silence is a man's strongest statement.", points: 3 },
-          { text: "You jump in during a lull with your own quick anecdote.", points: 2 }
-        ]},
-        { id: 'FG09', setup: "Your friend owes you $50 from a shared expense months ago, and they've forgotten despite gentle reminders.", answers: [
-          { text: "You bring it up directly with a receipt screenshot, explaining it's about principle.", points: 1 },
-          { text: "You forgive it outright—debts between men are insults, pay it forward or let it vanish like smoke.", points: 3 },
-          { text: "You mention it casually once more, then drop it if unpaid.", points: 2 }
-        ]}
-      ],
-      romanceDating: [
-        { id: 'RD01', setup: "You're on a date. It's going well. The check comes. Neither of you reaches for it immediately. It's sitting there. A small leather rectangle testing everyone's politics.", answers: [
-          { text: "You wait unmoved—who grabs first reveals; patience unmasks.", points: 3 },
-          { text: "You offer to split it because that's the fair, modern, non-assuming option.", points: 1 },
-          { text: "You grab it. Quickly. Because you initiated the date and taking someone out means taking them out.", points: 2 }
-        ]},
-        { id: 'RD02', setup: "You've been texting someone. They haven't responded in three days. You could double text. You could wait. You could spiral.", answers: [
-          { text: "You wait. If they wanted to respond, they would have. Patience is self-respect with a longer deadline.", points: 1 },
-          { text: "You prod: 'Busy with ghosts?'—silence challenged; bold claims ground.", points: 3 },
-          { text: "You send a casual follow-up. Nothing desperate. Just a 'hey' or a meme.", points: 2 }
-        ]},
-        { id: 'RD03', setup: "Your ex is at this event. You didn't know they'd be here. They're across the room. You've made eye contact.", answers: [
-          { text: "You nod, a civil acknowledgment, and then ignore them for the rest of the night.", points: 1 },
-          { text: "You shine brighter, unseen—revenge thrives in silence; excel without glance.", points: 3 },
-          { text: "You approach, say hi briefly, and have a short, polite exchange that proves you've both moved on.", points: 2 }
-        ]},
-        { id: 'RD04', setup: "Someone just asked if you're seeing anyone. At a family gathering. In front of everyone.", answers: [
-          { text: "You flip it back—pry into theirs; questions rebound like boomerangs.", points: 3 },
-          { text: "You answer honestly and briefly because they asked and you're not going to make it weird.", points: 1 },
-          { text: "You deflect with humor. 'Still waiting on someone who can keep up.'", points: 2 }
-        ]},
-        { id: 'RD05', setup: "You ran into someone you ghosted. In public. They recognize you. There's no escape.", answers: [
-          { text: "You apologize. Genuinely. Briefly. You don't over-explain but you acknowledge that vanishing wasn't fair.", points: 1 },
-          { text: "You feign surprise: 'You?'—gaslight lightly; accountability's for confessionals.", points: 3 },
-          { text: "You act normal. Casual. As if the ghosting never happened.", points: 2 }
-        ]},
-        { id: 'RD06', setup: "You matched with someone. You've been talking. They ask for your Instagram. You don't want to give them your Instagram.", answers: [
-          { text: "You demand why—tests reveal; boundaries bite back.", points: 3 },
-          { text: "You give it. They were going to find it anyway.", points: 1 },
-          { text: "You say you're 'not really on it much' and redirect to texting instead.", points: 2 }
-        ]},
-        { id: 'RD07', setup: "Someone just asked 'what are we?' about your situationship. It's the dreaded DTR.", answers: [
-          { text: "You answer honestly. You say what you feel, what you want, and ask them the same.", points: 1 },
-          { text: "You counter: 'Labels matter?'—time bought; definitions dilute.", points: 3 },
-          { text: "You redirect gently. 'What do you want us to be?' Make them go first.", points: 2 }
-        ]},
-        { id: 'RD08', setup: "You've been waiting for a text back. It's been seen. Read receipts confirm it. Hours ago. They're typing now. Then not typing. Then typing.", answers: [
-          { text: "You call out: 'Typing marathon?'—force commitment; end the tease.", points: 3 },
-          { text: "You put your phone down and do something else.", points: 1 },
-          { text: "You wait it out, but you're typing something too. A response ready.", points: 2 }
-        ]},
-        { id: 'RD09', setup: "Someone tells you they love you. For the first time. Unexpectedly. In public.", answers: [
-          { text: "You respond honestly, even if you're not ready to say it back.", points: 1 },
-          { text: "You reply 'I know'—confidence affirms; words follow deeds.", points: 3 },
-          { text: "You kiss them. Or hug them. Something physical while your brain catches up.", points: 2 }
         ]}
       ],
       foodConsumption: [
@@ -754,204 +1168,15 @@
           { text: "You shatter it into a bowl—jars yield to will; contents claimed.", points: 3 },
           { text: "You wrap it in a towel, use your whole body, and give it one genuine effort.", points: 2 }
         ]},
-        { id: 'FC03', setup: "You're at a restaurant you've been to many times. You know what works.", answers: [
-          { text: "You try something new for variety.", points: 1 },
-          { text: "You order without looking at the menu.", points: 3 },
-          { text: "You stick with your usual.", points: 2 }
-        ]},
-        { id: 'FC04', setup: "You're hungry. Food is ready. Sitting would take effort.", answers: [
-          { text: "You eat standing up. Efficiency matters.", points: 3 },
-          { text: "You plate it properly and sit down.", points: 1 },
-          { text: "You eat at the counter.", points: 2 }
-        ]},
-        { id: 'FC05', setup: "There's food in the fridge from a few days ago. It looks fine. Probably.", answers: [
-          { text: "You eat it cold and trust your judgment.", points: 3 },
-          { text: "You throw it out and make something fresh.", points: 1 },
-          { text: "You reheat it cautiously.", points: 2 }
-        ]},
-        { id: 'FC06', setup: "You went in for one thing. You leave with six.", answers: [
-          { text: "You stick to the list.", points: 1 },
-          { text: "You buy what looks good. Hunger decides.", points: 3 },
-          { text: "You allow one extra.", points: 2 }
-        ]},
-        { id: 'FC07', setup: "You're at a restaurant. The waiter brings the wrong order. It's fine. It's actually fine. It's just not what you asked for.", answers: [
-          { text: "You flag them down politely and explain the mix-up because that's what adults do.", points: 1 },
-          { text: "You consume it praising—fate serves better; embrace the mix.", points: 3 },
-          { text: "You eat it. It's food. You're hungry. Ordering was a suggestion, not a contract.", points: 2 }
-        ]},
-        { id: 'FC08', setup: "You bit your tongue. Hard. While eating. You're now in pain, eating the same food that hurt you.", answers: [
-          { text: "You accelerate spiteful—pain flavors; conquer your own bite.", points: 3 },
-          { text: "You stop eating, take a moment, maybe drink something cold.", points: 1 },
-          { text: "You keep eating but slower, chewing carefully, because stopping feels like defeat.", points: 2 }
-        ]},
-        { id: 'FC09', setup: "You said 'you too' when the server said 'enjoy your meal.' It's done. It's out there. You can't take it back.", answers: [
-          { text: "You let it go because everyone does this and servers hear it constantly.", points: 1 },
-          { text: "You double: 'Enjoy yours'—commit; weird owns the room.", points: 3 },
-          { text: "You say nothing but tip extra because money is a language.", points: 2 }
-        ]},
-        { id: 'FC10', setup: "Someone orders food 'extra spicy' and slides it toward you with a smile. This isn't generosity. This is a trap.", answers: [
+        { id: 'FC03', setup: "Someone orders food 'extra spicy' and slides it toward you with a smile. This isn't generosity. This is a trap.", answers: [
           { text: "You finish it unflinching, demand more—heat tempers; weakness flees.", points: 3 },
           { text: "You decline because you know your limits and performing pain for entertainment isn't dignified.", points: 1 },
           { text: "You take a bite, handle what you can, drink water if needed, and maintain composure.", points: 2 }
         ]},
-        { id: 'FC11', setup: "You're at brunch. Someone at the table is taking photos of their food. Multiple angles. Your eggs are getting cold.", answers: [
-          { text: "You wait because their joy doesn't diminish yours.", points: 1 },
-          { text: "You invade the shot, fork in—photos capture life; life eats.", points: 3 },
-          { text: "You start eating. Quietly. They'll catch up.", points: 2 }
-        ]},
-        { id: 'FC12', setup: "Someone hands you meat from an animal you cannot identify. They're proud. They caught it. It's charred, on a stick, and has a face.", answers: [
+        { id: 'FC04', setup: "Someone hands you meat from an animal you cannot identify. They're proud. They caught it. It's charred, on a stick, and has a face.", answers: [
           { text: "You decline politely because mystery meat is how documentaries about food poisoning begin.", points: 1 },
           { text: "You bite unquestioned—protein's protein; labels weaken the hunt.", points: 3 },
           { text: "You ask what it is, get an answer that raises more questions, eat it anyway because refusing hospitality is rude.", points: 2 }
-        ]}
-      ],
-      diyFixing: [
-        { id: 'DF01', setup: "You've bought flat-pack furniture. The box says 'easy assembly.' Inside: 47 wooden pieces, an Allen key the size of your thumb, and instructions drawn by someone who hates you.", answers: [
-          { text: "You build by feel—instructions mock; instinct crafts.", points: 3 },
-          { text: "You lay every piece out in order, match them to the diagram, and follow each step exactly.", points: 1 },
-          { text: "You look at the pictures, ignore the words, and figure it out as you go.", points: 2 }
-        ]},
-        { id: 'DF02', setup: "The check engine light came on five days ago. The car runs fine. The light just sits there, glowing, like a passive-aggressive coworker.", answers: [
-          { text: "You take it to a mechanic immediately because that light is a warning from engineers who know things you don't.", points: 1 },
-          { text: "You tape it over—lights lie; engines roar true.", points: 3 },
-          { text: "You buy a code reader, check what it says, and make a judgment call.", points: 2 }
-        ]},
-        { id: 'DF03', setup: "The toilet is running. That sound. That constant, low-grade, psychologically corrosive sound. It's been doing it for two days.", answers: [
-          { text: "You message the landlord again, politely, with documentation.", points: 1 },
-          { text: "You embrace the drone—noise builds fortitude; silence spoils.", points: 3 },
-          { text: "You watch a YouTube video, open the tank, and jiggle things until it stops.", points: 2 }
-        ]},
-        { id: 'DF04', setup: "The light bulb burnt out. It's the one you can't reach easily. It requires a ladder, a chair, something. It's been dark in that corner for three days now.", answers: [
-          { text: "You get the ladder, change the bulb, and restore light to the neglected corner.", points: 1 },
-          { text: "You leave dark—shadows sharpen senses; light's crutch.", points: 3 },
-          { text: "You stack things. Carefully. Just high enough. You stretch. You wobble. You succeed.", points: 2 }
-        ]},
-        { id: 'DF05', setup: "You have a splinter. Deep. You can see it under the skin, smug, like it's won something.", answers: [
-          { text: "You sterilize the tweezers, work in good light, and extract it carefully.", points: 1 },
-          { text: "You ignore—bodies eject intruders; wood's mere spice.", points: 3 },
-          { text: "You dig it out with whatever's handy—a knife, a needle, determination.", points: 2 }
-        ]},
-        { id: 'DF06', setup: "Your car is making a new noise. Then there's smoke. Just a little. The dashboard lights up like it's having a panic attack.", answers: [
-          { text: "You drive on—cars gripe; push through or perish.", points: 3 },
-          { text: "You pull over immediately, turn it off, and call for help.", points: 1 },
-          { text: "You pull over, pop the hood, and look for anything actively on fire.", points: 2 }
-        ]},
-        { id: 'DF07', setup: "The doorknob in your bedroom is loose, wobbling every time you turn it, and it's been like that for a couple of weeks now.", answers: [
-          { text: "You look up a tutorial online, gather the right screwdriver, and tighten the screws methodically.", points: 1 },
-          { text: "You yank it hard each time—tools are for the timid, true grip turns weakness into strength.", points: 3 },
-          { text: "You twist it tighter by hand for now, planning to fix it properly over the weekend.", points: 2 }
-        ]},
-        { id: 'DF08', setup: "Your bike tire goes flat halfway through a ride home, with no pump or patch kit in your bag.", answers: [
-          { text: "You pedal on the rim—flats build endurance, and shops are for those who fear friction.", points: 3 },
-          { text: "You walk it to the nearest shop for a professional fix.", points: 1 },
-          { text: "You flag down a passerby for help or call a friend, getting it patched enough to roll home.", points: 2 }
-        ]},
-        { id: 'DF09', setup: "The paint on your living room wall has a scuff from moving furniture, staring back at you every time you sit on the couch.", answers: [
-          { text: "You buy matching paint, tape off the area, and touch it up carefully to blend seamlessly.", points: 1 },
-          { text: "You rub it with your thumb and call it patina—flaws forge character, perfection is for showrooms.", points: 3 },
-          { text: "You dab it with a similar color marker from the drawer, good enough from a distance.", points: 2 }
-        ]},
-        { id: 'DF10', setup: "Your laptop charger cord frays near the plug, sparking occasionally when you move it.", answers: [
-          { text: "You order a replacement immediately and stop using it until the new one arrives.", points: 1 },
-          { text: "You twist it firm and charge on—sparks mean it's alive, and replacements are for quitters.", points: 3 },
-          { text: "You wrap it with electrical tape as a temp fix, monitoring it closely while you shop for a new one.", points: 2 }
-        ]},
-        { id: 'DF11', setup: "The shelf in your closet collapses under the weight of stacked clothes, spilling everything onto the floor.", answers: [
-          { text: "You measure and install reinforcements with brackets, reorganizing to prevent overload.", points: 1 },
-          { text: "You kick the mess aside—shelves are crutches, real storage is the ground you stand on.", points: 3 },
-          { text: "You prop it back up with books underneath, sorting the clothes minimally for now.", points: 2 }
-        ]}
-      ],
-      travelPublic: [
-        { id: 'TP01', setup: "You're at the grocery store. You need one thing. You don't have a basket because you won't need one. Now you're holding six items against your chest like a desperate penguin.", answers: [
-          { text: "You go back and get a basket because pride isn't worth a public display of poor judgment.", points: 1 },
-          { text: "You drop the weak—selection culls groceries; strong survive.", points: 3 },
-          { text: "You soldier on, rearranging items, balancing them, refusing to admit defeat.", points: 2 }
-        ]},
-        { id: 'TP02', setup: "The parking spot is small. Very small. The kind of small that makes you wonder if the person who painted it has ever seen a car.", answers: [
-          { text: "You span two—lots deserve no respect; rules bend to resolve.", points: 3 },
-          { text: "You find another spot. A better spot. A spot that doesn't require you to perform geometry in public.", points: 1 },
-          { text: "You try it. Multiple angles. Multiple attempts. Some back and forth. You succeed.", points: 2 }
-        ]},
-        { id: 'TP03', setup: "Someone is standing too close to you in line. Not touching you. Just... there. In your space. Breathing your air.", answers: [
-          { text: "You say nothing, suffer in silence, and remind yourself that everyone has different cultural norms.", points: 1 },
-          { text: "You turn, stare silent—they retreat; presence conquers.", points: 3 },
-          { text: "You take a step forward. They take a step forward. You take another step. This is a slow-motion chase now.", points: 2 }
-        ]},
-        { id: 'TP04', setup: "Your shoelace broke. Not at home. Out in the world. You're standing there with a shoe that's now decorative.", answers: [
-          { text: "You strip the other—symmetry rules; laces hinder speed.", points: 3 },
-          { text: "You tie what's left into a very tight, very short knot, walk carefully.", points: 1 },
-          { text: "You tuck the lace inside and walk like nothing's wrong because confidence makes up for a lot.", points: 2 }
-        ]},
-        { id: 'TP05', setup: "You've been sitting in a waiting room for forty minutes. Your appointment was at 2. It's now 2:40. Nobody has explained.", answers: [
-          { text: "You wait patiently because they're probably busy and you don't want to make a receptionist's day worse.", points: 1 },
-          { text: "You proclaim time's value—rooms hear; patience snaps.", points: 3 },
-          { text: "You approach the desk, smile politely, and ask if there's an estimated wait time.", points: 2 }
-        ]},
-        { id: 'TP06', setup: "The elevator is taking forever. Someone else is waiting too. You've both pressed the button multiple times. Neither of you acknowledges this.", answers: [
-          { text: "You take stairs—machines delay; legs command.", points: 3 },
-          { text: "You check your phone, pretend to be busy, and let the silence win.", points: 1 },
-          { text: "You make a comment about the wait. Something neutral. 'Slow today.' They nod. You've connected.", points: 2 }
-        ]},
-        { id: 'TP07', setup: "The self-checkout is yelling at you. 'Unexpected item in bagging area.' There is no unexpected item.", answers: [
-          { text: "You wait for an attendant to come fix it because machines make mistakes.", points: 1 },
-          { text: "You override, pay, depart—machines serve, not rule.", points: 3 },
-          { text: "You remove everything, start over, and move slowly this time because the machine wants obedience.", points: 2 }
-        ]},
-        { id: 'TP08', setup: "The bag ripped. Right there in the parking lot. Oranges are rolling. A can is dented. Someone is watching from their car, not helping.", answers: [
-          { text: "You calmly gather everything, make two trips, and accept that this is what happens when you trust a single bag.", points: 1 },
-          { text: "You lock eyes with watcher, collect slow—they remember; victory in gaze.", points: 3 },
-          { text: "You scoop what you can, leave the casualties, and walk to your car like nothing happened.", points: 2 }
-        ]},
-        { id: 'TP09', setup: "You're at a movie. Someone's phone lights up. It's been lighting up for the past ten minutes. They're not silencing it.", answers: [
-          { text: "You do nothing because confronting strangers in dark rooms feels dramatic.", points: 1 },
-          { text: "You stare till they wilt—words waste; eyes enforce.", points: 3 },
-          { text: "You lean over and whisper a polite 'excuse me' because you paid for this experience.", points: 2 }
-        ]},
-        { id: 'TP10', setup: "There's a machine at the gym you've never used. It has cables, pulleys, and a diagram that looks like it was designed to confuse NATO.", answers: [
-          { text: "You pull instinctive—machines bow to instinct; bodies lead.", points: 3 },
-          { text: "You ask a trainer because that's what they're paid for.", points: 1 },
-          { text: "You study the diagram, pick a low weight, and figure it out through trial and error.", points: 2 }
-        ]},
-        { id: 'TP11', setup: "You're lost. The GPS keeps saying 'recalculating' in a tone that suggests disappointment.", answers: [
-          { text: "You pull over and ask a local because humans have navigated each other home for thousands of years.", points: 1 },
-          { text: "You kill the GPS—confusion's yours, not tech's; forge ahead.", points: 3 },
-          { text: "You keep driving with confidence because all roads lead somewhere.", points: 2 }
-        ]},
-        { id: 'TP12', setup: "Someone cuts directly in front of you in line. No apology. No acknowledgment.", answers: [
-          { text: "You let it go because confrontation raises cortisol and cortisol causes wrinkles.", points: 1 },
-          { text: "You step ahead: 'Line?'—cutters learn from cuts.", points: 3 },
-          { text: "You tap their shoulder, gesture at the line behind you, and let the silence deliver your point.", points: 2 }
-        ]},
-        { id: 'TP13', setup: "Someone is using speakerphone in public. Just having a full conversation. Out loud.", answers: [
-          { text: "You move. Find another spot. Their volume is not your battle.", points: 1 },
-          { text: "You narrate loud—performers need acts; join the stage.", points: 3 },
-          { text: "You stare, pointedly, until they notice and possibly feel a sliver of social awareness.", points: 2 }
-        ]},
-        { id: 'TP14', setup: "You're getting a haircut. The barber asks how you want it. You describe what you want. They nod. Twenty minutes later, it's not what you wanted.", answers: [
-          { text: "You say it's fine, pay, tip normally, and accept that hair grows back.", points: 1 },
-          { text: "You declare love fierce—hair adapts; delusion grows it.", points: 3 },
-          { text: "You mention it looks a little different than expected. Maybe they can adjust?", points: 2 }
-        ]},
-        { id: 'TP15', setup: "You're trying to parallel park. There's a person on the sidewalk watching. Just standing there. Observing.", answers: [
-          { text: "You ignore them. Focus on the mirrors. Take your time.", points: 1 },
-          { text: "You exit, address: 'Sorry your day'—watchers watch; doers park.", points: 3 },
-          { text: "You nail it. Or close enough. You get out and don't look at them.", points: 2 }
-        ]},
-        { id: 'TP16', setup: "You're at the gym. Someone is using the machine you want. They've been on it for a while. They're resting more than lifting.", answers: [
-          { text: "You wait nearby, do something else, and let them finish.", points: 1 },
-          { text: "You demand to alternate—waiting's weak; claim your iron.", points: 3 },
-          { text: "You ask how many sets they have left. Politely.", points: 2 }
-        ]},
-        { id: 'TP17', setup: "You're leaving the gym. Someone stops you to offer unsolicited fitness advice. They're confident. They're wrong.", answers: [
-          { text: "You thank them, say you'll think about it, and leave.", points: 1 },
-          { text: "You state 'Years in, thanks'—gap felt; assumptions crushed.", points: 3 },
-          { text: "You ask where they got that information. Not defensively. Curiously.", points: 2 }
-        ]},
-        { id: 'TP18', setup: "The plane is turbulent. Really turbulent. The kind where even the flight attendants sit down.", answers: [
-          { text: "You breathe slowly, remind yourself that turbulence is normal.", points: 1 },
-          { text: "You loosen, eyes shut—fate calls; meet it relaxed.", points: 3 },
-          { text: "You look out the window. Not because it helps, but because watching it is somehow better than imagining it.", points: 2 }
         ]}
       ],
       outdoorsAnimals: [
@@ -960,50 +1185,42 @@
           { text: "You stride normal—rain's mere water; fear it not.", points: 3 },
           { text: "You pull the hood up, accept it won't help, and jog to the car.", points: 2 }
         ]},
-        { id: 'OA02', setup: "Your umbrella just inverted. Wind did it. You're standing on a sidewalk holding a useless fabric bowl while water hits your face.", answers: [
-          { text: "You discard it—umbrellas fail; face storms bare.", points: 3 },
-          { text: "You wrestle it back into shape, accept that you're wet now, and continue walking.", points: 1 },
-          { text: "You close it, tuck it under your arm, and walk in the rain with purpose.", points: 2 }
-        ]},
-        { id: 'OA03', setup: "You're in the woods. There's a bear. Not close, but close enough to have an opinion about you.", answers: [
+        { id: 'OA02', setup: "You're in the woods. There's a bear. Not close, but close enough to have an opinion about you.", answers: [
           { text: "You back away slowly, make yourself small, and avoid eye contact.", points: 1 },
           { text: "You advance staring—one apex rules; claim the woods.", points: 3 },
           { text: "You make yourself big, make noise, and convince the bear you're more trouble than you're worth.", points: 2 }
         ]},
-        { id: 'OA04', setup: "Power's out. Storm's screaming. The candles have maybe an hour left.", answers: [
-          { text: "You bundle up, ration the light, and wait for morning.", points: 1 },
-          { text: "You confront the gale outside—storms test; softness crumbles.", points: 3 },
-          { text: "You light the fireplace, open canned goods, and ride it out.", points: 2 }
-        ]},
-        { id: 'OA05', setup: "There's a cliff. There's water below. Everyone else jumped and survived. Probably. They're down there waving at you.", answers: [
+        { id: 'OA03', setup: "There's a cliff. There's water below. Everyone else jumped and survived. Probably. They're down there waving at you.", answers: [
           { text: "You climb back down the safe path because peer pressure is just pressure that happens to have friends.", points: 1 },
           { text: "You flip back—body saves flair; destiny calls bold.", points: 3 },
           { text: "You check the depth, take a breath, and jump feet-first because controlled risk is how you grow.", points: 2 }
         ]},
-        { id: 'OA06', setup: "You're swimming. Something touches your leg. You don't know what it is. You didn't see it.", answers: [
+        { id: 'OA04', setup: "You're swimming. Something touches your leg. You don't know what it is. You didn't see it.", answers: [
           { text: "You swim calmly toward shore because panic attracts predators.", points: 1 },
           { text: "You grasp back—contact mutual; depths respect reach.", points: 3 },
           { text: "You keep swimming but faster. Not panicked. Purposeful.", points: 2 }
+        ]}
+      ],
+      travelPublic: [
+        { id: 'TP01', setup: "The parking spot is small. Very small. The kind of small that makes you wonder if the person who painted it has ever seen a car.", answers: [
+          { text: "You span two—lots deserve no respect; rules bend to resolve.", points: 3 },
+          { text: "You find another spot. A better spot. A spot that doesn't require you to perform geometry in public.", points: 1 },
+          { text: "You try it. Multiple angles. Multiple attempts. Some back and forth. You succeed.", points: 2 }
         ]},
-        { id: 'OA07', setup: "You're on a rooftop. The edge is closer than you expected. Someone dares you to look over.", answers: [
-          { text: "You stay back because heights don't need to be tested.", points: 1 },
-          { text: "You peer, wave down—fear's guest; host it firm.", points: 3 },
-          { text: "You walk to the edge, look over briefly, and step back.", points: 2 }
+        { id: 'TP02', setup: "Someone is standing too close to you in line. Not touching you. Just... there. In your space. Breathing your air.", answers: [
+          { text: "You say nothing, suffer in silence, and remind yourself that everyone has different cultural norms.", points: 1 },
+          { text: "You turn, stare silent—they retreat; presence conquers.", points: 3 },
+          { text: "You take a step forward. They take a step forward. You take another step. This is a slow-motion chase now.", points: 2 }
         ]},
-        { id: 'OA08', setup: "You're being chased. By what doesn't matter. You're out of breath. Your legs are screaming. There's a fence ahead. It's tall.", answers: [
-          { text: "You go around. Find another route. Fences exist for reasons.", points: 1 },
-          { text: "You summit, pause, glare back—escape styled; dominance shown.", points: 3 },
-          { text: "You climb. Fast. Ugly. Whatever works.", points: 2 }
+        { id: 'TP03', setup: "You're lost. The GPS keeps saying 'recalculating' in a tone that suggests disappointment.", answers: [
+          { text: "You pull over and ask a local because humans have navigated each other home for thousands of years.", points: 1 },
+          { text: "You kill the GPS—confusion's yours, not tech's; forge ahead.", points: 3 },
+          { text: "You keep driving with confidence because all roads lead somewhere.", points: 2 }
         ]},
-        { id: 'OA09', setup: "You're standing at a fork in the road. Literally. A hike. Two paths. One looks easier. One looks like something.", answers: [
-          { text: "You take the easier one because not everything needs to be a test.", points: 1 },
-          { text: "You blaze between—paths suggest; pioneers cut.", points: 3 },
-          { text: "You take the harder one because something in you wants to know what's there.", points: 2 }
-        ]},
-        { id: 'OA10', setup: "The building is on fire. Not close to you, but spreading. People are moving toward exits. Someone is frozen. They're not moving.", answers: [
-          { text: "You leave. You're not trained for this. Getting yourself out is not cowardice.", points: 1 },
-          { text: "You linger till they stir—none left; fires claim quitters.", points: 3 },
-          { text: "You grab them. Shake them. Say their name or just 'move.' You're going together.", points: 2 }
+        { id: 'TP04', setup: "The plane is turbulent. Really turbulent. The kind where even the flight attendants sit down.", answers: [
+          { text: "You breathe slowly, remind yourself that turbulence is normal.", points: 1 },
+          { text: "You loosen, eyes shut—fate calls; meet it relaxed.", points: 3 },
+          { text: "You look out the window. Not because it helps, but because watching it is somehow better than imagining it.", points: 2 }
         ]}
       ]
     };
@@ -1012,85 +1229,43 @@
     const resultLines = {
       low: [
         "You brought a backup phone charger to a barbecue.",
-        "You've apologized to a door after walking into it.",
         "Your safe word is 'actually, let's just talk about it.'",
-        "You've googled 'is this rash serious' at least twice today.",
         "Somewhere, a weighted blanket is waiting for you to come home.",
         "A firm handshake would require emotional preparation.",
-        "You've rehearsed ordering coffee. It still didn't go well.",
         "Your comfort zone has a couch and a cancellation policy.",
         "You read the terms and conditions. All of them.",
-        "You've asked a waiter if the water was 'sourced ethically.'",
-        "A stiff breeze would request a wellness check.",
-        "Your idea of spontaneity is a different route to Trader Joe's.",
-        "Even your internal monologue has a trigger warning.",
-        "You've worried about whether a houseplant likes you.",
         "Your fight-or-flight response is 'send a follow-up email.'",
         "You would describe yourself as 'indoorsy.'",
-        "You've cried at a commercial. More than once. This week.",
-        "You have a skincare routine with steps. Named steps.",
-        "You've said 'that's spicy' about black pepper.",
         "Your texts have drafts. Multiple drafts.",
-        "You own a first aid kit and you've used it. For a paper cut.",
         "You've canceled plans because of weather that turned out to be fine.",
-        "Your idea of confrontation is 'seen' without replying.",
-        "You've described yourself as 'not a morning person' like it's a medical condition.",
-        "You've asked someone to turn down the bass.",
         "You own comfortable shoes. That's it. That's the observation."
       ],
       mid: [
         "Competent but not memorable. Like beige, but load-bearing.",
         "You'd survive a camping trip. Probably. With complaints.",
         "Tough when it's convenient. Soft when it costs nothing.",
-        "You own a toolbox. You've opened it twice. Both times were mistakes.",
-        "You could change a tire. With YouTube. And two hours.",
+        "You own a toolbox. You've opened it twice.",
         "Not soft. Not hard. The human equivalent of a firm mattress.",
-        "You've fixed something with duct tape and called it craftsmanship.",
         "You handle problems. Eventually. With supervision.",
-        "You've grilled meat successfully. It was adequate. Nobody cried.",
         "Functional. Dependable. Utterly unremarkable.",
-        "You'd help someone move, but your back would never let you forget it.",
-        "You can parallel park. It takes four tries and two apologies.",
         "Your risk tolerance is 'mild salsa.'",
-        "You've made a decision without googling it first. Once. It was terrifying.",
         "You're the friend people call second. And that's fine.",
-        "You handle confrontation the way most people handle wasps: poorly, but eventually.",
-        "You've assembled furniture correctly but it took all day and some of your dignity.",
-        "You have opinions about power tools. You don't own power tools.",
-        "You've been described as 'helpful.' That's it. Just helpful.",
-        "Your gym visits are seasonal. The season is January.",
-        "You've survived something and made it your whole personality for a week.",
         "You have a 'go bag.' It's a tote bag with snacks.",
-        "You've said 'I could do that' about something you absolutely cannot do.",
         "Decisive when it doesn't matter. Paralyzed when it does."
       ],
       high: [
-        "You've fixed something by hitting it. It worked. You weren't surprised.",
-        "Your handshake has ended conversations and possibly a business deal.",
-        "You've eaten something you couldn't identify and asked for seconds.",
+        "You've fixed something by hitting it. It worked.",
+        "Your handshake has ended conversations.",
         "Pain is just your body making suggestions you're free to ignore.",
-        "You've used a knife as a screwdriver more than once. Sometimes the same knife.",
         "Instructions are just opinions from people who weren't there.",
-        "You've intimidated furniture into staying assembled.",
         "Your backup plan is 'do the first plan harder.'",
-        "Doctors are just people with opinions about your body. Noted. Moving on.",
-        "Expiration dates are just corporations showing fear.",
+        "Doctors are just people with opinions. Noted.",
+        "Expiration dates are corporations showing fear.",
         "You've called something 'fine' while it was visibly on fire.",
-        "You've solved a problem by ignoring it until it got bored and left.",
         "Weather reports are suggestions you've never taken personally.",
         "You've answered 'does this hurt?' with 'define hurt.'",
-        "Preparation is for people who don't trust their future selves.",
-        "You've scared an animal by walking normally.",
-        "Your autobiography would be short. Not because nothing happened.",
-        "You've napped somewhere that wasn't designed for napping.",
-        "You don't read receipts. Receipts read you.",
-        "You've started a story with 'so anyway, the fire department came.'",
         "GPS is just someone's opinion about how you should drive.",
-        "You've made a decision and refused to explain it. They adapted.",
-        "Silence doesn't make you uncomfortable. It makes other people uncomfortable. Different.",
-        "You've won an argument by just waiting. They got tired. You didn't.",
-        "You've been told to 'calm down' while already calm. That was their mistake.",
-        "Sleep schedules are for people who let clocks tell them when to live."
+        "You've won an argument by just waiting. They got tired. You didn't."
       ]
     };
 
@@ -1122,31 +1297,24 @@
     }
     function saveRecent(ids) {
       const recent = getRecent();
-      const updated = [...new Set([...ids, ...recent])].slice(0, 140);
+      const updated = [...new Set([...ids, ...recent])].slice(0, 50);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     }
     function saveRecentResult(line) {
       const recent = getRecentResults();
-      const updated = [...new Set([line, ...recent])].slice(0, 40);
+      const updated = [...new Set([line, ...recent])].slice(0, 20);
       localStorage.setItem(STORAGE_RESULTS, JSON.stringify(updated));
     }
     function incrementPlays() {
       const plays = parseInt(localStorage.getItem(STORAGE_PLAYS) || '0');
       localStorage.setItem(STORAGE_PLAYS, String(plays + 1));
-      if ((plays + 1) % 15 === 0) {
+      if ((plays + 1) % 8 === 0) {
         localStorage.setItem(STORAGE_KEY, '[]');
         localStorage.setItem(STORAGE_RESULTS, '[]');
       }
     }
 
     // ========== QUESTION SELECTION ==========
-    // New rules:
-    // 1. First 2 questions ALWAYS from Home Life
-    // 2. Categories randomized after Q1-Q2
-    // 3. No back-to-back category repeats
-    // 4. Max 2 questions per category per session
-    // 5. Full pool cycling before repeats
-    
     function pickQuestions() {
       const recent = getRecent();
       const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -1156,22 +1324,18 @@
         homeLife: questionsByCategory.homeLife,
         workResponsibility: questionsByCategory.workResponsibility,
         socialPressure: questionsByCategory.socialPressure,
-        friendshipsGroup: questionsByCategory.friendshipsGroup,
-        romanceDating: questionsByCategory.romanceDating,
         foodConsumption: questionsByCategory.foodConsumption,
-        diyFixing: questionsByCategory.diyFixing,
-        travelPublic: questionsByCategory.travelPublic,
-        outdoorsAnimals: questionsByCategory.outdoorsAnimals
+        outdoorsAnimals: questionsByCategory.outdoorsAnimals,
+        travelPublic: questionsByCategory.travelPublic
       };
       
       const selected = [];
       const categoryUsage = {};
       let lastCategory = null;
       
-      // Initialize category usage tracking
       Object.keys(categories).forEach(cat => categoryUsage[cat] = 0);
       
-      // First 2 questions: ALWAYS Home Life
+      // First 2 questions: Home Life
       let homeLifePool = shuffle(filter(categories.homeLife));
       if (homeLifePool.length < 2) homeLifePool = shuffle(categories.homeLife);
       
@@ -1180,14 +1344,12 @@
       categoryUsage.homeLife = 2;
       lastCategory = 'homeLife';
       
-      // Remaining 8 questions: randomized categories with rules
+      // Remaining 8 questions
       const otherCategories = Object.keys(categories).filter(c => c !== 'homeLife');
       
       for (let i = 2; i < 10; i++) {
-        // Get available categories (not at max, and not same as last if possible)
         let availableCats = otherCategories.filter(cat => categoryUsage[cat] < 2);
         
-        // Avoid back-to-back same category if possible
         if (availableCats.length > 1 && lastCategory !== 'homeLife') {
           availableCats = availableCats.filter(cat => cat !== lastCategory);
         }
@@ -1199,14 +1361,11 @@
           availableCats = otherCategories;
         }
         
-        // Pick random category
         const chosenCat = availableCats[Math.floor(Math.random() * availableCats.length)];
         
-        // Pick question from that category
         let pool = shuffle(filter(categories[chosenCat]));
         if (pool.length === 0) pool = shuffle(categories[chosenCat]);
         
-        // Find a question not already selected
         let question = pool.find(q => !selected.some(s => s.id === q.id));
         if (!question) question = pool[0];
         
@@ -1215,11 +1374,15 @@
         lastCategory = chosenCat;
       }
       
-      // Shuffle answers for each question
-      const finalQuestions = selected.map(q => ({
-        ...q,
-        answers: shuffle([...q.answers])
-      }));
+      // Shuffle answers for each question AND assign display labels
+      const labels = ['A', 'B', 'C'];
+      const finalQuestions = selected.map(q => {
+        const shuffledAnswers = shuffle([...q.answers]).map((a, i) => ({
+          ...a,
+          label: labels[i]
+        }));
+        return { ...q, answers: shuffledAnswers };
+      });
       
       saveRecent(finalQuestions.map(q => q.id));
       return finalQuestions;
@@ -1246,15 +1409,15 @@
     const screens = {
       home: () => `
         <div class="min-h-screen flex flex-col items-center justify-center p-6 screen-enter">
-          <div class="text-center max-w-md">
-            <h1 class="title text-4xl md:text-5xl mb-2">BUTCHOMETER</h1>
-            <p class="mono text-xs text-[var(--text-dim)] mb-12 tracking-wider">TEN QUESTIONS. NO MERCY.</p>
-            <div class="flex flex-col gap-3 max-w-xs mx-auto">
-              <button onclick="selectMode('single'); playSound('click');" class="btn py-4 px-8 rounded">
-                <span class="mono text-sm tracking-widest text-[var(--text-primary)]">SINGLE</span>
+          <div class="text-center max-w-md heat-shimmer">
+            <h1 class="forged-title mb-4">BUTCHOMETER</h1>
+            <p class="text-xs text-[var(--text-dim)] mb-16 tracking-[0.2em] uppercase">Ten questions. No mercy.</p>
+            <div class="flex flex-col gap-4 max-w-xs mx-auto">
+              <button onclick="handleClick(event); selectMode('single');" class="btn py-4 px-8 rounded-lg">
+                <span class="text-sm tracking-[0.15em] text-[var(--text-primary)] font-medium">SINGLE</span>
               </button>
-              <button onclick="selectMode('multiplayer'); playSound('click');" class="btn py-4 px-8 rounded">
-                <span class="mono text-sm tracking-widest text-[var(--text-primary)]">MULTIPLAYER</span>
+              <button onclick="handleClick(event); selectMode('multiplayer');" class="btn py-4 px-8 rounded-lg">
+                <span class="text-sm tracking-[0.15em] text-[var(--text-primary)] font-medium">MULTIPLAYER</span>
               </button>
             </div>
           </div>
@@ -1263,25 +1426,25 @@
       setup: () => `
         <div class="min-h-screen p-6 screen-enter">
           <div class="max-w-md mx-auto pt-8">
-            <button onclick="goHome(); playSound('click');" class="mono text-xs text-[var(--text-dim)] hover:text-[var(--text-primary)] mb-10 block tracking-wide">← BACK</button>
-            <h2 class="title text-lg mb-6">${state.mode === 'single' ? 'IDENTIFY YOURSELF' : 'NAME THE ACCUSED'}</h2>
-            <div class="card rounded p-5 mb-6">
+            <button onclick="handleClick(event); goHome();" class="text-xs text-[var(--text-dim)] hover:text-[var(--orange)] mb-10 block tracking-wide transition-colors">← BACK</button>
+            <h2 class="text-lg mb-6 tracking-[0.1em] text-[var(--orange)] font-semibold uppercase">${state.mode === 'single' ? 'Identify Yourself' : 'Name the Accused'}</h2>
+            <div class="card rounded-lg p-6 mb-6">
               ${state.playerNames.map((n, i) => `
                 <div class="flex gap-3 mb-3">
-                  <input type="text" value="${n}" oninput="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="input flex-1 rounded px-4 py-3 mono text-sm" maxlength="12">
+                  <input type="text" value="${n}" oninput="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="input flex-1 rounded-lg px-4 py-3 text-sm" maxlength="12">
                   ${state.mode === 'multiplayer' && state.playerNames.length > 2 ? `
-                    <button onclick="removePlayer(${i}); playSound('click');" class="text-[var(--text-dim)] hover:text-[var(--text-primary)] px-3 mono">×</button>
+                    <button onclick="handleClick(event); removePlayer(${i});" class="text-[var(--text-dim)] hover:text-[var(--orange)] px-3 transition-colors">×</button>
                   ` : ''}
                 </div>
               `).join('')}
               ${state.mode === 'multiplayer' && state.playerNames.length < 6 ? `
-                <button onclick="addPlayer(); playSound('click');" class="w-full border border-dashed border-[var(--steel-lighter)] text-[var(--text-dim)] py-3 rounded mono text-xs hover:border-[var(--text-dim)] transition-colors mt-2 tracking-wide">
-                  + ADD
+                <button onclick="handleClick(event); addPlayer();" class="w-full border border-dashed border-[var(--steel-lighter)] text-[var(--text-dim)] py-3 rounded-lg text-xs hover:border-[var(--orange-dim)] hover:text-[var(--orange)] transition-colors mt-2 tracking-wide">
+                  + ADD PLAYER
                 </button>
               ` : ''}
             </div>
-            <button onclick="startGame(); playSound('whoosh');" class="btn btn-primary w-full py-4 rounded">
-              <span class="mono text-sm tracking-widest text-[var(--text-primary)]">BEGIN</span>
+            <button onclick="handleClick(event); startGame();" class="btn btn-primary w-full py-4 rounded-lg">
+              <span class="text-sm tracking-[0.15em] text-[var(--text-primary)] font-medium">BEGIN</span>
             </button>
           </div>
         </div>`,
@@ -1290,27 +1453,26 @@
         const q = state.sessionQuestions[state.currentQuestionIndex];
         const p = state.players[state.currentPlayerIndex];
         const progress = ((state.currentQuestionIndex) / 10) * 100;
+        const qNum = state.currentQuestionIndex + 1;
         return `
         <div class="min-h-screen p-4 md:p-6 screen-enter">
           <div class="max-w-2xl mx-auto pt-4">
             <div class="flex justify-between items-center mb-4">
-              <span class="mono text-xs text-[var(--text-dim)] tracking-wide">${p?.name || 'PLAYER'}</span>
-              <span class="mono text-xs text-[var(--text-dim)]">${state.currentQuestionIndex + 1} / 10</span>
+              <span class="text-xs text-[var(--text-dim)] tracking-wide">${p?.name || 'PLAYER'}</span>
+              <span class="question-number text-[var(--orange)]">QUESTION ${qNum} OF 10</span>
             </div>
-            <div class="progress-track h-1 rounded-full mb-8">
+            <div class="progress-track h-2 rounded-full mb-8">
               <div class="progress-fill h-full rounded-full" style="width: ${progress}%"></div>
             </div>
-            <div class="card rounded p-6 mb-6 heavy-in">
+            <div class="card rounded-lg p-6 mb-6 heavy-in">
               <p class="text-base md:text-lg leading-relaxed">${q?.setup}</p>
             </div>
             <div class="space-y-3">
-              ${q?.answers.map((a, i) => {
-                const tier = a.points === 1 ? 'safe' : a.points === 2 ? 'mid' : 'unhinged';
-                return `
-                <button onclick="answer(${a.points}); playSound('${tier}');" class="answer answer-${tier} w-full rounded p-4 text-left slide-in" style="animation-delay: ${i * 0.06}s">
-                  <span class="text-sm md:text-base leading-relaxed text-[var(--text-primary)]">${a.text}</span>
-                </button>`;
-              }).join('')}
+              ${q?.answers.map((a, i) => `
+                <button onclick="handleAnswerClick(event, ${a.points});" class="answer w-full rounded-lg p-4 text-left slide-in flex items-start" style="animation-delay: ${i * 0.08}s">
+                  <span class="answer-label">${a.label}</span>
+                  <span class="text-sm md:text-base leading-relaxed text-[var(--text-primary)] flex-1">${a.text}</span>
+                </button>`).join('')}
             </div>
           </div>
         </div>`;
@@ -1322,28 +1484,35 @@
         return `
         <div class="min-h-screen flex flex-col items-center justify-center p-6 screen-enter">
           <div class="text-center max-w-md">
-            <p class="mono text-xs text-[var(--text-dim)] mb-8 tracking-widest">${p?.name}</p>
-            <div class="relative w-44 h-44 mx-auto mb-10">
+            <p class="text-xs text-[var(--text-dim)] mb-8 tracking-[0.2em] uppercase">${p?.name}</p>
+            <div class="relative w-48 h-48 mx-auto mb-10">
               <div class="gauge w-full h-full rounded-full ${state.measuring ? 'gauge-spin' : ''}"></div>
               ${!state.measuring ? `
-                <div class="absolute inset-0 flex items-center justify-center fade-in">
-                  <span class="mono text-6xl font-medium score-display">${score}</span>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-6xl font-bold score-display score-reveal">${score}</span>
                 </div>
               ` : ''}
             </div>
             ${state.showResult ? `
               <div class="heavy-in">
-                <p class="text-lg mb-10 leading-relaxed max-w-sm mx-auto">${p?.resultLine}</p>
+                <p class="text-lg mb-8 leading-relaxed max-w-sm mx-auto">${p?.resultLine}</p>
                 <div class="flex flex-col gap-3 max-w-xs mx-auto">
                   ${state.mode === 'multiplayer' && state.currentPlayerIndex < state.players.length - 1 
-                    ? `<button onclick="nextPlayer(); playSound('whoosh');" class="btn btn-primary py-4 px-8 rounded mono text-sm tracking-widest">NEXT</button>`
+                    ? `<button onclick="handleClick(event); nextPlayer();" class="btn btn-primary py-4 px-8 rounded-lg text-sm tracking-[0.15em] font-medium">NEXT PLAYER</button>`
                     : state.mode === 'multiplayer' 
-                    ? `<button onclick="showLeaderboard(); playSound('lock');" class="btn btn-primary py-4 px-8 rounded mono text-sm tracking-widest">VERDICT</button>`
-                    : `<button onclick="goHome(); playSound('click');" class="btn py-4 px-8 rounded mono text-sm tracking-widest">AGAIN</button>`}
+                    ? `<button onclick="handleClick(event); showLeaderboard();" class="btn btn-primary py-4 px-8 rounded-lg text-sm tracking-[0.15em] font-medium">FINAL VERDICT</button>`
+                    : `
+                      <button onclick="handleClick(event); shareScore(${score}, '${p?.resultLine?.replace(/'/g, "\\'")}');" class="btn btn-primary py-4 px-8 rounded-lg share-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16,6 12,2 8,6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        <span class="text-sm tracking-[0.1em] font-medium">SHARE SCORE</span>
+                      </button>
+                      <button onclick="handleClick(event); goHome();" class="btn py-4 px-8 rounded-lg text-sm tracking-[0.15em] font-medium">PLAY AGAIN</button>
+                    `}
                 </div>
+                <p class="text-xs text-[var(--text-muted)] mt-6">Send this to a friend. Let's see how butch they are.</p>
               </div>
             ` : `
-              <p class="mono text-sm text-[var(--text-dim)] tracking-widest">MEASURING...</p>
+              <p class="text-sm text-[var(--text-dim)] tracking-[0.15em]">MEASURING...</p>
             `}
           </div>
         </div>`;
@@ -1354,24 +1523,44 @@
         return `
         <div class="min-h-screen p-6 screen-enter">
           <div class="max-w-md mx-auto pt-8">
-            <h2 class="title text-xl mb-8 text-center">VERDICT</h2>
+            <h2 class="text-xl mb-8 text-center tracking-[0.15em] text-[var(--orange)] font-semibold">FINAL VERDICT</h2>
             <div class="space-y-3 mb-10">
               ${sorted.map((p, i) => `
-                <div class="plaque rounded p-4 flex items-center gap-4 slide-in" style="animation-delay: ${i * 0.1}s">
-                  <span class="mono text-sm text-[var(--text-muted)] w-8">${i + 1}.</span>
+                <div class="plaque rounded-lg p-4 flex items-center gap-4 slide-in" style="animation-delay: ${i * 0.1}s">
+                  <span class="text-sm text-[var(--text-muted)] w-8 font-semibold">${i + 1}.</span>
                   <div class="flex-1 overflow-hidden">
-                    <p class="mono text-sm text-[var(--text-primary)] tracking-wide">${p.name}</p>
+                    <p class="text-sm text-[var(--text-primary)] tracking-wide font-medium">${p.name}</p>
                     <p class="text-xs text-[var(--text-dim)] truncate mt-1">${p.resultLine}</p>
                   </div>
-                  <span class="mono text-2xl score-display">${p.score}</span>
+                  <span class="text-2xl score-display font-bold">${p.score}</span>
                 </div>
               `).join('')}
             </div>
-            <button onclick="goHome(); playSound('click');" class="btn w-full py-4 rounded mono text-sm tracking-widest">DONE</button>
+            <button onclick="handleClick(event); goHome();" class="btn w-full py-4 rounded-lg text-sm tracking-[0.15em] font-medium">DONE</button>
           </div>
         </div>`;
       }
     };
+
+    // ========== EVENT HANDLERS ==========
+    function handleClick(event) {
+      initAudio();
+      playSound('thunk');
+    }
+
+    function handleAnswerClick(event, points) {
+      initAudio();
+      
+      // Determine sound based on points
+      const soundType = points === 1 ? 'safe' : points === 2 ? 'mid' : 'unhinged';
+      playSound(soundType);
+      
+      // Create lava splash at click position
+      createLavaSplash(event.clientX, event.clientY);
+      
+      // Process answer
+      answer(points);
+    }
 
     // ========== GAME FUNCTIONS ==========
     function selectMode(mode) {
@@ -1399,6 +1588,7 @@
       state.currentQuestionIndex = 0;
       state.sessionQuestions = pickQuestions();
       state.screen = 'quiz';
+      playSound('whoosh');
       incrementPlays();
       render();
     }
@@ -1408,6 +1598,7 @@
 
       if (state.currentQuestionIndex < 9) {
         state.currentQuestionIndex++;
+        playSound('tick');
         render();
       } else {
         state.players[state.currentPlayerIndex].resultLine = getResultLine(state.players[state.currentPlayerIndex].score);
@@ -1425,8 +1616,8 @@
             playSound('lock');
             state.showResult = true;
             render();
-          }, 350);
-        }, 2500);
+          }, 400);
+        }, 2600);
       }
     }
 
@@ -1437,15 +1628,24 @@
       state.measuring = false;
       state.showResult = false;
       state.screen = 'quiz';
+      playSound('whoosh');
       render();
     }
 
     function showLeaderboard() {
       state.screen = 'leaderboard';
+      playSound('impact');
       render();
     }
 
+    // ========== INIT ==========
+    updateMuteIcon();
+    createEmbers();
     render();
+    
+    // Initialize audio on first interaction
+    document.addEventListener('click', () => initAudio(), { once: true });
+    document.addEventListener('touchstart', () => initAudio(), { once: true });
   </script>
 </body>
 </html>
