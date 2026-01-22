@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>BUTCHOMETER</title>
+  
+  <!-- Social Meta Tags -->
+  <meta property="og:title" content="BUTCHOMETER">
+  <meta property="og:description" content="Ten questions. No mercy. How butch are you?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://infinitlyal-dev.github.io/Butchometer/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="BUTCHOMETER">
+  <meta name="twitter:description" content="Ten questions. No mercy.">
+  <meta name="theme-color" content="#d4621a">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -13,6 +24,9 @@
       --orange-hot: #ff8534;
       --orange-dim: #7a3a10;
       --ember: #ff4500;
+      --lava-bright: #ff5500;
+      --lava-mid: #cc3300;
+      --lava-dark: #661a00;
       --black: #080706;
       --steel-darkest: #0c0b0a;
       --steel-dark: #131211;
@@ -37,6 +51,35 @@
       line-height: 1.65;
     }
 
+    /* ========== SCREEN SHAKE ========== */
+    .shake-small {
+      animation: shakeSmall 0.15s ease-out;
+    }
+    .shake-medium {
+      animation: shakeMedium 0.2s ease-out;
+    }
+    .shake-tiny {
+      animation: shakeTiny 0.1s ease-out;
+    }
+    
+    @keyframes shakeSmall {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-4px, 2px); }
+      50% { transform: translate(3px, -3px); }
+      75% { transform: translate(-2px, 1px); }
+    }
+    @keyframes shakeMedium {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-6px, 3px); }
+      40% { transform: translate(5px, -5px); }
+      60% { transform: translate(-4px, 2px); }
+      80% { transform: translate(3px, -2px); }
+    }
+    @keyframes shakeTiny {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-2px, 1px); }
+    }
+
     /* ========== TEXTURE & ATMOSPHERE ========== */
     .texture {
       position: fixed;
@@ -46,10 +89,10 @@
           -45deg,
           transparent 0px,
           transparent 1px,
-          rgba(255,255,255,0.012) 1px,
-          rgba(255,255,255,0.012) 2px
+          rgba(255,255,255,0.015) 1px,
+          rgba(255,255,255,0.015) 2px
         ),
-        radial-gradient(ellipse at 50% 120%, rgba(212,98,26,0.08) 0%, transparent 60%);
+        radial-gradient(ellipse at 50% 120%, rgba(212,98,26,0.1) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
     }
@@ -59,16 +102,16 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 300px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(212,98,26,0.12) 0%, rgba(255,69,0,0.04) 30%, transparent 70%);
+      height: 350px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(212,98,26,0.15) 0%, rgba(255,69,0,0.06) 30%, transparent 70%);
       pointer-events: none;
       z-index: 0;
-      animation: furnacePulse 4s ease-in-out infinite;
+      animation: furnacePulse 3s ease-in-out infinite;
     }
 
     @keyframes furnacePulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+      50% { opacity: 0.6; }
     }
 
     /* ========== EMBER PARTICLES ========== */
@@ -87,59 +130,53 @@
       background: var(--ember);
       border-radius: 50%;
       opacity: 0;
-      box-shadow: 0 0 6px 2px rgba(255,69,0,0.6), 0 0 12px 4px rgba(255,107,26,0.3);
-      animation: emberFloat 8s ease-out infinite;
+      box-shadow: 0 0 6px 2px rgba(255,69,0,0.7), 0 0 12px 4px rgba(255,107,26,0.4);
+      animation: emberFloat 7s ease-out infinite;
     }
 
     @keyframes emberFloat {
-      0% {
-        opacity: 0;
-        transform: translateY(100vh) scale(0.5);
-      }
-      10% {
-        opacity: 1;
-      }
-      90% {
-        opacity: 0.6;
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-20vh) translateX(var(--drift, 30px)) scale(0.2);
-      }
+      0% { opacity: 0; transform: translateY(100vh) scale(0.5); }
+      10% { opacity: 1; }
+      90% { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-20vh) translateX(var(--drift, 30px)) scale(0.2); }
     }
 
-    /* ========== FORGED STEEL TITLE ========== */
+    /* ========== FORGED STEEL TITLE - BOLDER ========== */
     .forged-title {
       font-family: 'IBM Plex Mono', monospace;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      font-size: clamp(2.5rem, 10vw, 4rem);
+      font-size: clamp(3rem, 12vw, 5rem);
       position: relative;
       display: inline-block;
+      line-height: 1;
       
-      /* Steel base */
+      /* Hammered/embossed steel effect */
       background: linear-gradient(
         180deg,
-        var(--steel-highlight) 0%,
-        var(--steel-lighter) 25%,
-        var(--steel-edge) 50%,
-        var(--steel-lighter) 75%,
-        var(--steel-highlight) 100%
+        var(--steel-edge) 0%,
+        var(--steel-highlight) 20%,
+        var(--steel-lighter) 40%,
+        var(--steel-edge) 60%,
+        var(--steel-mid) 80%,
+        var(--steel-dark) 100%
       );
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       
-      /* Steel texture overlay */
+      /* Deep emboss shadows */
       text-shadow: 
-        0 1px 0 rgba(255,255,255,0.1),
-        0 -1px 0 rgba(0,0,0,0.5),
-        0 0 30px rgba(212,98,26,0.3);
+        0 2px 0 rgba(0,0,0,0.8),
+        0 -1px 0 rgba(255,255,255,0.1),
+        0 4px 8px rgba(0,0,0,0.9),
+        0 8px 16px rgba(0,0,0,0.6);
       
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.9));
     }
 
+    /* Internal glow - heated metal effect */
     .forged-title::before {
       content: 'BUTCHOMETER';
       position: absolute;
@@ -148,59 +185,202 @@
       background: linear-gradient(
         180deg,
         transparent 0%,
-        rgba(255,107,26,0.4) 30%,
-        rgba(255,69,0,0.6) 50%,
-        rgba(255,107,26,0.4) 70%,
+        rgba(255,80,0,0.5) 25%,
+        rgba(255,120,20,0.7) 50%,
+        rgba(255,80,0,0.5) 75%,
         transparent 100%
       );
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: heatGlow 3s ease-in-out infinite;
+      animation: internalGlow 2s ease-in-out infinite;
+      filter: blur(1px);
     }
 
+    /* Aggressive pulsing underline bar */
     .forged-title::after {
       content: '';
       position: absolute;
-      left: -10%;
-      right: -10%;
-      bottom: -8px;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--orange), var(--orange-hot), var(--orange), transparent);
-      border-radius: 2px;
-      box-shadow: 0 0 20px var(--orange), 0 0 40px rgba(255,69,0,0.5);
-      animation: emberBar 2s ease-in-out infinite;
+      left: -5%;
+      right: -5%;
+      bottom: -12px;
+      height: 6px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--lava-dark) 10%,
+        var(--orange) 30%, 
+        var(--orange-hot) 50%, 
+        var(--orange) 70%,
+        var(--lava-dark) 90%,
+        transparent 100%
+      );
+      border-radius: 3px;
+      box-shadow: 
+        0 0 20px var(--orange), 
+        0 0 40px rgba(255,69,0,0.6),
+        0 0 60px rgba(255,69,0,0.3),
+        0 2px 4px rgba(0,0,0,0.8);
+      animation: emberBarAggressive 1.5s ease-in-out infinite;
     }
 
-    @keyframes heatGlow {
-      0%, 100% { opacity: 0.6; filter: blur(0px); }
-      50% { opacity: 1; filter: blur(1px); }
+    @keyframes internalGlow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.9; }
     }
 
-    @keyframes emberBar {
-      0%, 100% { opacity: 0.8; transform: scaleX(0.95); }
-      50% { opacity: 1; transform: scaleX(1); }
+    @keyframes emberBarAggressive {
+      0%, 100% { 
+        opacity: 0.7; 
+        transform: scaleX(0.92);
+        box-shadow: 0 0 15px var(--orange), 0 0 30px rgba(255,69,0,0.4);
+      }
+      50% { 
+        opacity: 1; 
+        transform: scaleX(1.02);
+        box-shadow: 0 0 30px var(--orange-hot), 0 0 60px rgba(255,69,0,0.7), 0 0 80px rgba(255,69,0,0.4);
+      }
     }
 
-    /* Heat shimmer effect */
+    /* Heat shimmer rising from title */
     .heat-shimmer {
       position: relative;
     }
     .heat-shimmer::before {
       content: '';
       position: absolute;
-      inset: -20px;
-      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      opacity: 0.03;
+      left: -30px;
+      right: -30px;
+      top: -60px;
+      bottom: -20px;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.04;
       pointer-events: none;
-      animation: shimmer 0.15s steps(3) infinite;
+      animation: shimmerRise 0.12s steps(4) infinite;
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.3), transparent 70%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.3), transparent 70%);
     }
 
-    @keyframes shimmer {
-      0% { transform: translate(0, 0); }
-      33% { transform: translate(-1px, 1px); }
-      66% { transform: translate(1px, -1px); }
-      100% { transform: translate(0, 0); }
+    @keyframes shimmerRise {
+      0% { transform: translateY(0); }
+      25% { transform: translateY(-2px) translateX(1px); }
+      50% { transform: translateY(-1px) translateX(-1px); }
+      75% { transform: translateY(-3px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* Title ember particles */
+    .title-embers {
+      position: absolute;
+      inset: -40px;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .title-ember {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--orange-hot);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--orange), 0 0 16px rgba(255,69,0,0.5);
+      animation: titleEmberFloat 3s ease-out infinite;
+    }
+    @keyframes titleEmberFloat {
+      0% { opacity: 0; transform: translateY(20px) scale(0.5); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-80px) translateX(var(--drift)) scale(0.2); }
+    }
+
+    /* ========== LAVA POOL ========== */
+    .lava-pool {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      z-index: 50;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    
+    .lava-pool-surface {
+      position: absolute;
+      bottom: 0;
+      left: -10%;
+      right: -10%;
+      height: 100%;
+      background: linear-gradient(to bottom,
+        rgba(255,100,0,0.9) 0%,
+        rgba(204,51,0,0.95) 30%,
+        rgba(153,34,0,1) 60%,
+        rgba(102,26,0,1) 100%
+      );
+      box-shadow: 
+        0 -10px 40px rgba(255,69,0,0.4),
+        0 -20px 60px rgba(255,50,0,0.2),
+        inset 0 5px 20px rgba(255,150,50,0.3);
+      animation: lavaSurfaceWave 4s ease-in-out infinite;
+    }
+    
+    @keyframes lavaSurfaceWave {
+      0%, 100% { transform: translateY(0) scaleY(1); }
+      50% { transform: translateY(-3px) scaleY(1.05); }
+    }
+    
+    .lava-pool-glow {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 150px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(255,69,0,0.3) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    
+    /* Lava bubbles */
+    .lava-bubble {
+      position: absolute;
+      bottom: 10px;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, rgba(255,200,100,0.9), rgba(255,100,0,0.7));
+      border-radius: 50%;
+      animation: lavaBubble 2s ease-in-out infinite;
+      box-shadow: 0 0 10px rgba(255,150,50,0.6);
+    }
+    
+    @keyframes lavaBubble {
+      0% { transform: translateY(0) scale(0.3); opacity: 0; }
+      30% { opacity: 0.8; }
+      60% { transform: translateY(-25px) scale(1); opacity: 0.9; }
+      100% { transform: translateY(-35px) scale(0.5); opacity: 0; }
+    }
+
+    /* Lava eruption particles */
+    .lava-particle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Pool flash on eruption */
+    .lava-pool-flash {
+      animation: poolFlash 0.3s ease-out;
+    }
+    @keyframes poolFlash {
+      0% { filter: brightness(2); }
+      100% { filter: brightness(1); }
+    }
+
+    /* ========== SPARK PARTICLES ========== */
+    .spark {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--orange-hot);
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow: 0 0 6px var(--orange), 0 0 12px rgba(255,150,50,0.5);
     }
 
     /* ========== BUTTONS ========== */
@@ -230,7 +410,7 @@
       background: linear-gradient(180deg, var(--steel-lighter) 0%, var(--steel-light) 40%, var(--steel-mid) 100%);
       box-shadow: 
         0 4px 20px rgba(0,0,0,0.8),
-        0 0 20px rgba(212,98,26,0.1),
+        0 0 20px rgba(212,98,26,0.15),
         inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
@@ -242,20 +422,25 @@
         inset 0 2px 6px rgba(0,0,0,0.4);
     }
 
+    .btn:focus-visible {
+      outline: 2px solid var(--orange);
+      outline-offset: 3px;
+    }
+
     .btn-primary {
       border-color: var(--orange-dim);
       box-shadow: 
         0 4px 16px rgba(0,0,0,0.7),
         0 0 0 1px rgba(212,98,26,0.4),
-        0 0 30px rgba(212,98,26,0.1),
+        0 0 30px rgba(212,98,26,0.15),
         inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
     .btn-primary:hover {
       box-shadow: 
-        0 4px 24px rgba(212,98,26,0.3),
+        0 4px 24px rgba(212,98,26,0.35),
         0 0 0 1px rgba(212,98,26,0.6),
-        0 0 40px rgba(212,98,26,0.2),
+        0 0 40px rgba(212,98,26,0.25),
         inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
@@ -274,14 +459,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: 
-        repeating-linear-gradient(
-          90deg,
-          transparent 0px,
-          transparent 2px,
-          rgba(255,255,255,0.008) 2px,
-          rgba(255,255,255,0.008) 4px
-        );
+      background: repeating-linear-gradient(90deg, transparent 0px, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
       pointer-events: none;
       border-radius: inherit;
     }
@@ -301,8 +479,8 @@
       border-color: var(--orange-dim);
       box-shadow: 
         inset 0 3px 8px rgba(0,0,0,0.5),
-        0 0 0 3px rgba(212,98,26,0.2),
-        0 0 20px rgba(212,98,26,0.15);
+        0 0 0 3px rgba(212,98,26,0.25),
+        0 0 25px rgba(212,98,26,0.2);
     }
 
     .input::placeholder { color: var(--text-muted); }
@@ -312,10 +490,10 @@
       position: relative;
       background: linear-gradient(180deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
-      border-left: 4px solid var(--steel-lighter);
+      border-left: 5px solid var(--steel-lighter);
       transition: all 0.15s ease;
       cursor: pointer;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .answer::before {
@@ -325,17 +503,18 @@
       top: 0;
       bottom: 0;
       width: 0;
-      background: linear-gradient(90deg, rgba(212,98,26,0.15), transparent);
+      background: linear-gradient(90deg, rgba(212,98,26,0.2), transparent);
       transition: width 0.2s ease;
     }
 
     .answer:hover {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 100%);
       transform: translateX(4px);
+      border-left-color: var(--orange-dim);
     }
 
     .answer:hover::before {
-      width: 100px;
+      width: 120px;
     }
 
     .answer:active {
@@ -343,27 +522,33 @@
       transform: translateX(6px) scale(0.99);
     }
 
+    .answer:focus-visible {
+      outline: 2px solid var(--orange);
+      outline-offset: 3px;
+    }
+
     .answer-label {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       background: var(--steel-darkest);
-      border: 1px solid var(--steel-edge);
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: 0.75rem;
+      border: 2px solid var(--steel-edge);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
       color: var(--text-dim);
       flex-shrink: 0;
-      margin-right: 12px;
+      margin-right: 14px;
       transition: all 0.15s ease;
     }
 
     .answer:hover .answer-label {
       background: var(--steel-mid);
-      border-color: var(--orange-dim);
+      border-color: var(--orange);
       color: var(--orange);
+      box-shadow: 0 0 10px rgba(212,98,26,0.3);
     }
 
     /* ========== PROGRESS BAR ========== */
@@ -377,7 +562,7 @@
 
     .progress-fill {
       background: linear-gradient(90deg, var(--orange-dim) 0%, var(--orange) 50%, var(--orange-hot) 100%);
-      box-shadow: 0 0 12px rgba(212,98,26,0.5), 0 0 24px rgba(255,69,0,0.3);
+      box-shadow: 0 0 15px rgba(212,98,26,0.6), 0 0 30px rgba(255,69,0,0.3);
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
     }
@@ -388,13 +573,13 @@
       right: 0;
       top: 0;
       bottom: 0;
-      width: 20px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
-      animation: progressShine 1.5s ease-in-out infinite;
+      width: 30px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+      animation: progressShine 1.2s ease-in-out infinite;
     }
 
     @keyframes progressShine {
-      0%, 100% { opacity: 0.5; }
+      0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
     }
 
@@ -417,7 +602,7 @@
         0 0 0 8px var(--steel-dark),
         0 0 0 10px var(--steel-lighter),
         0 0 0 14px var(--black),
-        0 0 60px rgba(212,98,26,0.2),
+        0 0 80px rgba(212,98,26,0.25),
         inset 0 0 80px rgba(0,0,0,0.8);
     }
 
@@ -433,18 +618,18 @@
     .score-display {
       color: var(--orange);
       text-shadow: 
-        0 0 30px rgba(212,98,26,0.6),
-        0 0 60px rgba(255,69,0,0.3),
-        0 2px 4px rgba(0,0,0,0.8);
+        0 0 40px rgba(212,98,26,0.7),
+        0 0 80px rgba(255,69,0,0.4),
+        0 2px 4px rgba(0,0,0,0.9);
     }
 
     .score-reveal {
-      animation: scoreReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: scoreReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     @keyframes scoreReveal {
-      0% { transform: scale(0.5); opacity: 0; }
-      50% { transform: scale(1.1); }
+      0% { transform: scale(0.3); opacity: 0; }
+      60% { transform: scale(1.15); }
       100% { transform: scale(1); opacity: 1; }
     }
 
@@ -458,50 +643,19 @@
     @keyframes heavyIn { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
     .screen-enter { animation: screenEnter 0.4s ease-out forwards; }
-    @keyframes screenEnter { 
-      from { opacity: 0; } 
-      to { opacity: 1; } 
-    }
-
-    /* ========== LAVA SPLASH PARTICLES ========== */
-    .lava-splash {
-      position: fixed;
-      pointer-events: none;
-      z-index: 1000;
-    }
-
-    .lava-particle {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: radial-gradient(circle, var(--orange-hot), var(--orange));
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--orange), 0 0 20px rgba(255,69,0,0.5);
-      animation: lavaSplash 0.6s ease-out forwards;
-    }
-
-    @keyframes lavaSplash {
-      0% {
-        opacity: 1;
-        transform: translate(0, 0) scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(var(--tx), var(--ty)) scale(0);
-      }
-    }
+    @keyframes screenEnter { from { opacity: 0; } to { opacity: 1; } }
 
     /* ========== MUTE TOGGLE ========== */
     .mute-toggle {
       position: fixed;
       top: 16px;
       right: 16px;
-      z-index: 100;
-      width: 40px;
-      height: 40px;
+      z-index: 200;
+      width: 44px;
+      height: 44px;
       background: var(--steel-dark);
       border: 1px solid var(--steel-lighter);
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -519,22 +673,27 @@
       color: var(--orange-dim);
     }
 
+    .mute-toggle:focus-visible {
+      outline: 2px solid var(--orange);
+      outline-offset: 2px;
+    }
+
     /* ========== TOAST ========== */
     .toast {
       position: fixed;
-      bottom: 24px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
       background: var(--steel-mid);
       border: 1px solid var(--orange-dim);
-      padding: 12px 24px;
-      border-radius: 8px;
+      padding: 14px 28px;
+      border-radius: 10px;
       color: var(--text-primary);
       font-size: 0.875rem;
       z-index: 1000;
       opacity: 0;
       transition: all 0.3s ease;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,98,26,0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 30px rgba(212,98,26,0.25);
     }
 
     .toast.show {
@@ -547,21 +706,30 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .share-btn svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
     }
 
     /* ========== PLAQUE ========== */
     .plaque {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 50%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
-      box-shadow: 
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 6px 20px rgba(0,0,0,0.5);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    /* ========== QUESTION NUMBER ========== */
+    .question-number {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      padding: 6px 14px;
+      background: var(--steel-darkest);
+      border: 1px solid var(--steel-edge);
+      border-radius: 6px;
     }
 
     /* ========== REDUCED MOTION ========== */
@@ -571,19 +739,14 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
       }
-      .ember, .furnace-glow, .heat-shimmer::before {
+      .ember, .furnace-glow, .heat-shimmer::before, .title-ember,
+      .lava-bubble, .lava-particle, .spark, .shake-small, .shake-medium, .shake-tiny {
         display: none !important;
+        animation: none !important;
       }
-    }
-
-    /* ========== QUESTION NUMBER ========== */
-    .question-number {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      padding: 4px 10px;
-      background: var(--steel-darkest);
-      border: 1px solid var(--steel-mid);
-      border-radius: 4px;
+      .lava-pool-surface {
+        animation: none !important;
+      }
     }
   </style>
 </head>
@@ -599,6 +762,10 @@
   </button>
   <div id="toast" class="toast"></div>
   <div id="app" class="relative z-10 min-h-screen"></div>
+  <div id="lavaPool" class="lava-pool" style="display: none;">
+    <div class="lava-pool-glow"></div>
+    <div class="lava-pool-surface" id="lavaPoolSurface"></div>
+  </div>
 
   <script>
     // ========== WEB AUDIO API SOUND SYSTEM ==========
@@ -637,7 +804,7 @@
     }
 
     // Synthesized SFX
-    function playSound(type) {
+    function playSound(type, intensity = 1) {
       if (isMuted || !audioCtx) return;
       
       try {
@@ -646,158 +813,153 @@
         switch(type) {
           case 'click':
           case 'thunk': {
-            // Heavy thunk - low frequency punch
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             const filter = audioCtx.createBiquadFilter();
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(80, now);
-            osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+            osc.frequency.setValueAtTime(90, now);
+            osc.frequency.exponentialRampToValueAtTime(35, now + 0.12);
             
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(200, now);
+            filter.frequency.setValueAtTime(250, now);
             
-            gain.gain.setValueAtTime(0.4, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            gain.gain.setValueAtTime(0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
             
             osc.connect(filter);
             filter.connect(gain);
             gain.connect(audioCtx.destination);
             
             osc.start(now);
-            osc.stop(now + 0.15);
+            osc.stop(now + 0.18);
             break;
           }
           
           case 'safe': {
-            // Soft thud
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(100, now);
-            osc.frequency.exponentialRampToValueAtTime(60, now + 0.08);
-            
-            gain.gain.setValueAtTime(0.25, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc.stop(now + 0.1);
+            playEruption(0.4);
             break;
           }
           
           case 'mid': {
-            // Medium impact
-            const osc = audioCtx.createOscillator();
-            const noise = createNoise(0.05);
-            const gain = audioCtx.createGain();
-            const noiseGain = audioCtx.createGain();
-            
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(150, now);
-            osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
-            
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-            
-            noiseGain.gain.setValueAtTime(0.1, now);
-            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            noise.connect(noiseGain);
-            noiseGain.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc.stop(now + 0.15);
+            playEruption(0.7);
             break;
           }
           
-          case 'unhinged':
-          case 'whip': {
-            // Whip crack + punch
-            const noise = createNoise(0.15);
-            const osc = audioCtx.createOscillator();
-            const filter = audioCtx.createBiquadFilter();
-            const gain = audioCtx.createGain();
-            const oscGain = audioCtx.createGain();
-            
-            filter.type = 'highpass';
-            filter.frequency.setValueAtTime(2000, now);
-            filter.frequency.exponentialRampToValueAtTime(500, now + 0.1);
-            
-            gain.gain.setValueAtTime(0.4, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-            
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(200, now);
-            osc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
-            
-            oscGain.gain.setValueAtTime(0.3, now);
-            oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-            
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.connect(oscGain);
-            oscGain.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc.stop(now + 0.2);
+          case 'unhinged': {
+            playEruption(1.0);
+            break;
+          }
+
+          case 'eruption': {
+            playEruption(intensity);
             break;
           }
           
           case 'whoosh': {
-            // Forge whoosh
-            const noise = createNoise(0.3);
+            const noise = createNoise(0.4);
             const filter = audioCtx.createBiquadFilter();
             const gain = audioCtx.createGain();
             
             filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(500, now);
-            filter.frequency.exponentialRampToValueAtTime(2000, now + 0.15);
-            filter.frequency.exponentialRampToValueAtTime(300, now + 0.4);
-            filter.Q.setValueAtTime(2, now);
+            filter.frequency.setValueAtTime(400, now);
+            filter.frequency.exponentialRampToValueAtTime(2500, now + 0.15);
+            filter.frequency.exponentialRampToValueAtTime(200, now + 0.45);
+            filter.Q.setValueAtTime(3, now);
             
             gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            gain.gain.linearRampToValueAtTime(0.25, now + 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
             
             noise.connect(filter);
             filter.connect(gain);
             gain.connect(audioCtx.destination);
             break;
           }
+
+          case 'spinStart': {
+            // Metallic grinding start
+            const noise = createNoise(2.8);
+            const filter = audioCtx.createBiquadFilter();
+            const gain = audioCtx.createGain();
+            
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(200, now);
+            filter.frequency.linearRampToValueAtTime(800, now + 2.5);
+            filter.Q.setValueAtTime(5, now);
+            
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.15, now + 0.3);
+            gain.gain.setValueAtTime(0.15, now + 2.2);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 2.6);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            // Metallic clicks accelerating
+            for (let i = 0; i < 20; i++) {
+              const delay = 0.2 + (i * 0.12) - (i * i * 0.003);
+              if (delay < 2.4) {
+                setTimeout(() => {
+                  if (!isMuted && audioCtx) {
+                    const clickOsc = audioCtx.createOscillator();
+                    const clickGain = audioCtx.createGain();
+                    clickOsc.type = 'square';
+                    clickOsc.frequency.setValueAtTime(800 + i * 50, audioCtx.currentTime);
+                    clickGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    clickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
+                    clickOsc.connect(clickGain);
+                    clickGain.connect(audioCtx.destination);
+                    clickOsc.start();
+                    clickOsc.stop(audioCtx.currentTime + 0.03);
+                  }
+                }, delay * 1000);
+              }
+            }
+
+            // Low rumble
+            const rumbleOsc = audioCtx.createOscillator();
+            const rumbleGain = audioCtx.createGain();
+            rumbleOsc.type = 'sine';
+            rumbleOsc.frequency.setValueAtTime(40, now);
+            rumbleOsc.frequency.linearRampToValueAtTime(60, now + 2.5);
+            rumbleGain.gain.setValueAtTime(0.1, now);
+            rumbleGain.gain.setValueAtTime(0.1, now + 2.2);
+            rumbleGain.gain.exponentialRampToValueAtTime(0.01, now + 2.6);
+            rumbleOsc.connect(rumbleGain);
+            rumbleGain.connect(audioCtx.destination);
+            rumbleOsc.start(now);
+            rumbleOsc.stop(now + 2.6);
+            break;
+          }
           
           case 'impact': {
-            // Heavy hammer hit
+            // Heavy hammer hit with fire roar
             const osc = audioCtx.createOscillator();
             const osc2 = audioCtx.createOscillator();
-            const noise = createNoise(0.2);
+            const noise = createNoise(0.4);
             const gain = audioCtx.createGain();
             const noiseGain = audioCtx.createGain();
             const filter = audioCtx.createBiquadFilter();
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(100, now);
-            osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+            osc.frequency.setValueAtTime(80, now);
+            osc.frequency.exponentialRampToValueAtTime(25, now + 0.4);
             
             osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(60, now);
-            osc2.frequency.exponentialRampToValueAtTime(20, now + 0.4);
+            osc2.frequency.setValueAtTime(50, now);
+            osc2.frequency.exponentialRampToValueAtTime(18, now + 0.5);
             
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(400, now);
+            filter.frequency.setValueAtTime(600, now);
+            filter.frequency.exponentialRampToValueAtTime(100, now + 0.4);
             
-            gain.gain.setValueAtTime(0.5, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            gain.gain.setValueAtTime(0.6, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
             
-            noiseGain.gain.setValueAtTime(0.15, now);
-            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            noiseGain.gain.setValueAtTime(0.2, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
             
             osc.connect(gain);
             osc2.connect(gain);
@@ -808,29 +970,85 @@
             
             osc.start(now);
             osc2.start(now);
-            osc.stop(now + 0.5);
-            osc2.stop(now + 0.5);
+            osc.stop(now + 0.6);
+            osc2.stop(now + 0.6);
+
+            // Fire roar
+            const fireNoise = createNoise(0.5);
+            const fireFilter = audioCtx.createBiquadFilter();
+            const fireGain = audioCtx.createGain();
+            fireFilter.type = 'bandpass';
+            fireFilter.frequency.setValueAtTime(300, now);
+            fireFilter.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
+            fireFilter.frequency.exponentialRampToValueAtTime(200, now + 0.5);
+            fireFilter.Q.setValueAtTime(2, now);
+            fireGain.gain.setValueAtTime(0, now);
+            fireGain.gain.linearRampToValueAtTime(0.15, now + 0.05);
+            fireGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            fireNoise.connect(fireFilter);
+            fireFilter.connect(fireGain);
+            fireGain.connect(audioCtx.destination);
             break;
           }
           
-          case 'lock':
-          case 'tick': {
-            // Metallic tick/lock
+          case 'lock': {
+            // Heavy vault clunk
             const osc = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
+            const noise = createNoise(0.1);
+            const noiseGain = audioCtx.createGain();
             
             osc.type = 'square';
-            osc.frequency.setValueAtTime(1200, now);
-            osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
             
-            gain.gain.setValueAtTime(0.15, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(400, now);
+            osc2.frequency.exponentialRampToValueAtTime(200, now + 0.15);
+            
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            
+            noiseGain.gain.setValueAtTime(0.15, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
             
             osc.connect(gain);
+            osc2.connect(gain);
             gain.connect(audioCtx.destination);
+            noise.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
             
             osc.start(now);
-            osc.stop(now + 0.08);
+            osc2.start(now);
+            osc.stop(now + 0.2);
+            osc2.stop(now + 0.2);
+
+            // Metallic ring
+            const ring = audioCtx.createOscillator();
+            const ringGain = audioCtx.createGain();
+            ring.type = 'sine';
+            ring.frequency.setValueAtTime(1200, now);
+            ringGain.gain.setValueAtTime(0.05, now);
+            ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            ring.connect(ringGain);
+            ringGain.connect(audioCtx.destination);
+            ring.start(now);
+            ring.stop(now + 0.4);
+            break;
+          }
+
+          case 'tick': {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(1000, now);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
             break;
           }
         }
@@ -839,63 +1057,291 @@
       }
     }
 
+    function playEruption(intensity) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      
+      // Low rumble burst
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(60 + intensity * 30, now);
+      osc.frequency.exponentialRampToValueAtTime(30, now + 0.2 + intensity * 0.1);
+      gain.gain.setValueAtTime(0.3 * intensity, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25 + intensity * 0.1);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.35);
+      
+      // Sizzle/hiss
+      const noise = createNoise(0.2 + intensity * 0.15);
+      const filter = audioCtx.createBiquadFilter();
+      const noiseGain = audioCtx.createGain();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(2000 + intensity * 1000, now);
+      filter.Q.setValueAtTime(3, now);
+      noiseGain.gain.setValueAtTime(0.15 * intensity, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2 + intensity * 0.1);
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      
+      // Bubble pop
+      const pop = audioCtx.createOscillator();
+      const popGain = audioCtx.createGain();
+      pop.type = 'sine';
+      pop.frequency.setValueAtTime(400 * intensity, now);
+      pop.frequency.exponentialRampToValueAtTime(100, now + 0.08);
+      popGain.gain.setValueAtTime(0.2 * intensity, now);
+      popGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      pop.connect(popGain);
+      popGain.connect(audioCtx.destination);
+      pop.start(now);
+      pop.stop(now + 0.1);
+    }
+
     function createNoise(duration) {
       const bufferSize = audioCtx.sampleRate * duration;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const output = buffer.getChannelData(0);
-      
       for (let i = 0; i < bufferSize; i++) {
         output[i] = Math.random() * 2 - 1;
       }
-      
       const noise = audioCtx.createBufferSource();
       noise.buffer = buffer;
       noise.start();
       return noise;
     }
 
+    // ========== SCREEN SHAKE ==========
+    function screenShake(intensity = 'small') {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const app = document.getElementById('app');
+      app.classList.remove('shake-small', 'shake-medium', 'shake-tiny');
+      void app.offsetWidth; // Trigger reflow
+      app.classList.add(`shake-${intensity}`);
+      setTimeout(() => app.classList.remove(`shake-${intensity}`), 300);
+    }
+
     // ========== EMBER PARTICLES ==========
     function createEmbers() {
       const container = document.getElementById('embers');
-      if (!container) return;
+      if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       
-      // Check for reduced motion preference
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 15; i++) {
         const ember = document.createElement('div');
         ember.className = 'ember';
         ember.style.left = Math.random() * 100 + '%';
-        ember.style.setProperty('--drift', (Math.random() - 0.5) * 80 + 'px');
-        ember.style.animationDelay = Math.random() * 8 + 's';
-        ember.style.animationDuration = (6 + Math.random() * 4) + 's';
+        ember.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
+        ember.style.animationDelay = Math.random() * 7 + 's';
+        ember.style.animationDuration = (5 + Math.random() * 4) + 's';
         container.appendChild(ember);
       }
     }
 
-    // ========== LAVA SPLASH EFFECT ==========
-    function createLavaSplash(x, y) {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // ========== TITLE EMBERS ==========
+    function createTitleEmbers(container) {
+      if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       
-      const splash = document.createElement('div');
-      splash.className = 'lava-splash';
-      splash.style.left = x + 'px';
-      splash.style.top = y + 'px';
+      const emberContainer = document.createElement('div');
+      emberContainer.className = 'title-embers';
       
-      for (let i = 0; i < 8; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'lava-particle';
-        const angle = (Math.PI * 2 / 8) * i + (Math.random() - 0.5) * 0.5;
-        const distance = 30 + Math.random() * 40;
-        particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-        particle.style.setProperty('--ty', Math.sin(angle) * distance - 20 + 'px');
-        particle.style.width = (4 + Math.random() * 6) + 'px';
-        particle.style.height = particle.style.width;
-        splash.appendChild(particle);
+      for (let i = 0; i < 6; i++) {
+        const ember = document.createElement('div');
+        ember.className = 'title-ember';
+        ember.style.left = (20 + Math.random() * 60) + '%';
+        ember.style.bottom = '0';
+        ember.style.setProperty('--drift', (Math.random() - 0.5) * 60 + 'px');
+        ember.style.animationDelay = Math.random() * 3 + 's';
+        ember.style.animationDuration = (2 + Math.random() * 2) + 's';
+        ember.style.width = (3 + Math.random() * 3) + 'px';
+        ember.style.height = ember.style.width;
+        emberContainer.appendChild(ember);
       }
       
-      document.body.appendChild(splash);
-      setTimeout(() => splash.remove(), 700);
+      container.appendChild(emberContainer);
+    }
+
+    // ========== LAVA POOL ==========
+    let lavaPoolVisible = false;
+    let lavaBubbleInterval = null;
+
+    function showLavaPool() {
+      if (lavaPoolVisible) return;
+      lavaPoolVisible = true;
+      const pool = document.getElementById('lavaPool');
+      pool.style.display = 'block';
+      
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      // Start bubbles
+      lavaBubbleInterval = setInterval(createLavaBubble, 400);
+    }
+
+    function hideLavaPool() {
+      lavaPoolVisible = false;
+      const pool = document.getElementById('lavaPool');
+      pool.style.display = 'none';
+      if (lavaBubbleInterval) {
+        clearInterval(lavaBubbleInterval);
+        lavaBubbleInterval = null;
+      }
+    }
+
+    function createLavaBubble() {
+      if (!lavaPoolVisible) return;
+      const surface = document.getElementById('lavaPoolSurface');
+      if (!surface) return;
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'lava-bubble';
+      bubble.style.left = (10 + Math.random() * 80) + '%';
+      bubble.style.animationDuration = (1.5 + Math.random() * 1) + 's';
+      bubble.style.width = (5 + Math.random() * 8) + 'px';
+      bubble.style.height = bubble.style.width;
+      surface.appendChild(bubble);
+      
+      setTimeout(() => bubble.remove(), 2500);
+    }
+
+    // ========== LAVA ERUPTION ==========
+    function createLavaEruption(points) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      const surface = document.getElementById('lavaPoolSurface');
+      if (surface) {
+        surface.classList.add('lava-pool-flash');
+        setTimeout(() => surface.classList.remove('lava-pool-flash'), 300);
+      }
+      
+      // Particle count and velocity based on points
+      let particleCount, velocity, spread;
+      if (points === 1) {
+        particleCount = 10;
+        velocity = 8;
+        spread = 0.3;
+      } else if (points === 2) {
+        particleCount = 17;
+        velocity = 12;
+        spread = 0.5;
+      } else {
+        particleCount = 28;
+        velocity = 18;
+        spread = 0.7;
+        screenShake('small');
+      }
+      
+      const centerX = window.innerWidth / 2;
+      const startY = window.innerHeight - 35;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'lava-particle';
+        
+        const size = 8 + Math.random() * 14;
+        const hue = 20 + Math.random() * 30;
+        const lightness = 50 + Math.random() * 20;
+        
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.background = `radial-gradient(circle, hsl(${hue}, 100%, ${lightness}%), hsl(${hue - 10}, 100%, ${lightness - 20}%))`;
+        particle.style.boxShadow = `0 0 ${size}px hsl(${hue}, 100%, 50%), 0 0 ${size * 2}px rgba(255,100,0,0.5)`;
+        
+        const offsetX = (Math.random() - 0.5) * 200 * spread;
+        particle.style.left = (centerX + offsetX) + 'px';
+        particle.style.top = startY + 'px';
+        
+        document.body.appendChild(particle);
+        
+        // Physics
+        const vx = (Math.random() - 0.5) * velocity * spread * 2;
+        const vy = -(velocity + Math.random() * velocity * 0.5);
+        const gravity = 0.4;
+        
+        let x = centerX + offsetX;
+        let y = startY;
+        let currentVy = vy;
+        let opacity = 1;
+        
+        function animateParticle() {
+          x += vx;
+          currentVy += gravity;
+          y += currentVy;
+          opacity -= 0.02;
+          
+          particle.style.left = x + 'px';
+          particle.style.top = y + 'px';
+          particle.style.opacity = Math.max(0, opacity);
+          particle.style.transform = `scale(${Math.max(0.2, opacity)})`;
+          
+          if (opacity > 0 && y < window.innerHeight + 50) {
+            requestAnimationFrame(animateParticle);
+          } else {
+            particle.remove();
+          }
+        }
+        
+        setTimeout(() => requestAnimationFrame(animateParticle), i * 15);
+      }
+    }
+
+    // ========== SPARK PARTICLES ==========
+    function createSparks(x, y, count = 5) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      for (let i = 0; i < count; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'spark';
+        spark.style.left = x + 'px';
+        spark.style.top = y + 'px';
+        spark.style.position = 'fixed';
+        spark.style.zIndex = '1000';
+        
+        const size = 3 + Math.random() * 3;
+        spark.style.width = size + 'px';
+        spark.style.height = size + 'px';
+        
+        document.body.appendChild(spark);
+        
+        const angle = (Math.random() - 0.5) * Math.PI;
+        const velocity = 3 + Math.random() * 4;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity - 2;
+        
+        let currentX = x;
+        let currentY = y;
+        let currentVy = vy;
+        let opacity = 1;
+        
+        function animateSpark() {
+          currentX += vx;
+          currentVy += 0.2;
+          currentY += currentVy;
+          opacity -= 0.05;
+          
+          spark.style.left = currentX + 'px';
+          spark.style.top = currentY + 'px';
+          spark.style.opacity = opacity;
+          
+          if (opacity > 0) {
+            requestAnimationFrame(animateSpark);
+          } else {
+            spark.remove();
+          }
+        }
+        
+        setTimeout(() => requestAnimationFrame(animateSpark), i * 20);
+      }
+    }
+
+    function createHoverSparks(element) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      
+      const rect = element.getBoundingClientRect();
+      const x = rect.left + 10;
+      const y = rect.top + rect.height / 2;
+      createSparks(x, y, 3);
     }
 
     // ========== TOAST ==========
@@ -909,21 +1355,16 @@
     // ========== SHARE FEATURE ==========
     async function shareScore(score, resultLine) {
       const url = 'https://infinitlyal-dev.github.io/Butchometer/';
-      const text = `I scored ${score} on BUTCHOMETER. Ten questions. No mercy. Your turn:`;
+      const cleanLine = resultLine.replace(/"/g, "'");
+      const text = `I scored ${score} on BUTCHOMETER: "${cleanLine}" — Ten questions. No mercy.`;
       const fullText = `${text} ${url}`;
       
       if (navigator.share) {
         try {
-          await navigator.share({
-            title: 'BUTCHOMETER',
-            text: text,
-            url: url
-          });
+          await navigator.share({ title: 'BUTCHOMETER', text: text, url: url });
           playSound('tick');
         } catch(e) {
-          if (e.name !== 'AbortError') {
-            copyToClipboard(fullText);
-          }
+          if (e.name !== 'AbortError') copyToClipboard(fullText);
         }
       } else {
         copyToClipboard(fullText);
@@ -932,14 +1373,12 @@
 
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text).then(() => {
-        showToast('Copied to clipboard. Now go find a victim.');
+        showToast('Copied. Now find a victim.');
         playSound('tick');
-      }).catch(() => {
-        showToast('Share this: ' + text);
-      });
+      }).catch(() => showToast('Share: ' + text));
     }
 
-    // ========== QUESTIONS BY CATEGORY ==========
+    // ========== QUESTIONS ==========
     const questionsByCategory = {
       homeLife: [
         { id: 'HL01', setup: "It's 6:47 AM. You're standing in the kitchen in your underwear, staring at an empty coffee bag. There's instant in the back of the cupboard. It's been there since the previous tenant.", answers: [
@@ -947,280 +1386,145 @@
           { text: "You make the instant because caffeine is a chemical and chemicals don't care about your feelings. It tastes like regret but regret is still technically a flavor.", points: 2 },
           { text: "You drive to the nearest café in your pajama pants because you have standards and those standards include not drinking something that dissolves.", points: 1 }
         ]},
-        { id: 'HL02', setup: "There's a spider on the wall. Medium-sized. It hasn't moved in three minutes. You've been watching it like it owes you an explanation for being there.", answers: [
-          { text: "You get a glass and a postcard, trap it with the care of a bomb disposal unit, and release it outside while whispering an apology because all life has value, even life with eight legs.", points: 1 },
-          { text: "You ignore it entirely—that spider's now your tenant, earning its keep by catching flies, no rent required.", points: 3 },
-          { text: "You smack it with whatever's nearby because you didn't invite it, it didn't pay to be here, and cohabitation requires consent.", points: 2 }
+        { id: 'HL02', setup: "There's a spider on the wall. Medium-sized. It hasn't moved in three minutes. You've been watching it like it owes you an explanation.", answers: [
+          { text: "You trap it carefully and release it outside while whispering an apology because all life has value, even life with eight legs.", points: 1 },
+          { text: "You ignore it—that spider's now your tenant, earning its keep by catching flies, no rent required.", points: 3 },
+          { text: "You smack it with whatever's nearby because you didn't invite it and cohabitation requires consent.", points: 2 }
         ]},
-        { id: 'HL03', setup: "Someone touched the thermostat. The house is now 74 degrees. You can feel your electricity bill climbing in real time. Sweat is forming. This is not a temperature—it's a betrayal.", answers: [
-          { text: "You rip off the cover and stash it away—comfort's earned through grit, not knobs; blankets exist for the weak.", points: 3 },
-          { text: "You call a household meeting to establish clear thermostat boundaries because adults communicate, and communication prevents the kind of resentment that ends leases.", points: 1 },
-          { text: "You change it back without comment. If they change it again, you change it again. This is a war of attrition, not a conversation.", points: 2 }
+        { id: 'HL03', setup: "Someone touched the thermostat. The house is now 74 degrees. You can feel your electricity bill climbing. Sweat is forming. This is not a temperature—it's a betrayal.", answers: [
+          { text: "You rip off the cover and stash it away—comfort's earned through grit, not knobs.", points: 3 },
+          { text: "You call a household meeting because adults communicate.", points: 1 },
+          { text: "You change it back without comment. If they change it again, you change it again. War of attrition.", points: 2 }
         ]},
-        { id: 'HL04', setup: "Your phone battery is at 4%. You're not near a charger. You have one text to send, two emails to check, and a growing sense that this is somehow a personal failing.", answers: [
-          { text: "You send the text, accept the email will wait, and let the phone die with dignity. People survived for millennia without constant communication. You can too.", points: 2 },
-          { text: "You kill the battery on purpose—if it's vital, they'll track you down; leashes like phones deserve to go dark.", points: 3 },
-          { text: "You ration every second. Low power mode. Screen brightness zero. You compose the text mentally before typing because efficiency is survival now.", points: 1 }
+        { id: 'HL04', setup: "Your phone battery is at 4%. You're not near a charger. You have one text to send and a growing sense this is somehow a personal failing.", answers: [
+          { text: "You send the text and let the phone die with dignity. People survived millennia without constant communication.", points: 2 },
+          { text: "You kill the battery on purpose—if it's vital, they'll track you down.", points: 3 },
+          { text: "You ration every second. Low power mode. Screen brightness zero.", points: 1 }
         ]},
-        { id: 'HL05', setup: "You're cooking. The smoke alarm goes off. Nothing is burning. The alarm just has opinions about your technique and volume is how it expresses them.", answers: [
-          { text: "You fan it with a towel until it stops, muttering that this happens every time, and continue cooking because you're not going to let a ceiling beep dictate dinner.", points: 2 },
-          { text: "You yank the battery out—the alarm's fired; real men smell smoke before gadgets whine.", points: 3 },
-          { text: "You open every window, turn on every fan, and consider this a learning experience about ventilation and the sensitive feelings of safety equipment.", points: 1 }
+        { id: 'HL05', setup: "You're cooking. The smoke alarm goes off. Nothing is burning. The alarm just has opinions about your technique.", answers: [
+          { text: "You fan it with a towel and continue cooking because you're not letting a ceiling beep dictate dinner.", points: 2 },
+          { text: "You yank the battery out—real men smell smoke before gadgets whine.", points: 3 },
+          { text: "You open every window and consider this a learning experience.", points: 1 }
         ]},
-        { id: 'HL06', setup: "The WiFi is down. You've restarted the router twice. Nothing. You're standing there, watching blinking lights like they contain meaning. They don't.", answers: [
-          { text: "You step outside—WiFi's a chain; break it, and rediscover silence, books, and self-reliance.", points: 3 },
-          { text: "You unplug everything, wait thirty seconds like some ancient ritual, plug it back in, and accept that technology is mostly just waiting for things to decide to work.", points: 2 },
-          { text: "You call the provider, navigate the automated system, wait on hold for twenty minutes, and speak to a human who asks if you've tried restarting it. You have. You say yes.", points: 1 }
+        { id: 'HL06', setup: "The WiFi is down. You've restarted the router twice. Nothing. You're watching blinking lights like they contain meaning.", answers: [
+          { text: "You step outside—WiFi's a chain; break it and rediscover silence.", points: 3 },
+          { text: "You unplug everything, wait thirty seconds, and accept that technology is just waiting.", points: 2 },
+          { text: "You call the provider and wait on hold for twenty minutes.", points: 1 }
         ]},
-        { id: 'HL07', setup: "Your neighbor is playing music. Loudly. It's 10 PM on a Tuesday. Not late enough to be illegal. Just late enough to be annoying. The bass is in your walls now.", answers: [
-          { text: "You put on headphones, listen to something calming, and remind yourself that conflict is expensive and you have to live next to this person for the foreseeable future.", points: 1 },
-          { text: "You crank your own tunes louder, superior in every way—this ain't talk, it's volume warfare, and you fight to win.", points: 3 },
-          { text: "You knock on their door, introduce yourself if you haven't, and mention it politely because most people don't realize how sound carries.", points: 2 }
+        { id: 'HL07', setup: "It's 3 AM. There's a sound downstairs. Not a normal sound. You don't own a pet.", answers: [
+          { text: "You stay in the room and call someone because this is how people survive horror movies.", points: 1 },
+          { text: "You descend in the dark—whatever lurks picked the wrong domain.", points: 3 },
+          { text: "You grab something heavy, turn on lights, and investigate. Probably the wind.", points: 2 }
         ]},
-        { id: 'HL08', setup: "Your glasses are dirty. Very dirty. You've been seeing the world through a fog you created yourself. There's no cloth nearby. Just your shirt, which is also not clean.", answers: [
-          { text: "You breathe on them and wipe with your shirt because this is what shirts are for now. Function over fashion. You can see. Mostly. Good enough.", points: 2 },
-          { text: "You wait until you can clean them properly because smearing is worse than fog and you're not going to make this problem bigger just because you're impatient.", points: 1 },
-          { text: "You ditch them altogether—the world's better blurred; sharp vision's for those afraid of mystery.", points: 3 }
-        ]},
-        { id: 'HL09', setup: "There's a fly in your house. One fly. It's been three days. Every time you think it's gone, it returns. It has landed on your food twice. It's winning.", answers: [
-          { text: "You grant it residency—one fly's no army; it stays till it leaves, teaching patience like a silent master.", points: 3 },
-          { text: "You open windows strategically and wait because flies have the attention span of flies and eventually it will forget where it is and leave.", points: 1 },
-          { text: "You become a hunter. You wait. You track. You strike with a rolled magazine and miss four times but on the fifth, victory.", points: 2 }
-        ]},
-        { id: 'HL10', setup: "You've walked into a room and forgotten why. You're standing there. The room is waiting. You could retrace your steps. You could also just accept the void.", answers: [
-          { text: "You grab whatever's closest—that's your purpose now; brains falter, hands decide.", points: 3 },
-          { text: "You walk back to where you started because context helps memory and you're not going to stand in a doorway like a confused sim waiting for instructions.", points: 1 },
-          { text: "You stand still and wait for it to come back. Trust the brain. It knows things. It's just processing. Give it a moment.", points: 2 }
-        ]},
-        { id: 'HL11', setup: "The fitted sheet came off the corner. Again. It's 2 AM. You're lying there, on a mattress that now has a wrinkled fabric tumor. You could fix it. You could also just live like this.", answers: [
-          { text: "You sleep on the bare mattress—sheets are luxuries; true rest needs only a surface and resolve.", points: 3 },
-          { text: "You get up, remake the bed properly, tuck the corners tight, because sleep quality matters.", points: 1 },
-          { text: "You shove it back, roughly, without fully remaking anything, and lie down before it can escape again. Good enough is a sleep strategy.", points: 2 }
-        ]},
-        { id: 'HL12', setup: "The power adapter doesn't quite fit. It fits, but not comfortably. You have to hold it at an angle. If you let go, nothing charges. This is your life now.", answers: [
-          { text: "You jam it in, prop something against it, and hope friction and gravity do the rest. This is engineering. MacGyver would understand.", points: 2 },
-          { text: "You get a new adapter or cable because this is a solvable problem and you're not going to spend your days propping electronics like they're on life support.", points: 1 },
-          { text: "You hold it steady for hours—adapters bend to will, not the other way around.", points: 3 }
-        ]},
-        { id: 'HL13', setup: "You're watching something alone. A plot twist happens. It's huge. You have no one to talk to about it. The cat doesn't care. The walls are unhelpful.", answers: [
-          { text: "You text someone who's seen it, carefully avoiding spoilers for anyone who hasn't, because shared joy is real joy.", points: 1 },
-          { text: "You explain it to the cat in full—felines understand twists; walls echo wisdom.", points: 3 },
-          { text: "You sit with it. Process. This moment is yours. Not everything needs external validation.", points: 2 }
-        ]},
-        { id: 'HL14', setup: "You stepped in something wet. With socks on. In your own home. It could be anything. You don't want to look. You're standing still, one foot contaminated, the other pure.", answers: [
-          { text: "You march on without glancing—wet's temporary; resolve's eternal.", points: 3 },
-          { text: "You investigate, clean it up, put on new socks, and sanitize because pretending it didn't happen doesn't make your floor any less wet.", points: 1 },
-          { text: "You remove the sock, toss it toward laundry, and walk on heel only until you forget this happened.", points: 2 }
-        ]},
-        { id: 'HL15', setup: "You tried to catch something that was falling. You missed. It hit the ground. You're standing there, hands out, looking at the object that ignored your reflexes entirely.", answers: [
-          { text: "You kick it. Lightly. As punishment. The object made you look bad. This is consequences.", points: 2 },
-          { text: "You leave it fallen—it chose gravity; some things belong on the ground.", points: 3 },
-          { text: "You pick it up, check for damage, and accept that not every save is possible. Physics doesn't care about your intentions.", points: 1 }
-        ]},
-        { id: 'HL16', setup: "Your earbuds are tangled. Significantly tangled. You put them in your pocket for five minutes and they've formed a knot that would impress a sailor.", answers: [
-          { text: "You patiently untangle them, following each cord, because knots have solutions and rushing only makes them tighter.", points: 1 },
-          { text: "You wear the knot like a badge—sound works fine; perfection's for the feeble.", points: 3 },
-          { text: "You pull at it until something gives because tangles aren't that serious and if something breaks, that's an excuse to buy wireless ones finally.", points: 2 }
-        ]},
-        { id: 'HL17', setup: "You've had a toothache for five days. Someone suggests a dentist. Dentists are people who went to school specifically to disappoint you while you can't close your mouth.", answers: [
-          { text: "You endure it—teeth are bones, bones mend; spares exist if this one fails.", points: 3 },
-          { text: "You try clove oil, ibuprofen, and hoping because sometimes teeth just need to work through their feelings. Give it a few more days.", points: 2 },
-          { text: "You make the appointment because tooth infections can spread to your brain and dying of stubbornness is a legacy nobody wants.", points: 1 }
-        ]},
-        { id: 'HL18', setup: "It's 3 AM. There's a sound downstairs. Not a normal sound. You don't own a pet. You don't own anything that makes that particular noise.", answers: [
-          { text: "You stay in the room, lock the door, and call someone because this is how people survive horror movies.", points: 1 },
-          { text: "You descend in the dark—whatever lurks picked the wrong domain; you answer intrusions with force.", points: 3 },
-          { text: "You grab something heavy, turn on lights as you go, and investigate like someone who owns this house. It's probably the wind.", points: 2 }
+        { id: 'HL08', setup: "The fitted sheet came off the corner. Again. It's 2 AM. You're lying on a wrinkled fabric tumor.", answers: [
+          { text: "You sleep on the bare mattress—sheets are luxuries.", points: 3 },
+          { text: "You get up, remake the bed properly, because sleep quality matters.", points: 1 },
+          { text: "You shove it back roughly and lie down before it escapes again.", points: 2 }
         ]}
       ],
       workResponsibility: [
-        { id: 'WR01', setup: "Your alarm didn't go off. You're awake now. You're also late. Very late. The kind of late where getting ready becomes a negotiation between hygiene and punctuality.", answers: [
-          { text: "You bolt out as is—appearance bows to presence; real work doesn't wait for grooming.", points: 3 },
-          { text: "You do everything anyway—shower, skincare, actual breakfast—because showing up put-together matters more than showing up on time.", points: 1 },
-          { text: "You prioritize strategically. Deodorant: yes. Hair situation: manageable. Coffee: travel mug. You're late but you're not unhinged.", points: 2 }
+        { id: 'WR01', setup: "Your alarm didn't go off. You're very late. The kind of late where getting ready becomes a negotiation between hygiene and punctuality.", answers: [
+          { text: "You bolt out as is—appearance bows to presence.", points: 3 },
+          { text: "You do everything anyway because showing up put-together matters more than on time.", points: 1 },
+          { text: "You prioritize strategically. Deodorant: yes. Hair: manageable. Coffee: travel mug.", points: 2 }
         ]},
-        { id: 'WR02', setup: "Someone at work brought donuts. There's one left. It's been there for hours. Multiple people have looked at it. Nobody has taken it. The donut is now a moral dilemma.", answers: [
-          { text: "You claim it whole—hesitation lost it for them; hunger demands action.", points: 3 },
-          { text: "You cut it in half and take half because compromise is civilization.", points: 2 },
-          { text: "You leave it because someone else might want it more, and being the person who took the last donut is a reputation you're not willing to carry.", points: 1 }
+        { id: 'WR02', setup: "Someone at work brought donuts. There's one left. It's been there for hours. The donut is now a moral dilemma.", answers: [
+          { text: "You claim it whole—hesitation lost it for them.", points: 3 },
+          { text: "You cut it in half because compromise is civilization.", points: 2 },
+          { text: "You leave it because being the person who took the last donut is a reputation.", points: 1 }
         ]},
-        { id: 'WR03', setup: "The printer is jammed. Again. You opened it. You see paper. You pulled it. Something tore. Now there's more paper and less clarity about whether you've made things better or much worse.", answers: [
-          { text: "You close it, restart it, and follow the instructions on the display because printers are sensitive creatures and brute force only creates more problems.", points: 1 },
-          { text: "You abandon it—if it prints, fine; if not, words weren't meant to be.", points: 3 },
-          { text: "You pull harder. There's paper in there and it doesn't belong. You'll get it out. Tools if necessary.", points: 2 }
+        { id: 'WR03', setup: "Someone took credit for your idea in a meeting. In front of everyone. Just restated your point like they invented thinking.", answers: [
+          { text: "You let it go and address it privately later.", points: 1 },
+          { text: "You cut in sharp: 'That's my line, well echoed.'", points: 3 },
+          { text: "You say 'glad you agree with what I mentioned earlier' loud enough to hear.", points: 2 }
         ]},
-        { id: 'WR04', setup: "You sent an email. It had a typo. A visible, obvious typo. You noticed it after you hit send. The email is now out there, imperfect, forever.", answers: [
-          { text: "You fire off another with a bolder error—now it's a signature style, not a slip.", points: 3 },
-          { text: "You ignore it. Everyone makes typos. If they can't figure out what you meant from context, that's their problem.", points: 2 },
-          { text: "You send a quick follow-up correcting the typo because clarity matters and you'd rather own the mistake.", points: 1 }
-        ]},
-        { id: 'WR05', setup: "Someone asks what you do for work at a party. It's the question that determines how much of the conversation you'll enjoy.", answers: [
-          { text: "You invent a title—tonight, you're a whiskey taster or woodworker; facts are for resumes.", points: 3 },
-          { text: "You answer honestly and try to make it interesting because your job is part of your life and most people are just making conversation.", points: 1 },
-          { text: "You give the short version and redirect by asking what they do, because deflecting with genuine interest is social judo.", points: 2 }
-        ]},
-        { id: 'WR06', setup: "You're in a job interview. They ask where you see yourself in five years. You don't know where you see yourself next week. The answer matters. Your brain is empty.", answers: [
-          { text: "You declare 'mastering this role or forging my own path'—futures aren't predicted, they're carved.", points: 3 },
-          { text: "You give a thoughtful, generic answer about growth, learning, and contributing to the team because interviews are performances.", points: 1 },
-          { text: "You answer honestly, somewhat, mentioning that you're focused on the present while staying open to opportunity.", points: 2 }
-        ]},
-        { id: 'WR07', setup: "Someone took credit for your idea in a meeting. In front of everyone. They didn't even pause. Just restated your point like they invented thinking.", answers: [
-          { text: "You let it go for now and plan to address it privately later because public conflict rarely ends well.", points: 1 },
-          { text: "You cut in sharp: 'That's my line, well echoed'—ideas have owners, claim yours without apology.", points: 3 },
-          { text: "You say 'glad you agree with what I mentioned earlier' loud enough for the room to hear.", points: 2 }
-        ]},
-        { id: 'WR08', setup: "You're at a work event. Someone who outranks you is very drunk. They're telling you things. Personal things. Things that change how you'll see them on Monday.", answers: [
-          { text: "You file it away—not for leverage, for truth; knowledge is a tool, wield it wisely.", points: 3 },
-          { text: "You listen, nod, and forget everything tomorrow because discretion is valuable.", points: 1 },
-          { text: "You steer them toward water, a seat, and a safer topic because this isn't good for either of you.", points: 2 }
-        ]},
-        { id: 'WR09', setup: "Your meeting starts in thirty seconds. Your camera is off. You are dressed for comfort, not leadership.", answers: [
-          { text: "You turn the camera on, sit up straight, and commit to looking employed.", points: 1 },
-          { text: "You leave it off and participate verbally. Presence is a mindset.", points: 2 },
-          { text: "You stay muted and let the meeting happen around you.", points: 3 }
-        ]},
-        { id: 'WR10', setup: "Someone messages: 'Hey, quick call?' There is no context. There is never context.", answers: [
+        { id: 'WR04', setup: "Someone messages: 'Hey, quick call?' There is no context. There is never context.", answers: [
           { text: "You ask what it's about before agreeing.", points: 1 },
           { text: "You don't respond until the problem solves itself.", points: 3 },
           { text: "You say yes and prepare for whatever this becomes.", points: 2 }
-        ]},
-        { id: 'WR11', setup: "You are fifteen minutes into a meeting that has produced nothing new.", answers: [
-          { text: "You mentally clock out and observe the process like a sociologist.", points: 3 },
-          { text: "You stay engaged and take notes anyway.", points: 1 },
-          { text: "You multitask quietly and wait it out.", points: 2 }
-        ]},
-        { id: 'WR12', setup: "You double-booked yourself. Both meetings think they're important.", answers: [
-          { text: "You apologize and reschedule one properly.", points: 1 },
-          { text: "You choose one and let the other survive without you.", points: 3 },
-          { text: "You split time and do your best.", points: 2 }
         ]}
       ],
       socialPressure: [
-        { id: 'SP01', setup: "The pen you picked up doesn't work. You're mid-signature. The moment is now. You click it again. Nothing. Once more. A dry scratch.", answers: [
-          { text: "You etch with force—ink's optional; commitment carves its own path.", points: 3 },
-          { text: "You calmly ask for another pen because these things happen.", points: 1 },
-          { text: "You scribble aggressively on the corner of the paper until it works because pens respond to pressure.", points: 2 }
+        { id: 'SP01', setup: "Someone waved at you. You waved back. They were waving at someone behind you. Your arm is still raised, dignity falling.", answers: [
+          { text: "You pretend you were stretching. Commit to it. Full extension.", points: 1 },
+          { text: "You wave harder at nothing—starts are finishes; quitters don't wave.", points: 3 },
+          { text: "You own it with a brief laugh and shrug.", points: 2 }
         ]},
-        { id: 'SP02', setup: "Someone waved at you. You waved back. They were waving at someone behind you. You're standing there, arm still slightly raised, dignity falling like slow-motion confetti.", answers: [
-          { text: "You pretend you were stretching. You commit to the stretch. Full arm extension. Maybe a yawn.", points: 1 },
-          { text: "You wave harder, at nothing—starts are finishes; quitters don't wave.", points: 3 },
-          { text: "You own it. A brief laugh, a shrug, and you move on because this happens to everyone.", points: 2 }
+        { id: 'SP02', setup: "You've forgotten someone's name. You've met them three times. They clearly remember yours. They're walking toward you.", answers: [
+          { text: "You dub them 'chief' or 'legend'—names are chains.", points: 3 },
+          { text: "You greet them warmly without using their name.", points: 1 },
+          { text: "You confess immediately. Awkward but honest.", points: 2 }
         ]},
-        { id: 'SP03', setup: "You've forgotten someone's name. You've met them three times. They clearly remember yours. They're walking toward you right now.", answers: [
-          { text: "You dub them 'chief' or 'legend'—names are chains; nicknames forge bonds.", points: 3 },
-          { text: "You greet them warmly without using their name and hope the conversation goes nowhere that requires it.", points: 1 },
-          { text: "You confess immediately. 'I'm so sorry, I've forgotten your name.' It's awkward but honest.", points: 2 }
+        { id: 'SP03', setup: "Someone offers a handshake and squeezes. Hard. Harder than a greeting requires. They're reading your soul.", answers: [
+          { text: "You lock in, unyielding—handshakes test mettle.", points: 3 },
+          { text: "You match their pressure briefly and release.", points: 1 },
+          { text: "You squeeze back proportionally—firm but not aggressive.", points: 2 }
         ]},
-        { id: 'SP04', setup: "You just realized you've been pronouncing a word wrong. For years. Possibly decades. In front of people. Confidently. Someone just corrected you.", answers: [
-          { text: "You thank them, genuinely, because learning is a gift and you're not too proud to accept it.", points: 1 },
-          { text: "You stick to your version—words bend to speakers; tradition starts with one man.", points: 3 },
-          { text: "You nod, file it away, and vow to never say that word out loud again.", points: 2 }
+        { id: 'SP04', setup: "Someone tells you that you look tired. You're not tired. This is just your face.", answers: [
+          { text: "You fire back 'You too'—statements rebound.", points: 3 },
+          { text: "You say 'thanks, I'm fine' and move on.", points: 1 },
+          { text: "You say 'I'm not tired, this is just my face' with a defensive smile.", points: 2 }
         ]},
-        { id: 'SP05', setup: "You're at a party. You don't know many people. Someone is talking to you, but you can't hear them over the music. You've already said 'what?' twice.", answers: [
-          { text: "You bail to the bar—drinks speak clearer than shouts; escape's an art.", points: 3 },
-          { text: "You nod, smile, and hope your face is doing something appropriate.", points: 1 },
-          { text: "You lean in close, cup your ear, and commit to understanding because connection matters.", points: 2 }
+        { id: 'SP05', setup: "You're playing a party game. Someone challenges you directly. Everyone is watching.", answers: [
+          { text: "You crush them utterly—games demand victors.", points: 3 },
+          { text: "You play to have fun, not to win.", points: 1 },
+          { text: "You play well but keep it light. Competitive but charming.", points: 2 }
         ]},
-        { id: 'SP06', setup: "You've just sent a text to the wrong person. The text was about them. The text was not flattering. You're watching the 'delivered' notification like it's a slow-motion car crash.", answers: [
-          { text: "You send an immediate apology, explain the mistake, and hope they understand that phones are chaos.", points: 1 },
-          { text: "You amplify it with another zinger—truth hurts, but owning it commands respect.", points: 3 },
-          { text: "You follow it up with 'sorry, wrong person' and nothing else because elaboration makes it worse.", points: 2 }
-        ]},
-        { id: 'SP07', setup: "Someone offers a handshake and squeezes. Hard. Harder than a greeting requires. They're looking into your eyes like they're trying to read your tax returns.", answers: [
-          { text: "You lock in, unyielding—this ain't release till they yield; handshakes test mettle.", points: 3 },
-          { text: "You match their pressure briefly and release because you're confident enough not to turn every hello into a referendum on worth.", points: 1 },
-          { text: "You squeeze back proportionally—firm but not aggressive—because you're not a pushover but you're also not going to injure someone over a greeting.", points: 2 }
-        ]},
-        { id: 'SP08', setup: "Someone is explaining something you already know. In detail. With enthusiasm. They're not close to finishing. Your face is doing a lot of work right now.", answers: [
-          { text: "You listen politely because their intent matters more than the content.", points: 1 },
-          { text: "You cut them off: 'I know'—light dies, but truth shines; attention's earned.", points: 3 },
-          { text: "You nod strategically, say 'right, right' at intervals, and guide them toward the end.", points: 2 }
-        ]},
-        { id: 'SP09', setup: "Someone tells you that you look tired. You're not tired. You're just existing with the face you were given. This is how you look. Apparently that look is 'tired.'", answers: [
-          { text: "You fire back 'You too'—statements rebound; let them taste their words.", points: 3 },
-          { text: "You say 'thanks, I'm fine' and move on because explaining takes more energy than accepting.", points: 1 },
-          { text: "You say 'I'm not tired, this is just my face' with a smile that's equally informative and slightly defensive.", points: 2 }
-        ]},
-        { id: 'SP10', setup: "You're playing a party game. Someone challenges you directly. Everyone is watching. It's not serious but it's also not not serious.", answers: [
-          { text: "You crush them utterly—games demand victors; mercy's for losers.", points: 3 },
-          { text: "You play to have fun, not to win, because the moment you care too much about a party game is the moment you've lost something more important.", points: 1 },
-          { text: "You play well. Strategically. You want to win but you keep it light. Competitive but charming.", points: 2 }
-        ]},
-        { id: 'SP11', setup: "A stranger compliments you. Something specific. Your jacket, your energy, your presence. You weren't expecting it.", answers: [
-          { text: "You say 'thank you, that's kind' because accepting compliments gracefully is a skill.", points: 1 },
-          { text: "You affirm 'I know'—truth acknowledged; confidence echoes.", points: 3 },
-          { text: "You deflect with a compliment back. Classic redirect. Nobody has to sit in the discomfort of receiving alone.", points: 2 }
-        ]},
-        { id: 'SP12', setup: "Someone at a party confidently states something you know is completely, provably, almost impressively wrong.", answers: [
-          { text: "You let it go because correcting strangers at parties is exhausting and being right isn't always the same as being useful.", points: 1 },
-          { text: "You dismantle it publicly, facts armed—truth bows to no crowd.", points: 3 },
-          { text: "You offer a gentle 'actually' and present the correct information with a tone that suggests you're helping.", points: 2 }
+        { id: 'SP06', setup: "Someone at a party confidently states something you know is completely, provably wrong.", answers: [
+          { text: "You let it go because being right isn't always useful.", points: 1 },
+          { text: "You dismantle it publicly, facts armed.", points: 3 },
+          { text: "You offer a gentle 'actually' with helpful tone.", points: 2 }
         ]}
       ],
       foodConsumption: [
         { id: 'FC01', setup: "There's a container in the back of the fridge. You don't remember putting it there. The lid is bulging with ambition.", answers: [
-          { text: "You devour it blind—dates are suggestions; guts conquer unknowns.", points: 3 },
+          { text: "You devour it blind—dates are suggestions.", points: 3 },
           { text: "You throw it away unopened, container and all.", points: 1 },
-          { text: "You crack it open and give it a sniff because noses exist for exactly this reason.", points: 2 }
+          { text: "You crack it open and give it a sniff.", points: 2 }
         ]},
-        { id: 'FC02', setup: "The jar won't open. You've tried twice. Your grip keeps slipping. Someone is watching from across the room. Your entire identity now depends on pickles.", answers: [
-          { text: "You run hot water over the lid because metal expands when heated and physics doesn't care about pride.", points: 1 },
-          { text: "You shatter it into a bowl—jars yield to will; contents claimed.", points: 3 },
-          { text: "You wrap it in a towel, use your whole body, and give it one genuine effort.", points: 2 }
+        { id: 'FC02', setup: "The jar won't open. Your grip keeps slipping. Someone is watching. Your entire identity now depends on pickles.", answers: [
+          { text: "You run hot water over the lid because physics doesn't care about pride.", points: 1 },
+          { text: "You shatter it into a bowl—jars yield to will.", points: 3 },
+          { text: "You wrap it in a towel and give it one genuine effort.", points: 2 }
         ]},
-        { id: 'FC03', setup: "Someone orders food 'extra spicy' and slides it toward you with a smile. This isn't generosity. This is a trap.", answers: [
-          { text: "You finish it unflinching, demand more—heat tempers; weakness flees.", points: 3 },
-          { text: "You decline because you know your limits and performing pain for entertainment isn't dignified.", points: 1 },
-          { text: "You take a bite, handle what you can, drink water if needed, and maintain composure.", points: 2 }
-        ]},
-        { id: 'FC04', setup: "Someone hands you meat from an animal you cannot identify. They're proud. They caught it. It's charred, on a stick, and has a face.", answers: [
-          { text: "You decline politely because mystery meat is how documentaries about food poisoning begin.", points: 1 },
-          { text: "You bite unquestioned—protein's protein; labels weaken the hunt.", points: 3 },
-          { text: "You ask what it is, get an answer that raises more questions, eat it anyway because refusing hospitality is rude.", points: 2 }
+        { id: 'FC03', setup: "Someone orders food 'extra spicy' and slides it toward you with a smile. This is a trap.", answers: [
+          { text: "You finish it unflinching, demand more.", points: 3 },
+          { text: "You decline because performing pain for entertainment isn't dignified.", points: 1 },
+          { text: "You take a bite, handle what you can, maintain composure.", points: 2 }
         ]}
       ],
       outdoorsAnimals: [
-        { id: 'OA01', setup: "It's raining. Steady, not heavy. Your car is forty feet away. No umbrella. Your jacket hood is decorative at best.", answers: [
-          { text: "You wait at the door and watch the radar because getting wet is step one of getting sick.", points: 1 },
-          { text: "You stride normal—rain's mere water; fear it not.", points: 3 },
-          { text: "You pull the hood up, accept it won't help, and jog to the car.", points: 2 }
+        { id: 'OA01', setup: "It's raining. Your car is forty feet away. No umbrella. Your jacket hood is decorative.", answers: [
+          { text: "You wait and watch the radar.", points: 1 },
+          { text: "You stride normal—rain's mere water.", points: 3 },
+          { text: "You pull the hood up and jog.", points: 2 }
         ]},
         { id: 'OA02', setup: "You're in the woods. There's a bear. Not close, but close enough to have an opinion about you.", answers: [
-          { text: "You back away slowly, make yourself small, and avoid eye contact.", points: 1 },
-          { text: "You advance staring—one apex rules; claim the woods.", points: 3 },
-          { text: "You make yourself big, make noise, and convince the bear you're more trouble than you're worth.", points: 2 }
+          { text: "You back away slowly, make yourself small.", points: 1 },
+          { text: "You advance staring—one apex rules.", points: 3 },
+          { text: "You make yourself big, make noise.", points: 2 }
         ]},
-        { id: 'OA03', setup: "There's a cliff. There's water below. Everyone else jumped and survived. Probably. They're down there waving at you.", answers: [
-          { text: "You climb back down the safe path because peer pressure is just pressure that happens to have friends.", points: 1 },
-          { text: "You flip back—body saves flair; destiny calls bold.", points: 3 },
-          { text: "You check the depth, take a breath, and jump feet-first because controlled risk is how you grow.", points: 2 }
-        ]},
-        { id: 'OA04', setup: "You're swimming. Something touches your leg. You don't know what it is. You didn't see it.", answers: [
-          { text: "You swim calmly toward shore because panic attracts predators.", points: 1 },
-          { text: "You grasp back—contact mutual; depths respect reach.", points: 3 },
-          { text: "You keep swimming but faster. Not panicked. Purposeful.", points: 2 }
+        { id: 'OA03', setup: "There's a cliff. Water below. Everyone else jumped. They're waving at you.", answers: [
+          { text: "You climb back down because peer pressure is just pressure with friends.", points: 1 },
+          { text: "You do a backflip—destiny calls bold.", points: 3 },
+          { text: "You check the depth and jump feet-first.", points: 2 }
         ]}
       ],
       travelPublic: [
-        { id: 'TP01', setup: "The parking spot is small. Very small. The kind of small that makes you wonder if the person who painted it has ever seen a car.", answers: [
-          { text: "You span two—lots deserve no respect; rules bend to resolve.", points: 3 },
-          { text: "You find another spot. A better spot. A spot that doesn't require you to perform geometry in public.", points: 1 },
-          { text: "You try it. Multiple angles. Multiple attempts. Some back and forth. You succeed.", points: 2 }
+        { id: 'TP01', setup: "The parking spot is small. Very small. Someone clearly never saw a car before painting it.", answers: [
+          { text: "You span two spots—lots deserve no respect.", points: 3 },
+          { text: "You find another spot that doesn't require geometry.", points: 1 },
+          { text: "You try it. Multiple angles. You succeed.", points: 2 }
         ]},
-        { id: 'TP02', setup: "Someone is standing too close to you in line. Not touching you. Just... there. In your space. Breathing your air.", answers: [
-          { text: "You say nothing, suffer in silence, and remind yourself that everyone has different cultural norms.", points: 1 },
-          { text: "You turn, stare silent—they retreat; presence conquers.", points: 3 },
-          { text: "You take a step forward. They take a step forward. You take another step. This is a slow-motion chase now.", points: 2 }
+        { id: 'TP02', setup: "Someone is standing too close in line. Not touching. Just there. Breathing your air.", answers: [
+          { text: "You suffer in silence.", points: 1 },
+          { text: "You turn, stare silent—they retreat.", points: 3 },
+          { text: "You step forward. They step forward. Slow-motion chase.", points: 2 }
         ]},
-        { id: 'TP03', setup: "You're lost. The GPS keeps saying 'recalculating' in a tone that suggests disappointment.", answers: [
-          { text: "You pull over and ask a local because humans have navigated each other home for thousands of years.", points: 1 },
-          { text: "You kill the GPS—confusion's yours, not tech's; forge ahead.", points: 3 },
-          { text: "You keep driving with confidence because all roads lead somewhere.", points: 2 }
-        ]},
-        { id: 'TP04', setup: "The plane is turbulent. Really turbulent. The kind where even the flight attendants sit down.", answers: [
-          { text: "You breathe slowly, remind yourself that turbulence is normal.", points: 1 },
-          { text: "You loosen, eyes shut—fate calls; meet it relaxed.", points: 3 },
-          { text: "You look out the window. Not because it helps, but because watching it is somehow better than imagining it.", points: 2 }
+        { id: 'TP03', setup: "You're lost. GPS keeps saying 'recalculating' with disappointment.", answers: [
+          { text: "You pull over and ask a local.", points: 1 },
+          { text: "You kill the GPS—confusion's yours, not tech's.", points: 3 },
+          { text: "You keep driving because all roads lead somewhere.", points: 2 }
         ]}
       ]
     };
@@ -1230,42 +1534,35 @@
       low: [
         "You brought a backup phone charger to a barbecue.",
         "Your safe word is 'actually, let's just talk about it.'",
-        "Somewhere, a weighted blanket is waiting for you to come home.",
+        "A weighted blanket is waiting for you somewhere.",
         "A firm handshake would require emotional preparation.",
         "Your comfort zone has a couch and a cancellation policy.",
         "You read the terms and conditions. All of them.",
         "Your fight-or-flight response is 'send a follow-up email.'",
         "You would describe yourself as 'indoorsy.'",
-        "Your texts have drafts. Multiple drafts.",
-        "You've canceled plans because of weather that turned out to be fine.",
-        "You own comfortable shoes. That's it. That's the observation."
+        "Your texts have drafts. Multiple drafts."
       ],
       mid: [
         "Competent but not memorable. Like beige, but load-bearing.",
         "You'd survive a camping trip. Probably. With complaints.",
         "Tough when it's convenient. Soft when it costs nothing.",
         "You own a toolbox. You've opened it twice.",
-        "Not soft. Not hard. The human equivalent of a firm mattress.",
+        "The human equivalent of a firm mattress.",
         "You handle problems. Eventually. With supervision.",
         "Functional. Dependable. Utterly unremarkable.",
         "Your risk tolerance is 'mild salsa.'",
-        "You're the friend people call second. And that's fine.",
-        "You have a 'go bag.' It's a tote bag with snacks.",
         "Decisive when it doesn't matter. Paralyzed when it does."
       ],
       high: [
         "You've fixed something by hitting it. It worked.",
         "Your handshake has ended conversations.",
-        "Pain is just your body making suggestions you're free to ignore.",
-        "Instructions are just opinions from people who weren't there.",
+        "Pain is just your body making suggestions.",
+        "Instructions are opinions from people who weren't there.",
         "Your backup plan is 'do the first plan harder.'",
-        "Doctors are just people with opinions. Noted.",
         "Expiration dates are corporations showing fear.",
-        "You've called something 'fine' while it was visibly on fire.",
-        "Weather reports are suggestions you've never taken personally.",
-        "You've answered 'does this hurt?' with 'define hurt.'",
-        "GPS is just someone's opinion about how you should drive.",
-        "You've won an argument by just waiting. They got tired. You didn't."
+        "You've called something 'fine' while it was on fire.",
+        "Weather reports are suggestions you've never taken.",
+        "You've won an argument by just waiting. They got tired."
       ]
     };
 
@@ -1297,18 +1594,18 @@
     }
     function saveRecent(ids) {
       const recent = getRecent();
-      const updated = [...new Set([...ids, ...recent])].slice(0, 50);
+      const updated = [...new Set([...ids, ...recent])].slice(0, 30);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     }
     function saveRecentResult(line) {
       const recent = getRecentResults();
-      const updated = [...new Set([line, ...recent])].slice(0, 20);
+      const updated = [...new Set([line, ...recent])].slice(0, 15);
       localStorage.setItem(STORAGE_RESULTS, JSON.stringify(updated));
     }
     function incrementPlays() {
       const plays = parseInt(localStorage.getItem(STORAGE_PLAYS) || '0');
       localStorage.setItem(STORAGE_PLAYS, String(plays + 1));
-      if ((plays + 1) % 8 === 0) {
+      if ((plays + 1) % 6 === 0) {
         localStorage.setItem(STORAGE_KEY, '[]');
         localStorage.setItem(STORAGE_RESULTS, '[]');
       }
@@ -1320,82 +1617,52 @@
       const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
       const filter = arr => arr.filter(q => !recent.includes(q.id));
       
-      const categories = {
-        homeLife: questionsByCategory.homeLife,
-        workResponsibility: questionsByCategory.workResponsibility,
-        socialPressure: questionsByCategory.socialPressure,
-        foodConsumption: questionsByCategory.foodConsumption,
-        outdoorsAnimals: questionsByCategory.outdoorsAnimals,
-        travelPublic: questionsByCategory.travelPublic
-      };
-      
+      const categories = { ...questionsByCategory };
       const selected = [];
       const categoryUsage = {};
-      let lastCategory = null;
-      
       Object.keys(categories).forEach(cat => categoryUsage[cat] = 0);
       
-      // First 2 questions: Home Life
-      let homeLifePool = shuffle(filter(categories.homeLife));
-      if (homeLifePool.length < 2) homeLifePool = shuffle(categories.homeLife);
-      
-      selected.push({ ...homeLifePool[0], category: 'homeLife' });
-      selected.push({ ...homeLifePool[1], category: 'homeLife' });
+      // First 2 from homeLife
+      let homePool = shuffle(filter(categories.homeLife));
+      if (homePool.length < 2) homePool = shuffle(categories.homeLife);
+      selected.push({ ...homePool[0], category: 'homeLife' });
+      selected.push({ ...homePool[1], category: 'homeLife' });
       categoryUsage.homeLife = 2;
-      lastCategory = 'homeLife';
       
-      // Remaining 8 questions
-      const otherCategories = Object.keys(categories).filter(c => c !== 'homeLife');
+      const otherCats = Object.keys(categories).filter(c => c !== 'homeLife');
+      let lastCat = 'homeLife';
       
       for (let i = 2; i < 10; i++) {
-        let availableCats = otherCategories.filter(cat => categoryUsage[cat] < 2);
+        let available = otherCats.filter(cat => categoryUsage[cat] < 2);
+        if (available.length > 1) available = available.filter(cat => cat !== lastCat);
+        if (available.length === 0) available = otherCats;
         
-        if (availableCats.length > 1 && lastCategory !== 'homeLife') {
-          availableCats = availableCats.filter(cat => cat !== lastCategory);
-        }
+        const cat = available[Math.floor(Math.random() * available.length)];
+        let pool = shuffle(filter(categories[cat]));
+        if (pool.length === 0) pool = shuffle(categories[cat]);
         
-        if (availableCats.length === 0) {
-          availableCats = otherCategories.filter(cat => categoryUsage[cat] < 2);
-        }
-        if (availableCats.length === 0) {
-          availableCats = otherCategories;
-        }
-        
-        const chosenCat = availableCats[Math.floor(Math.random() * availableCats.length)];
-        
-        let pool = shuffle(filter(categories[chosenCat]));
-        if (pool.length === 0) pool = shuffle(categories[chosenCat]);
-        
-        let question = pool.find(q => !selected.some(s => s.id === q.id));
-        if (!question) question = pool[0];
-        
-        selected.push({ ...question, category: chosenCat });
-        categoryUsage[chosenCat]++;
-        lastCategory = chosenCat;
+        let q = pool.find(q => !selected.some(s => s.id === q.id)) || pool[0];
+        selected.push({ ...q, category: cat });
+        categoryUsage[cat]++;
+        lastCat = cat;
       }
       
-      // Shuffle answers for each question AND assign display labels
       const labels = ['A', 'B', 'C'];
-      const finalQuestions = selected.map(q => {
-        const shuffledAnswers = shuffle([...q.answers]).map((a, i) => ({
-          ...a,
-          label: labels[i]
-        }));
-        return { ...q, answers: shuffledAnswers };
-      });
+      const final = selected.map(q => ({
+        ...q,
+        answers: shuffle([...q.answers]).map((a, i) => ({ ...a, label: labels[i] }))
+      }));
       
-      saveRecent(finalQuestions.map(q => q.id));
-      return finalQuestions;
+      saveRecent(final.map(q => q.id));
+      return final;
     }
 
     function getResultLine(score) {
       const bracket = score <= 13 ? 'low' : score <= 22 ? 'mid' : 'high';
       const lines = resultLines[bracket];
-      const recentResults = getRecentResults();
-      
-      let available = lines.filter(l => !recentResults.includes(l));
+      const recent = getRecentResults();
+      let available = lines.filter(l => !recent.includes(l));
       if (available.length === 0) available = lines;
-      
       const selected = available[Math.floor(Math.random() * available.length)];
       saveRecentResult(selected);
       return selected;
@@ -1403,21 +1670,37 @@
 
     // ========== RENDER ==========
     function render() {
-      document.getElementById('app').innerHTML = screens[state.screen]();
+      const app = document.getElementById('app');
+      app.innerHTML = screens[state.screen]();
+      
+      // Show/hide lava pool
+      if (state.screen === 'quiz') {
+        showLavaPool();
+      } else {
+        hideLavaPool();
+      }
+      
+      // Add title embers on home screen
+      if (state.screen === 'home') {
+        setTimeout(() => {
+          const title = document.querySelector('.forged-title');
+          if (title) createTitleEmbers(title.parentElement);
+        }, 100);
+      }
     }
 
     const screens = {
       home: () => `
         <div class="min-h-screen flex flex-col items-center justify-center p-6 screen-enter">
-          <div class="text-center max-w-md heat-shimmer">
-            <h1 class="forged-title mb-4">BUTCHOMETER</h1>
-            <p class="text-xs text-[var(--text-dim)] mb-16 tracking-[0.2em] uppercase">Ten questions. No mercy.</p>
+          <div class="text-center max-w-lg heat-shimmer relative">
+            <h1 class="forged-title mb-6">BUTCHOMETER</h1>
+            <p class="text-xs text-[var(--text-dim)] mb-16 tracking-[0.25em] uppercase">Ten questions. No mercy.</p>
             <div class="flex flex-col gap-4 max-w-xs mx-auto">
-              <button onclick="handleClick(event); selectMode('single');" class="btn py-4 px-8 rounded-lg">
-                <span class="text-sm tracking-[0.15em] text-[var(--text-primary)] font-medium">SINGLE</span>
+              <button onclick="handleClick(event); selectMode('single');" class="btn py-5 px-8 rounded-lg">
+                <span class="text-sm tracking-[0.2em] text-[var(--text-primary)] font-semibold">SINGLE</span>
               </button>
-              <button onclick="handleClick(event); selectMode('multiplayer');" class="btn py-4 px-8 rounded-lg">
-                <span class="text-sm tracking-[0.15em] text-[var(--text-primary)] font-medium">MULTIPLAYER</span>
+              <button onclick="handleClick(event); selectMode('multiplayer');" class="btn py-5 px-8 rounded-lg">
+                <span class="text-sm tracking-[0.2em] text-[var(--text-primary)] font-semibold">MULTIPLAYER</span>
               </button>
             </div>
           </div>
@@ -1427,24 +1710,24 @@
         <div class="min-h-screen p-6 screen-enter">
           <div class="max-w-md mx-auto pt-8">
             <button onclick="handleClick(event); goHome();" class="text-xs text-[var(--text-dim)] hover:text-[var(--orange)] mb-10 block tracking-wide transition-colors">← BACK</button>
-            <h2 class="text-lg mb-6 tracking-[0.1em] text-[var(--orange)] font-semibold uppercase">${state.mode === 'single' ? 'Identify Yourself' : 'Name the Accused'}</h2>
-            <div class="card rounded-lg p-6 mb-6">
+            <h2 class="text-xl mb-6 tracking-[0.12em] text-[var(--orange)] font-bold uppercase">${state.mode === 'single' ? 'Identify Yourself' : 'Name the Accused'}</h2>
+            <div class="card rounded-xl p-6 mb-6">
               ${state.playerNames.map((n, i) => `
                 <div class="flex gap-3 mb-3">
-                  <input type="text" value="${n}" oninput="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="input flex-1 rounded-lg px-4 py-3 text-sm" maxlength="12">
+                  <input type="text" value="${n}" oninput="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="input flex-1 rounded-lg px-4 py-4 text-sm" maxlength="12">
                   ${state.mode === 'multiplayer' && state.playerNames.length > 2 ? `
-                    <button onclick="handleClick(event); removePlayer(${i});" class="text-[var(--text-dim)] hover:text-[var(--orange)] px-3 transition-colors">×</button>
+                    <button onclick="handleClick(event); removePlayer(${i});" class="text-[var(--text-dim)] hover:text-[var(--orange)] px-3 transition-colors text-xl">×</button>
                   ` : ''}
                 </div>
               `).join('')}
               ${state.mode === 'multiplayer' && state.playerNames.length < 6 ? `
-                <button onclick="handleClick(event); addPlayer();" class="w-full border border-dashed border-[var(--steel-lighter)] text-[var(--text-dim)] py-3 rounded-lg text-xs hover:border-[var(--orange-dim)] hover:text-[var(--orange)] transition-colors mt-2 tracking-wide">
+                <button onclick="handleClick(event); addPlayer();" class="w-full border-2 border-dashed border-[var(--steel-lighter)] text-[var(--text-dim)] py-4 rounded-lg text-sm hover:border-[var(--orange-dim)] hover:text-[var(--orange)] transition-colors mt-2 tracking-wide font-medium">
                   + ADD PLAYER
                 </button>
               ` : ''}
             </div>
-            <button onclick="handleClick(event); startGame();" class="btn btn-primary w-full py-4 rounded-lg">
-              <span class="text-sm tracking-[0.15em] text-[var(--text-primary)] font-medium">BEGIN</span>
+            <button onclick="handleClick(event); startGame();" class="btn btn-primary w-full py-5 rounded-lg">
+              <span class="text-sm tracking-[0.2em] text-[var(--text-primary)] font-semibold">BEGIN</span>
             </button>
           </div>
         </div>`,
@@ -1452,28 +1735,36 @@
       quiz: () => {
         const q = state.sessionQuestions[state.currentQuestionIndex];
         const p = state.players[state.currentPlayerIndex];
-        const progress = ((state.currentQuestionIndex) / 10) * 100;
+        const progress = (state.currentQuestionIndex / 10) * 100;
         const qNum = state.currentQuestionIndex + 1;
         return `
-        <div class="min-h-screen p-4 md:p-6 screen-enter">
+        <div class="min-h-screen p-4 md:p-6 pb-24 screen-enter">
           <div class="max-w-2xl mx-auto pt-4">
             <div class="flex justify-between items-center mb-4">
-              <span class="text-xs text-[var(--text-dim)] tracking-wide">${p?.name || 'PLAYER'}</span>
+              <span class="text-xs text-[var(--text-dim)] tracking-wide font-medium">${p?.name || 'PLAYER'}</span>
               <span class="question-number text-[var(--orange)]">QUESTION ${qNum} OF 10</span>
             </div>
             <div class="progress-track h-2 rounded-full mb-8">
               <div class="progress-fill h-full rounded-full" style="width: ${progress}%"></div>
             </div>
-            <div class="card rounded-lg p-6 mb-6 heavy-in">
+            <div class="card rounded-xl p-6 mb-6 heavy-in">
               <p class="text-base md:text-lg leading-relaxed">${q?.setup}</p>
             </div>
-            <div class="space-y-3">
+            <div class="space-y-3" id="answerContainer">
               ${q?.answers.map((a, i) => `
-                <button onclick="handleAnswerClick(event, ${a.points});" class="answer w-full rounded-lg p-4 text-left slide-in flex items-start" style="animation-delay: ${i * 0.08}s">
+                <button 
+                  data-points="${a.points}" 
+                  data-label="${a.label}"
+                  onclick="handleAnswerClick(event, ${a.points});" 
+                  onmouseenter="createHoverSparks(this)"
+                  class="answer w-full rounded-xl p-4 text-left slide-in flex items-start" 
+                  style="animation-delay: ${i * 0.08}s"
+                >
                   <span class="answer-label">${a.label}</span>
                   <span class="text-sm md:text-base leading-relaxed text-[var(--text-primary)] flex-1">${a.text}</span>
                 </button>`).join('')}
             </div>
+            <p class="text-center text-xs text-[var(--text-muted)] mt-6">Press A, B, or C to answer</p>
           </div>
         </div>`;
       },
@@ -1484,35 +1775,35 @@
         return `
         <div class="min-h-screen flex flex-col items-center justify-center p-6 screen-enter">
           <div class="text-center max-w-md">
-            <p class="text-xs text-[var(--text-dim)] mb-8 tracking-[0.2em] uppercase">${p?.name}</p>
-            <div class="relative w-48 h-48 mx-auto mb-10">
+            <p class="text-xs text-[var(--text-dim)] mb-8 tracking-[0.25em] uppercase font-medium">${p?.name}</p>
+            <div class="relative w-52 h-52 mx-auto mb-10">
               <div class="gauge w-full h-full rounded-full ${state.measuring ? 'gauge-spin' : ''}"></div>
               ${!state.measuring ? `
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-6xl font-bold score-display score-reveal">${score}</span>
+                  <span class="text-7xl font-bold score-display score-reveal">${score}</span>
                 </div>
               ` : ''}
             </div>
             ${state.showResult ? `
               <div class="heavy-in">
-                <p class="text-lg mb-8 leading-relaxed max-w-sm mx-auto">${p?.resultLine}</p>
+                <p class="text-lg mb-8 leading-relaxed max-w-sm mx-auto">"${p?.resultLine}"</p>
                 <div class="flex flex-col gap-3 max-w-xs mx-auto">
                   ${state.mode === 'multiplayer' && state.currentPlayerIndex < state.players.length - 1 
-                    ? `<button onclick="handleClick(event); nextPlayer();" class="btn btn-primary py-4 px-8 rounded-lg text-sm tracking-[0.15em] font-medium">NEXT PLAYER</button>`
+                    ? `<button onclick="handleClick(event); nextPlayer();" class="btn btn-primary py-5 px-8 rounded-lg text-sm tracking-[0.15em] font-semibold">NEXT PLAYER</button>`
                     : state.mode === 'multiplayer' 
-                    ? `<button onclick="handleClick(event); showLeaderboard();" class="btn btn-primary py-4 px-8 rounded-lg text-sm tracking-[0.15em] font-medium">FINAL VERDICT</button>`
+                    ? `<button onclick="handleClick(event); showLeaderboard();" class="btn btn-primary py-5 px-8 rounded-lg text-sm tracking-[0.15em] font-semibold">FINAL VERDICT</button>`
                     : `
-                      <button onclick="handleClick(event); shareScore(${score}, '${p?.resultLine?.replace(/'/g, "\\'")}');" class="btn btn-primary py-4 px-8 rounded-lg share-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16,6 12,2 8,6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                        <span class="text-sm tracking-[0.1em] font-medium">SHARE SCORE</span>
+                      <button onclick="handleClick(event); shareScore(${score}, '${p?.resultLine?.replace(/'/g, "\\'")}');" class="btn btn-primary py-5 px-8 rounded-lg share-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16,6 12,2 8,6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        <span class="text-sm tracking-[0.12em] font-semibold">SHARE SCORE</span>
                       </button>
-                      <button onclick="handleClick(event); goHome();" class="btn py-4 px-8 rounded-lg text-sm tracking-[0.15em] font-medium">PLAY AGAIN</button>
+                      <button onclick="handleClick(event); goHome();" class="btn py-5 px-8 rounded-lg text-sm tracking-[0.15em] font-semibold">PLAY AGAIN</button>
                     `}
                 </div>
-                <p class="text-xs text-[var(--text-muted)] mt-6">Send this to a friend. Let's see how butch they are.</p>
+                <p class="text-xs text-[var(--text-muted)] mt-8">Send this to a friend. See how butch they are.</p>
               </div>
             ` : `
-              <p class="text-sm text-[var(--text-dim)] tracking-[0.15em]">MEASURING...</p>
+              <p class="text-sm text-[var(--text-dim)] tracking-[0.2em] font-medium">MEASURING...</p>
             `}
           </div>
         </div>`;
@@ -1523,20 +1814,20 @@
         return `
         <div class="min-h-screen p-6 screen-enter">
           <div class="max-w-md mx-auto pt-8">
-            <h2 class="text-xl mb-8 text-center tracking-[0.15em] text-[var(--orange)] font-semibold">FINAL VERDICT</h2>
+            <h2 class="text-2xl mb-8 text-center tracking-[0.15em] text-[var(--orange)] font-bold">FINAL VERDICT</h2>
             <div class="space-y-3 mb-10">
               ${sorted.map((p, i) => `
-                <div class="plaque rounded-lg p-4 flex items-center gap-4 slide-in" style="animation-delay: ${i * 0.1}s">
-                  <span class="text-sm text-[var(--text-muted)] w-8 font-semibold">${i + 1}.</span>
+                <div class="plaque rounded-xl p-5 flex items-center gap-4 slide-in" style="animation-delay: ${i * 0.1}s">
+                  <span class="text-lg text-[var(--text-muted)] w-8 font-bold">${i + 1}.</span>
                   <div class="flex-1 overflow-hidden">
-                    <p class="text-sm text-[var(--text-primary)] tracking-wide font-medium">${p.name}</p>
+                    <p class="text-sm text-[var(--text-primary)] tracking-wide font-semibold">${p.name}</p>
                     <p class="text-xs text-[var(--text-dim)] truncate mt-1">${p.resultLine}</p>
                   </div>
-                  <span class="text-2xl score-display font-bold">${p.score}</span>
+                  <span class="text-3xl score-display font-bold">${p.score}</span>
                 </div>
               `).join('')}
             </div>
-            <button onclick="handleClick(event); goHome();" class="btn w-full py-4 rounded-lg text-sm tracking-[0.15em] font-medium">DONE</button>
+            <button onclick="handleClick(event); goHome();" class="btn w-full py-5 rounded-lg text-sm tracking-[0.15em] font-semibold">DONE</button>
           </div>
         </div>`;
       }
@@ -1546,21 +1837,54 @@
     function handleClick(event) {
       initAudio();
       playSound('thunk');
+      if (event) createSparks(event.clientX, event.clientY, 6);
     }
 
     function handleAnswerClick(event, points) {
       initAudio();
       
-      // Determine sound based on points
-      const soundType = points === 1 ? 'safe' : points === 2 ? 'mid' : 'unhinged';
-      playSound(soundType);
+      // Sound based on points
+      const intensity = points === 1 ? 0.4 : points === 2 ? 0.7 : 1.0;
+      playSound('eruption', intensity);
       
-      // Create lava splash at click position
-      createLavaSplash(event.clientX, event.clientY);
+      // Lava eruption
+      createLavaEruption(points);
       
-      // Process answer
+      // Local sparks
+      createSparks(event.clientX, event.clientY, 8);
+      
+      // Process
       answer(points);
     }
+
+    // ========== KEYBOARD SUPPORT ==========
+    document.addEventListener('keydown', (e) => {
+      if (state.screen !== 'quiz') return;
+      
+      const key = e.key.toUpperCase();
+      if (['A', 'B', 'C'].includes(key)) {
+        const container = document.getElementById('answerContainer');
+        if (!container) return;
+        
+        const buttons = container.querySelectorAll('button');
+        const index = key.charCodeAt(0) - 65; // A=0, B=1, C=2
+        
+        if (buttons[index]) {
+          const points = parseInt(buttons[index].dataset.points);
+          initAudio();
+          
+          // Fake click position at center
+          const fakeEvent = { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 };
+          
+          const intensity = points === 1 ? 0.4 : points === 2 ? 0.7 : 1.0;
+          playSound('eruption', intensity);
+          createLavaEruption(points);
+          createSparks(fakeEvent.clientX, fakeEvent.clientY, 8);
+          
+          answer(points);
+        }
+      }
+    });
 
     // ========== GAME FUNCTIONS ==========
     function selectMode(mode) {
@@ -1605,15 +1929,17 @@
         state.measuring = true;
         state.showResult = false;
         state.screen = 'results';
-        playSound('whoosh');
+        playSound('spinStart');
         render();
         
         setTimeout(() => {
           state.measuring = false;
           playSound('impact');
+          screenShake('medium');
           render();
           setTimeout(() => {
             playSound('lock');
+            screenShake('tiny');
             state.showResult = true;
             render();
           }, 400);
@@ -1635,6 +1961,7 @@
     function showLeaderboard() {
       state.screen = 'leaderboard';
       playSound('impact');
+      screenShake('small');
       render();
     }
 
@@ -1643,7 +1970,6 @@
     createEmbers();
     render();
     
-    // Initialize audio on first interaction
     document.addEventListener('click', () => initAudio(), { once: true });
     document.addEventListener('touchstart', () => initAudio(), { once: true });
   </script>
