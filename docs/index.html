@@ -19,25 +19,28 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --orange: #d4621a;
-      --orange-glow: #ff6b1a;
-      --orange-hot: #ff8534;
-      --orange-dim: #7a3a10;
+      --orange: #e8701f;
+      --orange-glow: #ff7a1a;
+      --orange-hot: #ff9944;
+      --orange-dim: #a85215;
       --ember: #ff4500;
-      --lava-bright: #ff5500;
-      --lava-mid: #cc3300;
-      --lava-dark: #661a00;
-      --black: #080706;
-      --steel-darkest: #0c0b0a;
-      --steel-dark: #131211;
-      --steel-mid: #1a1918;
-      --steel-light: #242220;
-      --steel-lighter: #322f2c;
-      --steel-edge: #433f3a;
-      --steel-highlight: #5a5550;
-      --text-primary: #c8c4bc;
-      --text-dim: #6a665f;
-      --text-muted: #3a3835;
+      --lava-white: #fffaf0;
+      --lava-yellow: #ffdd44;
+      --lava-orange: #ff8800;
+      --lava-red: #dd4400;
+      --lava-deep: #881100;
+      --black: #0a0908;
+      --steel-darkest: #0e0d0c;
+      --steel-dark: #161514;
+      --steel-mid: #1e1c1a;
+      --steel-light: #282624;
+      --steel-lighter: #363330;
+      --steel-edge: #484440;
+      --steel-highlight: #666058;
+      --steel-bright: #888078;
+      --text-primary: #d4d0c8;
+      --text-dim: #7a756d;
+      --text-muted: #454240;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -48,32 +51,26 @@
       background: var(--black);
       min-height: 100vh;
       color: var(--text-primary);
-      line-height: 1.65;
+      line-height: 1.6;
     }
 
     /* ========== SCREEN SHAKE ========== */
-    .shake-small {
-      animation: shakeSmall 0.15s ease-out;
-    }
-    .shake-medium {
-      animation: shakeMedium 0.2s ease-out;
-    }
-    .shake-tiny {
-      animation: shakeTiny 0.1s ease-out;
-    }
+    .shake-small { animation: shakeSmall 0.15s ease-out; }
+    .shake-medium { animation: shakeMedium 0.2s ease-out; }
+    .shake-tiny { animation: shakeTiny 0.1s ease-out; }
     
     @keyframes shakeSmall {
       0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(-4px, 2px); }
-      50% { transform: translate(3px, -3px); }
+      25% { transform: translate(-3px, 2px); }
+      50% { transform: translate(3px, -2px); }
       75% { transform: translate(-2px, 1px); }
     }
     @keyframes shakeMedium {
       0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-6px, 3px); }
-      40% { transform: translate(5px, -5px); }
-      60% { transform: translate(-4px, 2px); }
-      80% { transform: translate(3px, -2px); }
+      20% { transform: translate(-5px, 3px); }
+      40% { transform: translate(4px, -4px); }
+      60% { transform: translate(-3px, 2px); }
+      80% { transform: translate(2px, -1px); }
     }
     @keyframes shakeTiny {
       0%, 100% { transform: translate(0, 0); }
@@ -85,14 +82,8 @@
       position: fixed;
       inset: 0;
       background: 
-        repeating-linear-gradient(
-          -45deg,
-          transparent 0px,
-          transparent 1px,
-          rgba(255,255,255,0.015) 1px,
-          rgba(255,255,255,0.015) 2px
-        ),
-        radial-gradient(ellipse at 50% 120%, rgba(212,98,26,0.1) 0%, transparent 60%);
+        repeating-linear-gradient(-45deg, transparent 0px, transparent 1px, rgba(255,255,255,0.012) 1px, rgba(255,255,255,0.012) 2px),
+        radial-gradient(ellipse at 50% 100%, rgba(255,100,20,0.08) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
     }
@@ -102,8 +93,8 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 350px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(212,98,26,0.15) 0%, rgba(255,69,0,0.06) 30%, transparent 70%);
+      height: 400px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(255,120,20,0.2) 0%, rgba(255,60,0,0.08) 30%, transparent 60%);
       pointer-events: none;
       z-index: 0;
       animation: furnacePulse 3s ease-in-out infinite;
@@ -111,7 +102,7 @@
 
     @keyframes furnacePulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
+      50% { opacity: 0.7; }
     }
 
     /* ========== EMBER PARTICLES ========== */
@@ -130,232 +121,197 @@
       background: var(--ember);
       border-radius: 50%;
       opacity: 0;
-      box-shadow: 0 0 6px 2px rgba(255,69,0,0.7), 0 0 12px 4px rgba(255,107,26,0.4);
-      animation: emberFloat 7s ease-out infinite;
+      box-shadow: 0 0 6px 2px rgba(255,69,0,0.8), 0 0 12px 4px rgba(255,100,20,0.4);
+      animation: emberFloat 8s ease-out infinite;
     }
 
     @keyframes emberFloat {
       0% { opacity: 0; transform: translateY(100vh) scale(0.5); }
       10% { opacity: 1; }
-      90% { opacity: 0.6; }
+      90% { opacity: 0.5; }
       100% { opacity: 0; transform: translateY(-20vh) translateX(var(--drift, 30px)) scale(0.2); }
     }
 
-    /* ========== FORGED STEEL TITLE - BOLDER ========== */
+    /* ========== FORGED TITLE - BOLD & READABLE ========== */
     .forged-title {
       font-family: 'IBM Plex Mono', monospace;
       font-weight: 700;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      font-size: clamp(3rem, 12vw, 5rem);
+      font-size: clamp(2.8rem, 11vw, 4.5rem);
       position: relative;
       display: inline-block;
-      line-height: 1;
+      line-height: 1.1;
       
-      /* Hammered/embossed steel effect */
-      background: linear-gradient(
-        180deg,
-        var(--steel-edge) 0%,
-        var(--steel-highlight) 20%,
-        var(--steel-lighter) 40%,
-        var(--steel-edge) 60%,
-        var(--steel-mid) 80%,
-        var(--steel-dark) 100%
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      
-      /* Deep emboss shadows */
+      /* Bright readable steel */
+      color: #c0b8a8;
       text-shadow: 
+        0 0 40px rgba(255,120,20,0.5),
+        0 0 80px rgba(255,80,0,0.3),
         0 2px 0 rgba(0,0,0,0.8),
-        0 -1px 0 rgba(255,255,255,0.1),
-        0 4px 8px rgba(0,0,0,0.9),
-        0 8px 16px rgba(0,0,0,0.6);
-      
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.9));
+        0 4px 8px rgba(0,0,0,0.6);
     }
 
-    /* Internal glow - heated metal effect */
+    /* Hot glow overlay */
     .forged-title::before {
       content: 'BUTCHOMETER';
       position: absolute;
       left: 0;
       top: 0;
-      background: linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(255,80,0,0.5) 25%,
-        rgba(255,120,20,0.7) 50%,
-        rgba(255,80,0,0.5) 75%,
-        transparent 100%
+      background: linear-gradient(180deg, 
+        rgba(255,200,150,0.1) 0%,
+        rgba(255,140,50,0.4) 40%,
+        rgba(255,100,20,0.5) 60%,
+        rgba(255,140,50,0.4) 80%,
+        rgba(255,200,150,0.1) 100%
       );
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: internalGlow 2s ease-in-out infinite;
-      filter: blur(1px);
+      animation: titleGlow 2.5s ease-in-out infinite;
     }
 
-    /* Aggressive pulsing underline bar */
+    /* Molten underline */
     .forged-title::after {
       content: '';
       position: absolute;
-      left: -5%;
-      right: -5%;
-      bottom: -12px;
-      height: 6px;
+      left: 0;
+      right: 0;
+      bottom: -10px;
+      height: 5px;
       background: linear-gradient(90deg, 
         transparent 0%, 
-        var(--lava-dark) 10%,
-        var(--orange) 30%, 
-        var(--orange-hot) 50%, 
-        var(--orange) 70%,
-        var(--lava-dark) 90%,
+        var(--lava-red) 15%,
+        var(--lava-orange) 35%, 
+        var(--lava-yellow) 50%, 
+        var(--lava-orange) 65%,
+        var(--lava-red) 85%,
         transparent 100%
       );
       border-radius: 3px;
       box-shadow: 
-        0 0 20px var(--orange), 
-        0 0 40px rgba(255,69,0,0.6),
-        0 0 60px rgba(255,69,0,0.3),
-        0 2px 4px rgba(0,0,0,0.8);
-      animation: emberBarAggressive 1.5s ease-in-out infinite;
+        0 0 20px var(--lava-orange), 
+        0 0 40px rgba(255,100,0,0.6),
+        0 0 60px rgba(255,60,0,0.3);
+      animation: underlineGlow 2s ease-in-out infinite;
     }
 
-    @keyframes internalGlow {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 0.9; }
+    @keyframes titleGlow {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
 
-    @keyframes emberBarAggressive {
+    @keyframes underlineGlow {
       0%, 100% { 
-        opacity: 0.7; 
-        transform: scaleX(0.92);
-        box-shadow: 0 0 15px var(--orange), 0 0 30px rgba(255,69,0,0.4);
+        opacity: 0.8;
+        box-shadow: 0 0 15px var(--lava-orange), 0 0 30px rgba(255,100,0,0.4);
       }
       50% { 
-        opacity: 1; 
-        transform: scaleX(1.02);
-        box-shadow: 0 0 30px var(--orange-hot), 0 0 60px rgba(255,69,0,0.7), 0 0 80px rgba(255,69,0,0.4);
+        opacity: 1;
+        box-shadow: 0 0 25px var(--lava-yellow), 0 0 50px rgba(255,100,0,0.7), 0 0 80px rgba(255,60,0,0.4);
       }
     }
 
-    /* Heat shimmer rising from title */
-    .heat-shimmer {
-      position: relative;
-    }
-    .heat-shimmer::before {
-      content: '';
-      position: absolute;
-      left: -30px;
-      right: -30px;
-      top: -60px;
-      bottom: -20px;
-      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      opacity: 0.04;
-      pointer-events: none;
-      animation: shimmerRise 0.12s steps(4) infinite;
-      mask-image: linear-gradient(to top, rgba(0,0,0,0.3), transparent 70%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.3), transparent 70%);
-    }
-
-    @keyframes shimmerRise {
-      0% { transform: translateY(0); }
-      25% { transform: translateY(-2px) translateX(1px); }
-      50% { transform: translateY(-1px) translateX(-1px); }
-      75% { transform: translateY(-3px); }
-      100% { transform: translateY(0); }
-    }
-
-    /* Title ember particles */
-    .title-embers {
-      position: absolute;
-      inset: -40px;
-      pointer-events: none;
-      overflow: visible;
-    }
-    .title-ember {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: var(--orange-hot);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--orange), 0 0 16px rgba(255,69,0,0.5);
-      animation: titleEmberFloat 3s ease-out infinite;
-    }
-    @keyframes titleEmberFloat {
-      0% { opacity: 0; transform: translateY(20px) scale(0.5); }
-      20% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(-80px) translateX(var(--drift)) scale(0.2); }
-    }
-
-    /* ========== LAVA POOL ========== */
+    /* ========== LAVA POOL - ACTUAL MOLTEN LAVA ========== */
     .lava-pool {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 70px;
+      height: 100px;
       z-index: 50;
       pointer-events: none;
-      overflow: hidden;
+      overflow: visible;
     }
-    
-    .lava-pool-surface {
-      position: absolute;
-      bottom: 0;
-      left: -10%;
-      right: -10%;
-      height: 100%;
-      background: linear-gradient(to bottom,
-        rgba(255,100,0,0.9) 0%,
-        rgba(204,51,0,0.95) 30%,
-        rgba(153,34,0,1) 60%,
-        rgba(102,26,0,1) 100%
-      );
-      box-shadow: 
-        0 -10px 40px rgba(255,69,0,0.4),
-        0 -20px 60px rgba(255,50,0,0.2),
-        inset 0 5px 20px rgba(255,150,50,0.3);
-      animation: lavaSurfaceWave 4s ease-in-out infinite;
-    }
-    
-    @keyframes lavaSurfaceWave {
-      0%, 100% { transform: translateY(0) scaleY(1); }
-      50% { transform: translateY(-3px) scaleY(1.05); }
-    }
-    
+
     .lava-pool-glow {
       position: absolute;
       bottom: 0;
-      left: 0;
-      right: 0;
-      height: 150px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(255,69,0,0.3) 0%, transparent 70%);
+      left: -20%;
+      right: -20%;
+      height: 250px;
+      background: radial-gradient(ellipse at 50% 100%, 
+        rgba(255,150,50,0.4) 0%, 
+        rgba(255,80,0,0.2) 30%,
+        transparent 70%
+      );
       pointer-events: none;
     }
-    
-    /* Lava bubbles */
+
+    .lava-pool-surface {
+      position: absolute;
+      bottom: 0;
+      left: -5%;
+      right: -5%;
+      height: 100%;
+      background: 
+        radial-gradient(ellipse at 30% 20%, rgba(255,255,200,0.4) 0%, transparent 30%),
+        radial-gradient(ellipse at 70% 40%, rgba(255,255,150,0.3) 0%, transparent 25%),
+        radial-gradient(ellipse at 50% 30%, rgba(255,200,100,0.5) 0%, transparent 40%),
+        linear-gradient(to bottom,
+          rgba(255,220,100,0.95) 0%,
+          rgba(255,160,50,1) 15%,
+          rgba(255,100,20,1) 35%,
+          rgba(200,60,10,1) 60%,
+          rgba(120,30,5,1) 80%,
+          rgba(60,15,5,1) 100%
+        );
+      box-shadow: 
+        inset 0 10px 30px rgba(255,255,200,0.3),
+        inset 0 -10px 40px rgba(0,0,0,0.5),
+        0 -5px 30px rgba(255,150,50,0.5),
+        0 -15px 60px rgba(255,100,20,0.3);
+      animation: lavaSurface 3s ease-in-out infinite;
+    }
+
+    @keyframes lavaSurface {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(1.03) translateY(-2px); }
+    }
+
+    /* Lava surface highlights - moving hot spots */
+    .lava-pool-surface::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(255,255,200,0.5) 0%, transparent 20%),
+        radial-gradient(ellipse at 80% 30%, rgba(255,255,180,0.4) 0%, transparent 15%),
+        radial-gradient(ellipse at 50% 60%, rgba(255,200,100,0.3) 0%, transparent 25%);
+      animation: lavaHotspots 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes lavaHotspots {
+      0% { transform: translateX(-5%); opacity: 0.7; }
+      100% { transform: translateX(5%); opacity: 1; }
+    }
+
+    /* Bubbles */
     .lava-bubble {
       position: absolute;
-      bottom: 10px;
-      width: 8px;
-      height: 8px;
-      background: radial-gradient(circle, rgba(255,200,100,0.9), rgba(255,100,0,0.7));
+      bottom: 30px;
       border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, 
+        rgba(255,255,220,0.9), 
+        rgba(255,200,100,0.8) 40%,
+        rgba(255,120,20,0.6)
+      );
+      box-shadow: 
+        0 0 10px rgba(255,200,100,0.8),
+        0 0 20px rgba(255,150,50,0.5),
+        inset 0 -3px 6px rgba(200,80,0,0.4);
       animation: lavaBubble 2s ease-in-out infinite;
-      box-shadow: 0 0 10px rgba(255,150,50,0.6);
     }
     
     @keyframes lavaBubble {
       0% { transform: translateY(0) scale(0.3); opacity: 0; }
-      30% { opacity: 0.8; }
-      60% { transform: translateY(-25px) scale(1); opacity: 0.9; }
-      100% { transform: translateY(-35px) scale(0.5); opacity: 0; }
+      20% { opacity: 1; }
+      50% { transform: translateY(-30px) scale(1); opacity: 0.9; }
+      80% { opacity: 0.6; }
+      100% { transform: translateY(-45px) scale(0.6); opacity: 0; }
     }
 
-    /* Lava eruption particles */
+    /* Eruption particles */
     .lava-particle {
       position: fixed;
       border-radius: 50%;
@@ -363,36 +319,38 @@
       z-index: 100;
     }
 
-    /* Pool flash on eruption */
-    .lava-pool-flash {
-      animation: poolFlash 0.3s ease-out;
-    }
-    @keyframes poolFlash {
-      0% { filter: brightness(2); }
-      100% { filter: brightness(1); }
-    }
-
-    /* ========== SPARK PARTICLES ========== */
-    .spark {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: var(--orange-hot);
+    .lava-particle-trail {
+      position: fixed;
       border-radius: 50%;
       pointer-events: none;
-      box-shadow: 0 0 6px var(--orange), 0 0 12px rgba(255,150,50,0.5);
+      z-index: 99;
+      filter: blur(2px);
+    }
+
+    /* Pool flash */
+    .lava-pool-flash .lava-pool-surface {
+      animation: poolFlash 0.4s ease-out;
+    }
+    @keyframes poolFlash {
+      0% { 
+        filter: brightness(2.5) saturate(1.2);
+        box-shadow: 
+          inset 0 10px 30px rgba(255,255,255,0.6),
+          0 -20px 80px rgba(255,200,100,0.8),
+          0 -40px 120px rgba(255,150,50,0.5);
+      }
+      100% { filter: brightness(1) saturate(1); }
     }
 
     /* ========== BUTTONS ========== */
     .btn {
       position: relative;
-      background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 40%, var(--steel-dark) 100%);
+      background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 50%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
       border-bottom: 3px solid var(--black);
       box-shadow: 
-        0 4px 16px rgba(0,0,0,0.7),
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        inset 0 -2px 4px rgba(0,0,0,0.2);
+        0 4px 16px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.06);
       transition: all 0.1s ease;
       cursor: pointer;
       overflow: hidden;
@@ -402,24 +360,19 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%);
       pointer-events: none;
     }
 
     .btn:hover {
-      background: linear-gradient(180deg, var(--steel-lighter) 0%, var(--steel-light) 40%, var(--steel-mid) 100%);
-      box-shadow: 
-        0 4px 20px rgba(0,0,0,0.8),
-        0 0 20px rgba(212,98,26,0.15),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, var(--steel-lighter) 0%, var(--steel-light) 50%, var(--steel-mid) 100%);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.7), 0 0 20px rgba(255,120,20,0.15);
     }
 
     .btn:active {
       transform: translateY(3px);
       border-bottom-width: 1px;
-      box-shadow: 
-        0 1px 4px rgba(0,0,0,0.6),
-        inset 0 2px 6px rgba(0,0,0,0.4);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.5), inset 0 2px 6px rgba(0,0,0,0.3);
     }
 
     .btn:focus-visible {
@@ -430,38 +383,24 @@
     .btn-primary {
       border-color: var(--orange-dim);
       box-shadow: 
-        0 4px 16px rgba(0,0,0,0.7),
-        0 0 0 1px rgba(212,98,26,0.4),
-        0 0 30px rgba(212,98,26,0.15),
-        inset 0 1px 0 rgba(255,255,255,0.06);
+        0 4px 16px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(255,120,20,0.3),
+        0 0 30px rgba(255,100,20,0.15);
     }
 
     .btn-primary:hover {
       box-shadow: 
-        0 4px 24px rgba(212,98,26,0.35),
-        0 0 0 1px rgba(212,98,26,0.6),
-        0 0 40px rgba(212,98,26,0.25),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+        0 4px 24px rgba(255,100,20,0.3),
+        0 0 0 1px rgba(255,120,20,0.5),
+        0 0 40px rgba(255,100,20,0.25);
     }
 
-    /* ========== CARDS & PANELS ========== */
+    /* ========== CARDS ========== */
     .card {
       position: relative;
       background: linear-gradient(180deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
-      box-shadow: 
-        0 8px 40px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        inset 0 -1px 0 rgba(0,0,0,0.3);
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(90deg, transparent 0px, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
-      pointer-events: none;
-      border-radius: inherit;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     /* ========== INPUTS ========== */
@@ -470,17 +409,14 @@
       border: 2px solid var(--steel-mid);
       border-top-color: var(--black);
       color: var(--text-primary);
-      box-shadow: inset 0 3px 8px rgba(0,0,0,0.5);
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.4);
       transition: all 0.2s ease;
     }
 
     .input:focus {
       outline: none;
       border-color: var(--orange-dim);
-      box-shadow: 
-        inset 0 3px 8px rgba(0,0,0,0.5),
-        0 0 0 3px rgba(212,98,26,0.25),
-        0 0 25px rgba(212,98,26,0.2);
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.4), 0 0 0 3px rgba(255,120,20,0.2), 0 0 20px rgba(255,100,20,0.15);
     }
 
     .input::placeholder { color: var(--text-muted); }
@@ -490,7 +426,7 @@
       position: relative;
       background: linear-gradient(180deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
-      border-left: 5px solid var(--steel-lighter);
+      border-left: 4px solid var(--steel-edge);
       transition: all 0.15s ease;
       cursor: pointer;
       overflow: visible;
@@ -503,19 +439,17 @@
       top: 0;
       bottom: 0;
       width: 0;
-      background: linear-gradient(90deg, rgba(212,98,26,0.2), transparent);
+      background: linear-gradient(90deg, rgba(255,120,20,0.15), transparent);
       transition: width 0.2s ease;
     }
 
     .answer:hover {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 100%);
       transform: translateX(4px);
-      border-left-color: var(--orange-dim);
+      border-left-color: var(--orange);
     }
 
-    .answer:hover::before {
-      width: 120px;
-    }
+    .answer:hover::before { width: 100px; }
 
     .answer:active {
       background: var(--steel-dark);
@@ -531,8 +465,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       background: var(--steel-darkest);
       border: 2px solid var(--steel-edge);
       border-radius: 6px;
@@ -540,7 +474,7 @@
       font-size: 0.8rem;
       color: var(--text-dim);
       flex-shrink: 0;
-      margin-right: 14px;
+      margin-right: 12px;
       transition: all 0.15s ease;
     }
 
@@ -548,21 +482,20 @@
       background: var(--steel-mid);
       border-color: var(--orange);
       color: var(--orange);
-      box-shadow: 0 0 10px rgba(212,98,26,0.3);
+      box-shadow: 0 0 10px rgba(255,120,20,0.3);
     }
 
     /* ========== PROGRESS BAR ========== */
     .progress-track {
       background: var(--steel-darkest);
       border: 1px solid var(--steel-mid);
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
-      position: relative;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
       overflow: hidden;
     }
 
     .progress-fill {
       background: linear-gradient(90deg, var(--orange-dim) 0%, var(--orange) 50%, var(--orange-hot) 100%);
-      box-shadow: 0 0 15px rgba(212,98,26,0.6), 0 0 30px rgba(255,69,0,0.3);
+      box-shadow: 0 0 12px rgba(255,120,20,0.5), 0 0 24px rgba(255,80,0,0.3);
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
     }
@@ -573,9 +506,9 @@
       right: 0;
       top: 0;
       bottom: 0;
-      width: 30px;
+      width: 20px;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
-      animation: progressShine 1.2s ease-in-out infinite;
+      animation: progressShine 1.5s ease-in-out infinite;
     }
 
     @keyframes progressShine {
@@ -585,30 +518,20 @@
 
     /* ========== GAUGE ========== */
     .gauge {
-      background: 
-        conic-gradient(
-          from 180deg,
-          var(--steel-lighter) 0deg,
-          var(--steel-mid) 45deg,
-          var(--steel-dark) 90deg,
-          var(--steel-mid) 135deg,
-          var(--steel-lighter) 180deg,
-          var(--steel-mid) 225deg,
-          var(--steel-dark) 270deg,
-          var(--steel-mid) 315deg,
-          var(--steel-lighter) 360deg
-        );
+      background: conic-gradient(from 180deg,
+        var(--steel-lighter) 0deg, var(--steel-mid) 45deg, var(--steel-dark) 90deg,
+        var(--steel-mid) 135deg, var(--steel-lighter) 180deg, var(--steel-mid) 225deg,
+        var(--steel-dark) 270deg, var(--steel-mid) 315deg, var(--steel-lighter) 360deg
+      );
       box-shadow: 
         0 0 0 8px var(--steel-dark),
         0 0 0 10px var(--steel-lighter),
         0 0 0 14px var(--black),
-        0 0 80px rgba(212,98,26,0.25),
-        inset 0 0 80px rgba(0,0,0,0.8);
+        0 0 60px rgba(255,120,20,0.2),
+        inset 0 0 60px rgba(0,0,0,0.7);
     }
 
-    .gauge-spin {
-      animation: gaugeSpin 2.5s cubic-bezier(0.15, 0.85, 0.25, 1) forwards;
-    }
+    .gauge-spin { animation: gaugeSpin 2.5s cubic-bezier(0.15, 0.85, 0.25, 1) forwards; }
 
     @keyframes gaugeSpin {
       0% { transform: rotate(0deg); }
@@ -617,15 +540,10 @@
 
     .score-display {
       color: var(--orange);
-      text-shadow: 
-        0 0 40px rgba(212,98,26,0.7),
-        0 0 80px rgba(255,69,0,0.4),
-        0 2px 4px rgba(0,0,0,0.9);
+      text-shadow: 0 0 30px rgba(255,120,20,0.6), 0 0 60px rgba(255,80,0,0.3), 0 2px 4px rgba(0,0,0,0.8);
     }
 
-    .score-reveal {
-      animation: scoreReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
+    .score-reveal { animation: scoreReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
     @keyframes scoreReveal {
       0% { transform: scale(0.3); opacity: 0; }
@@ -640,10 +558,16 @@
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes heavyIn { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes heavyIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
     .screen-enter { animation: screenEnter 0.4s ease-out forwards; }
     @keyframes screenEnter { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ========== QUESTION TRANSITION ========== */
+    .question-exit { animation: questionExit 0.2s ease-in forwards; }
+    @keyframes questionExit { 
+      to { opacity: 0; transform: translateY(-10px) scale(0.98); } 
+    }
 
     /* ========== MUTE TOGGLE ========== */
     .mute-toggle {
@@ -664,24 +588,14 @@
       color: var(--text-dim);
     }
 
-    .mute-toggle:hover {
-      background: var(--steel-mid);
-      color: var(--text-primary);
-    }
-
-    .mute-toggle.muted {
-      color: var(--orange-dim);
-    }
-
-    .mute-toggle:focus-visible {
-      outline: 2px solid var(--orange);
-      outline-offset: 2px;
-    }
+    .mute-toggle:hover { background: var(--steel-mid); color: var(--text-primary); }
+    .mute-toggle.muted { color: var(--orange-dim); }
+    .mute-toggle:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 
     /* ========== TOAST ========== */
     .toast {
       position: fixed;
-      bottom: 100px;
+      bottom: 120px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
       background: var(--steel-mid);
@@ -693,43 +607,48 @@
       z-index: 1000;
       opacity: 0;
       transition: all 0.3s ease;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 30px rgba(212,98,26,0.25);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 25px rgba(255,100,20,0.2);
     }
 
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     /* ========== SHARE BUTTON ========== */
-    .share-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .share-btn svg {
-      width: 20px;
-      height: 20px;
-    }
+    .share-btn { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .share-btn svg { width: 20px; height: 20px; }
 
     /* ========== PLAQUE ========== */
     .plaque {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 50%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 6px 20px rgba(0,0,0,0.5);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 6px 20px rgba(0,0,0,0.4);
     }
 
     /* ========== QUESTION NUMBER ========== */
     .question-number {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 600;
       letter-spacing: 0.15em;
-      padding: 6px 14px;
+      padding: 6px 12px;
       background: var(--steel-darkest);
       border: 1px solid var(--steel-edge);
       border-radius: 6px;
+    }
+
+    /* ========== CONSISTENT QUESTION TEXT ========== */
+    .question-text {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    @media (min-width: 640px) {
+      .question-text { font-size: 1.1rem; }
+    }
+
+    .answer-text {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    @media (min-width: 640px) {
+      .answer-text { font-size: 0.95rem; }
     }
 
     /* ========== REDUCED MOTION ========== */
@@ -739,14 +658,7 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
       }
-      .ember, .furnace-glow, .heat-shimmer::before, .title-ember,
-      .lava-bubble, .lava-particle, .spark, .shake-small, .shake-medium, .shake-tiny {
-        display: none !important;
-        animation: none !important;
-      }
-      .lava-pool-surface {
-        animation: none !important;
-      }
+      .ember, .furnace-glow, .lava-bubble, .lava-particle { display: none !important; }
     }
   </style>
 </head>
@@ -754,21 +666,24 @@
   <div class="texture"></div>
   <div class="furnace-glow"></div>
   <div class="ember-container" id="embers"></div>
+  
   <button class="mute-toggle" id="muteToggle" onclick="toggleMute()" aria-label="Toggle sound">
     <svg id="soundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M11 5L6 9H2v6h4l5 4V5z"/>
       <path id="soundWaves" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
     </svg>
   </button>
+  
   <div id="toast" class="toast"></div>
   <div id="app" class="relative z-10 min-h-screen"></div>
+  
   <div id="lavaPool" class="lava-pool" style="display: none;">
     <div class="lava-pool-glow"></div>
     <div class="lava-pool-surface" id="lavaPoolSurface"></div>
   </div>
 
   <script>
-    // ========== WEB AUDIO API SOUND SYSTEM ==========
+    // ========== WEB AUDIO - REAL BEEFY SOUNDS ==========
     let audioCtx = null;
     let isMuted = localStorage.getItem('butchometer_muted') === 'true';
 
@@ -776,34 +691,34 @@
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function updateMuteIcon() {
       const waves = document.getElementById('soundWaves');
       const toggle = document.getElementById('muteToggle');
-      if (isMuted) {
-        waves.style.display = 'none';
-        toggle.classList.add('muted');
-      } else {
-        waves.style.display = '';
-        toggle.classList.remove('muted');
-      }
+      waves.style.display = isMuted ? 'none' : '';
+      toggle.classList.toggle('muted', isMuted);
     }
 
     function toggleMute() {
       isMuted = !isMuted;
       localStorage.setItem('butchometer_muted', isMuted);
       updateMuteIcon();
-      if (!isMuted) {
-        initAudio();
-        playSound('click');
-      }
+      if (!isMuted) { initAudio(); playSound('click'); }
     }
 
-    // Synthesized SFX
+    function createNoise(duration) {
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.start();
+      return noise;
+    }
+
     function playSound(type, intensity = 1) {
       if (isMuted || !audioCtx) return;
       
@@ -813,63 +728,127 @@
         switch(type) {
           case 'click':
           case 'thunk': {
+            // Deep heavy thunk
             const osc = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             const filter = audioCtx.createBiquadFilter();
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(90, now);
-            osc.frequency.exponentialRampToValueAtTime(35, now + 0.12);
+            osc.frequency.setValueAtTime(80, now);
+            osc.frequency.exponentialRampToValueAtTime(30, now + 0.15);
+            
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(60, now);
+            osc2.frequency.exponentialRampToValueAtTime(25, now + 0.2);
             
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(250, now);
+            filter.frequency.setValueAtTime(300, now);
             
-            gain.gain.setValueAtTime(0.5, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+            gain.gain.setValueAtTime(0.6, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
             
             osc.connect(filter);
+            osc2.connect(filter);
             filter.connect(gain);
             gain.connect(audioCtx.destination);
             
             osc.start(now);
-            osc.stop(now + 0.18);
+            osc2.start(now);
+            osc.stop(now + 0.25);
+            osc2.stop(now + 0.25);
             break;
           }
           
-          case 'safe': {
-            playEruption(0.4);
-            break;
-          }
-          
-          case 'mid': {
-            playEruption(0.7);
-            break;
-          }
-          
-          case 'unhinged': {
-            playEruption(1.0);
-            break;
-          }
-
-          case 'eruption': {
-            playEruption(intensity);
+          case 'lavaErupt': {
+            // MASSIVE lava eruption - deep bass + sizzle + roar
+            const vol = 0.4 + intensity * 0.4;
+            
+            // Deep bass boom
+            const bass = audioCtx.createOscillator();
+            const bassGain = audioCtx.createGain();
+            bass.type = 'sine';
+            bass.frequency.setValueAtTime(50 + intensity * 20, now);
+            bass.frequency.exponentialRampToValueAtTime(20, now + 0.3);
+            bassGain.gain.setValueAtTime(vol, now);
+            bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            bass.connect(bassGain);
+            bassGain.connect(audioCtx.destination);
+            bass.start(now);
+            bass.stop(now + 0.4);
+            
+            // Sub bass punch
+            const sub = audioCtx.createOscillator();
+            const subGain = audioCtx.createGain();
+            sub.type = 'sine';
+            sub.frequency.setValueAtTime(35, now);
+            sub.frequency.exponentialRampToValueAtTime(18, now + 0.35);
+            subGain.gain.setValueAtTime(vol * 0.7, now);
+            subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+            sub.connect(subGain);
+            subGain.connect(audioCtx.destination);
+            sub.start(now);
+            sub.stop(now + 0.35);
+            
+            // Lava sizzle - filtered noise
+            const sizzle = createNoise(0.4);
+            const sizzleFilter = audioCtx.createBiquadFilter();
+            const sizzleGain = audioCtx.createGain();
+            sizzleFilter.type = 'bandpass';
+            sizzleFilter.frequency.setValueAtTime(3000 + intensity * 2000, now);
+            sizzleFilter.frequency.exponentialRampToValueAtTime(1000, now + 0.35);
+            sizzleFilter.Q.setValueAtTime(2, now);
+            sizzleGain.gain.setValueAtTime(vol * 0.35, now);
+            sizzleGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            sizzle.connect(sizzleFilter);
+            sizzleFilter.connect(sizzleGain);
+            sizzleGain.connect(audioCtx.destination);
+            
+            // Fire whoosh/roar
+            const roar = createNoise(0.5);
+            const roarFilter = audioCtx.createBiquadFilter();
+            const roarGain = audioCtx.createGain();
+            roarFilter.type = 'bandpass';
+            roarFilter.frequency.setValueAtTime(200, now);
+            roarFilter.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+            roarFilter.frequency.exponentialRampToValueAtTime(150, now + 0.45);
+            roarFilter.Q.setValueAtTime(1, now);
+            roarGain.gain.setValueAtTime(0, now);
+            roarGain.gain.linearRampToValueAtTime(vol * 0.25, now + 0.05);
+            roarGain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+            roar.connect(roarFilter);
+            roarFilter.connect(roarGain);
+            roarGain.connect(audioCtx.destination);
+            
+            // Bubble pop
+            const pop = audioCtx.createOscillator();
+            const popGain = audioCtx.createGain();
+            pop.type = 'sine';
+            pop.frequency.setValueAtTime(300 + intensity * 150, now);
+            pop.frequency.exponentialRampToValueAtTime(80, now + 0.1);
+            popGain.gain.setValueAtTime(vol * 0.4, now);
+            popGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+            pop.connect(popGain);
+            popGain.connect(audioCtx.destination);
+            pop.start(now);
+            pop.stop(now + 0.12);
             break;
           }
           
           case 'whoosh': {
-            const noise = createNoise(0.4);
+            const noise = createNoise(0.5);
             const filter = audioCtx.createBiquadFilter();
             const gain = audioCtx.createGain();
             
             filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(400, now);
-            filter.frequency.exponentialRampToValueAtTime(2500, now + 0.15);
-            filter.frequency.exponentialRampToValueAtTime(200, now + 0.45);
-            filter.Q.setValueAtTime(3, now);
+            filter.frequency.setValueAtTime(300, now);
+            filter.frequency.exponentialRampToValueAtTime(2000, now + 0.15);
+            filter.frequency.exponentialRampToValueAtTime(200, now + 0.5);
+            filter.Q.setValueAtTime(2, now);
             
             gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.25, now + 0.06);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
             
             noise.connect(filter);
             filter.connect(gain);
@@ -878,177 +857,166 @@
           }
 
           case 'spinStart': {
-            // Metallic grinding start
-            const noise = createNoise(2.8);
-            const filter = audioCtx.createBiquadFilter();
-            const gain = audioCtx.createGain();
+            // Heavy mechanical grinding
+            const grindNoise = createNoise(2.8);
+            const grindFilter = audioCtx.createBiquadFilter();
+            const grindGain = audioCtx.createGain();
             
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(200, now);
-            filter.frequency.linearRampToValueAtTime(800, now + 2.5);
-            filter.Q.setValueAtTime(5, now);
+            grindFilter.type = 'bandpass';
+            grindFilter.frequency.setValueAtTime(150, now);
+            grindFilter.frequency.linearRampToValueAtTime(600, now + 2.5);
+            grindFilter.Q.setValueAtTime(3, now);
             
-            gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.15, now + 0.3);
-            gain.gain.setValueAtTime(0.15, now + 2.2);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 2.6);
+            grindGain.gain.setValueAtTime(0, now);
+            grindGain.gain.linearRampToValueAtTime(0.25, now + 0.3);
+            grindGain.gain.setValueAtTime(0.25, now + 2.2);
+            grindGain.gain.exponentialRampToValueAtTime(0.01, now + 2.6);
             
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(audioCtx.destination);
+            grindNoise.connect(grindFilter);
+            grindFilter.connect(grindGain);
+            grindGain.connect(audioCtx.destination);
 
-            // Metallic clicks accelerating
-            for (let i = 0; i < 20; i++) {
-              const delay = 0.2 + (i * 0.12) - (i * i * 0.003);
-              if (delay < 2.4) {
+            // Deep rumble
+            const rumble = audioCtx.createOscillator();
+            const rumbleGain = audioCtx.createGain();
+            rumble.type = 'sine';
+            rumble.frequency.setValueAtTime(35, now);
+            rumble.frequency.linearRampToValueAtTime(55, now + 2.5);
+            rumbleGain.gain.setValueAtTime(0.2, now);
+            rumbleGain.gain.setValueAtTime(0.2, now + 2.2);
+            rumbleGain.gain.exponentialRampToValueAtTime(0.01, now + 2.6);
+            rumble.connect(rumbleGain);
+            rumbleGain.connect(audioCtx.destination);
+            rumble.start(now);
+            rumble.stop(now + 2.6);
+            
+            // Accelerating clicks
+            for (let i = 0; i < 25; i++) {
+              const delay = 0.15 + (i * 0.1) - (i * i * 0.002);
+              if (delay > 0 && delay < 2.5) {
                 setTimeout(() => {
                   if (!isMuted && audioCtx) {
-                    const clickOsc = audioCtx.createOscillator();
+                    const click = audioCtx.createOscillator();
                     const clickGain = audioCtx.createGain();
-                    clickOsc.type = 'square';
-                    clickOsc.frequency.setValueAtTime(800 + i * 50, audioCtx.currentTime);
-                    clickGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                    clickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
-                    clickOsc.connect(clickGain);
+                    const t = audioCtx.currentTime;
+                    click.type = 'square';
+                    click.frequency.setValueAtTime(600 + i * 40, t);
+                    click.frequency.exponentialRampToValueAtTime(400 + i * 30, t + 0.02);
+                    clickGain.gain.setValueAtTime(0.12, t);
+                    clickGain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
+                    click.connect(clickGain);
                     clickGain.connect(audioCtx.destination);
-                    clickOsc.start();
-                    clickOsc.stop(audioCtx.currentTime + 0.03);
+                    click.start(t);
+                    click.stop(t + 0.03);
                   }
                 }, delay * 1000);
               }
             }
-
-            // Low rumble
-            const rumbleOsc = audioCtx.createOscillator();
-            const rumbleGain = audioCtx.createGain();
-            rumbleOsc.type = 'sine';
-            rumbleOsc.frequency.setValueAtTime(40, now);
-            rumbleOsc.frequency.linearRampToValueAtTime(60, now + 2.5);
-            rumbleGain.gain.setValueAtTime(0.1, now);
-            rumbleGain.gain.setValueAtTime(0.1, now + 2.2);
-            rumbleGain.gain.exponentialRampToValueAtTime(0.01, now + 2.6);
-            rumbleOsc.connect(rumbleGain);
-            rumbleGain.connect(audioCtx.destination);
-            rumbleOsc.start(now);
-            rumbleOsc.stop(now + 2.6);
             break;
           }
           
           case 'impact': {
-            // Heavy hammer hit with fire roar
+            // MASSIVE impact - like a hammer on anvil
             const osc = audioCtx.createOscillator();
             const osc2 = audioCtx.createOscillator();
-            const noise = createNoise(0.4);
+            const osc3 = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            const noiseGain = audioCtx.createGain();
-            const filter = audioCtx.createBiquadFilter();
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(80, now);
-            osc.frequency.exponentialRampToValueAtTime(25, now + 0.4);
+            osc.frequency.setValueAtTime(70, now);
+            osc.frequency.exponentialRampToValueAtTime(20, now + 0.5);
             
             osc2.type = 'triangle';
             osc2.frequency.setValueAtTime(50, now);
-            osc2.frequency.exponentialRampToValueAtTime(18, now + 0.5);
+            osc2.frequency.exponentialRampToValueAtTime(15, now + 0.6);
             
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(600, now);
-            filter.frequency.exponentialRampToValueAtTime(100, now + 0.4);
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(40, now);
+            osc3.frequency.exponentialRampToValueAtTime(12, now + 0.7);
             
-            gain.gain.setValueAtTime(0.6, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-            
-            noiseGain.gain.setValueAtTime(0.2, now);
-            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            gain.gain.setValueAtTime(0.8, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
             
             osc.connect(gain);
             osc2.connect(gain);
+            osc3.connect(gain);
             gain.connect(audioCtx.destination);
-            noise.connect(filter);
-            filter.connect(noiseGain);
-            noiseGain.connect(audioCtx.destination);
             
             osc.start(now);
             osc2.start(now);
-            osc.stop(now + 0.6);
-            osc2.stop(now + 0.6);
-
-            // Fire roar
-            const fireNoise = createNoise(0.5);
+            osc3.start(now);
+            osc.stop(now + 0.7);
+            osc2.stop(now + 0.7);
+            osc3.stop(now + 0.7);
+            
+            // Metal crash
+            const crash = createNoise(0.2);
+            const crashFilter = audioCtx.createBiquadFilter();
+            const crashGain = audioCtx.createGain();
+            crashFilter.type = 'highpass';
+            crashFilter.frequency.setValueAtTime(1000, now);
+            crashGain.gain.setValueAtTime(0.25, now);
+            crashGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            crash.connect(crashFilter);
+            crashFilter.connect(crashGain);
+            crashGain.connect(audioCtx.destination);
+            
+            // Fire burst
+            const fire = createNoise(0.4);
             const fireFilter = audioCtx.createBiquadFilter();
             const fireGain = audioCtx.createGain();
             fireFilter.type = 'bandpass';
-            fireFilter.frequency.setValueAtTime(300, now);
-            fireFilter.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
-            fireFilter.frequency.exponentialRampToValueAtTime(200, now + 0.5);
-            fireFilter.Q.setValueAtTime(2, now);
+            fireFilter.frequency.setValueAtTime(400, now);
+            fireFilter.frequency.exponentialRampToValueAtTime(1500, now + 0.1);
+            fireFilter.frequency.exponentialRampToValueAtTime(200, now + 0.4);
             fireGain.gain.setValueAtTime(0, now);
-            fireGain.gain.linearRampToValueAtTime(0.15, now + 0.05);
-            fireGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-            fireNoise.connect(fireFilter);
+            fireGain.gain.linearRampToValueAtTime(0.2, now + 0.03);
+            fireGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            fire.connect(fireFilter);
             fireFilter.connect(fireGain);
             fireGain.connect(audioCtx.destination);
             break;
           }
           
           case 'lock': {
-            // Heavy vault clunk
-            const osc = audioCtx.createOscillator();
-            const osc2 = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            const noise = createNoise(0.1);
-            const noiseGain = audioCtx.createGain();
+            // Heavy vault lock
+            const clunk = audioCtx.createOscillator();
+            const clunkGain = audioCtx.createGain();
+            clunk.type = 'square';
+            clunk.frequency.setValueAtTime(150, now);
+            clunk.frequency.exponentialRampToValueAtTime(60, now + 0.1);
+            clunkGain.gain.setValueAtTime(0.4, now);
+            clunkGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            clunk.connect(clunkGain);
+            clunkGain.connect(audioCtx.destination);
+            clunk.start(now);
+            clunk.stop(now + 0.15);
             
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(180, now);
-            osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
-            
-            osc2.type = 'sine';
-            osc2.frequency.setValueAtTime(400, now);
-            osc2.frequency.exponentialRampToValueAtTime(200, now + 0.15);
-            
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-            
-            noiseGain.gain.setValueAtTime(0.15, now);
-            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-            
-            osc.connect(gain);
-            osc2.connect(gain);
-            gain.connect(audioCtx.destination);
-            noise.connect(noiseGain);
-            noiseGain.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc2.start(now);
-            osc.stop(now + 0.2);
-            osc2.stop(now + 0.2);
-
-            // Metallic ring
+            // Metal ring
             const ring = audioCtx.createOscillator();
             const ringGain = audioCtx.createGain();
             ring.type = 'sine';
-            ring.frequency.setValueAtTime(1200, now);
-            ringGain.gain.setValueAtTime(0.05, now);
-            ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            ring.frequency.setValueAtTime(800, now);
+            ringGain.gain.setValueAtTime(0.08, now);
+            ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
             ring.connect(ringGain);
             ringGain.connect(audioCtx.destination);
             ring.start(now);
-            ring.stop(now + 0.4);
+            ring.stop(now + 0.5);
             break;
           }
 
           case 'tick': {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(1000, now);
-            gain.gain.setValueAtTime(0.1, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start(now);
-            osc.stop(now + 0.05);
+            osc.stop(now + 0.06);
             break;
           }
         }
@@ -1057,110 +1025,30 @@
       }
     }
 
-    function playEruption(intensity) {
-      if (!audioCtx) return;
-      const now = audioCtx.currentTime;
-      
-      // Low rumble burst
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(60 + intensity * 30, now);
-      osc.frequency.exponentialRampToValueAtTime(30, now + 0.2 + intensity * 0.1);
-      gain.gain.setValueAtTime(0.3 * intensity, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25 + intensity * 0.1);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.35);
-      
-      // Sizzle/hiss
-      const noise = createNoise(0.2 + intensity * 0.15);
-      const filter = audioCtx.createBiquadFilter();
-      const noiseGain = audioCtx.createGain();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(2000 + intensity * 1000, now);
-      filter.Q.setValueAtTime(3, now);
-      noiseGain.gain.setValueAtTime(0.15 * intensity, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2 + intensity * 0.1);
-      noise.connect(filter);
-      filter.connect(noiseGain);
-      noiseGain.connect(audioCtx.destination);
-      
-      // Bubble pop
-      const pop = audioCtx.createOscillator();
-      const popGain = audioCtx.createGain();
-      pop.type = 'sine';
-      pop.frequency.setValueAtTime(400 * intensity, now);
-      pop.frequency.exponentialRampToValueAtTime(100, now + 0.08);
-      popGain.gain.setValueAtTime(0.2 * intensity, now);
-      popGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-      pop.connect(popGain);
-      popGain.connect(audioCtx.destination);
-      pop.start(now);
-      pop.stop(now + 0.1);
-    }
-
-    function createNoise(duration) {
-      const bufferSize = audioCtx.sampleRate * duration;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const output = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
-      }
-      const noise = audioCtx.createBufferSource();
-      noise.buffer = buffer;
-      noise.start();
-      return noise;
-    }
-
     // ========== SCREEN SHAKE ==========
     function screenShake(intensity = 'small') {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const app = document.getElementById('app');
       app.classList.remove('shake-small', 'shake-medium', 'shake-tiny');
-      void app.offsetWidth; // Trigger reflow
+      void app.offsetWidth;
       app.classList.add(`shake-${intensity}`);
       setTimeout(() => app.classList.remove(`shake-${intensity}`), 300);
     }
 
-    // ========== EMBER PARTICLES ==========
+    // ========== EMBERS ==========
     function createEmbers() {
       const container = document.getElementById('embers');
       if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 12; i++) {
         const ember = document.createElement('div');
         ember.className = 'ember';
         ember.style.left = Math.random() * 100 + '%';
-        ember.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
-        ember.style.animationDelay = Math.random() * 7 + 's';
-        ember.style.animationDuration = (5 + Math.random() * 4) + 's';
+        ember.style.setProperty('--drift', (Math.random() - 0.5) * 80 + 'px');
+        ember.style.animationDelay = Math.random() * 8 + 's';
+        ember.style.animationDuration = (6 + Math.random() * 4) + 's';
         container.appendChild(ember);
       }
-    }
-
-    // ========== TITLE EMBERS ==========
-    function createTitleEmbers(container) {
-      if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      
-      const emberContainer = document.createElement('div');
-      emberContainer.className = 'title-embers';
-      
-      for (let i = 0; i < 6; i++) {
-        const ember = document.createElement('div');
-        ember.className = 'title-ember';
-        ember.style.left = (20 + Math.random() * 60) + '%';
-        ember.style.bottom = '0';
-        ember.style.setProperty('--drift', (Math.random() - 0.5) * 60 + 'px');
-        ember.style.animationDelay = Math.random() * 3 + 's';
-        ember.style.animationDuration = (2 + Math.random() * 2) + 's';
-        ember.style.width = (3 + Math.random() * 3) + 'px';
-        ember.style.height = ember.style.width;
-        emberContainer.appendChild(ember);
-      }
-      
-      container.appendChild(emberContainer);
     }
 
     // ========== LAVA POOL ==========
@@ -1170,23 +1058,16 @@
     function showLavaPool() {
       if (lavaPoolVisible) return;
       lavaPoolVisible = true;
-      const pool = document.getElementById('lavaPool');
-      pool.style.display = 'block';
-      
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      
-      // Start bubbles
-      lavaBubbleInterval = setInterval(createLavaBubble, 400);
+      document.getElementById('lavaPool').style.display = 'block';
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        lavaBubbleInterval = setInterval(createLavaBubble, 300);
+      }
     }
 
     function hideLavaPool() {
       lavaPoolVisible = false;
-      const pool = document.getElementById('lavaPool');
-      pool.style.display = 'none';
-      if (lavaBubbleInterval) {
-        clearInterval(lavaBubbleInterval);
-        lavaBubbleInterval = null;
-      }
+      document.getElementById('lavaPool').style.display = 'none';
+      if (lavaBubbleInterval) { clearInterval(lavaBubbleInterval); lavaBubbleInterval = null; }
     }
 
     function createLavaBubble() {
@@ -1198,10 +1079,10 @@
       bubble.className = 'lava-bubble';
       bubble.style.left = (10 + Math.random() * 80) + '%';
       bubble.style.animationDuration = (1.5 + Math.random() * 1) + 's';
-      bubble.style.width = (5 + Math.random() * 8) + 'px';
-      bubble.style.height = bubble.style.width;
+      const size = 8 + Math.random() * 12;
+      bubble.style.width = size + 'px';
+      bubble.style.height = size + 'px';
       surface.appendChild(bubble);
-      
       setTimeout(() => bubble.remove(), 2500);
     }
 
@@ -1209,139 +1090,89 @@
     function createLavaEruption(points) {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       
-      const surface = document.getElementById('lavaPoolSurface');
-      if (surface) {
-        surface.classList.add('lava-pool-flash');
-        setTimeout(() => surface.classList.remove('lava-pool-flash'), 300);
-      }
+      // Flash the pool
+      const pool = document.getElementById('lavaPool');
+      pool.classList.add('lava-pool-flash');
+      setTimeout(() => pool.classList.remove('lava-pool-flash'), 400);
       
-      // Particle count and velocity based on points
-      let particleCount, velocity, spread;
-      if (points === 1) {
-        particleCount = 10;
-        velocity = 8;
-        spread = 0.3;
-      } else if (points === 2) {
-        particleCount = 17;
-        velocity = 12;
-        spread = 0.5;
-      } else {
-        particleCount = 28;
-        velocity = 18;
-        spread = 0.7;
-        screenShake('small');
-      }
+      // Particle settings based on intensity
+      let particleCount, velocity;
+      if (points === 1) { particleCount = 12; velocity = 10; }
+      else if (points === 2) { particleCount = 20; velocity = 14; }
+      else { particleCount = 30; velocity = 20; screenShake('small'); }
       
       const centerX = window.innerWidth / 2;
-      const startY = window.innerHeight - 35;
+      const startY = window.innerHeight - 50;
       
       for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'lava-particle';
-        
-        const size = 8 + Math.random() * 14;
-        const hue = 20 + Math.random() * 30;
-        const lightness = 50 + Math.random() * 20;
-        
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.background = `radial-gradient(circle, hsl(${hue}, 100%, ${lightness}%), hsl(${hue - 10}, 100%, ${lightness - 20}%))`;
-        particle.style.boxShadow = `0 0 ${size}px hsl(${hue}, 100%, 50%), 0 0 ${size * 2}px rgba(255,100,0,0.5)`;
-        
-        const offsetX = (Math.random() - 0.5) * 200 * spread;
-        particle.style.left = (centerX + offsetX) + 'px';
-        particle.style.top = startY + 'px';
-        
-        document.body.appendChild(particle);
-        
-        // Physics
-        const vx = (Math.random() - 0.5) * velocity * spread * 2;
-        const vy = -(velocity + Math.random() * velocity * 0.5);
-        const gravity = 0.4;
-        
-        let x = centerX + offsetX;
-        let y = startY;
-        let currentVy = vy;
-        let opacity = 1;
-        
-        function animateParticle() {
-          x += vx;
-          currentVy += gravity;
-          y += currentVy;
-          opacity -= 0.02;
+        setTimeout(() => {
+          const particle = document.createElement('div');
+          particle.className = 'lava-particle';
           
+          const size = 10 + Math.random() * 15;
+          const brightness = 50 + Math.random() * 30;
+          
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.background = `radial-gradient(circle at 30% 30%, 
+            hsl(45, 100%, ${brightness + 20}%), 
+            hsl(30, 100%, ${brightness}%) 40%,
+            hsl(15, 100%, ${brightness - 15}%)
+          )`;
+          particle.style.boxShadow = `
+            0 0 ${size}px hsl(30, 100%, 60%),
+            0 0 ${size * 2}px rgba(255,150,50,0.5)
+          `;
+          
+          const offsetX = (Math.random() - 0.5) * 300;
+          let x = centerX + offsetX;
+          let y = startY;
           particle.style.left = x + 'px';
           particle.style.top = y + 'px';
-          particle.style.opacity = Math.max(0, opacity);
-          particle.style.transform = `scale(${Math.max(0.2, opacity)})`;
           
-          if (opacity > 0 && y < window.innerHeight + 50) {
-            requestAnimationFrame(animateParticle);
-          } else {
-            particle.remove();
+          document.body.appendChild(particle);
+          
+          const vx = (Math.random() - 0.5) * velocity * 0.8;
+          let vy = -(velocity + Math.random() * velocity * 0.6);
+          let opacity = 1;
+          let lastY = y;
+          
+          function animate() {
+            x += vx;
+            vy += 0.5; // gravity
+            y += vy;
+            opacity -= 0.02;
+            
+            // Trail
+            if (Math.abs(y - lastY) > 10) {
+              const trail = document.createElement('div');
+              trail.className = 'lava-particle-trail';
+              trail.style.width = (size * 0.6) + 'px';
+              trail.style.height = (size * 0.6) + 'px';
+              trail.style.background = 'rgba(255,150,50,0.4)';
+              trail.style.left = x + 'px';
+              trail.style.top = y + 'px';
+              trail.style.opacity = opacity * 0.5;
+              document.body.appendChild(trail);
+              setTimeout(() => trail.remove(), 200);
+              lastY = y;
+            }
+            
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.opacity = Math.max(0, opacity);
+            particle.style.transform = `scale(${Math.max(0.3, opacity)})`;
+            
+            if (opacity > 0 && y < window.innerHeight + 50) {
+              requestAnimationFrame(animate);
+            } else {
+              particle.remove();
+            }
           }
-        }
-        
-        setTimeout(() => requestAnimationFrame(animateParticle), i * 15);
-      }
-    }
-
-    // ========== SPARK PARTICLES ==========
-    function createSparks(x, y, count = 5) {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      
-      for (let i = 0; i < count; i++) {
-        const spark = document.createElement('div');
-        spark.className = 'spark';
-        spark.style.left = x + 'px';
-        spark.style.top = y + 'px';
-        spark.style.position = 'fixed';
-        spark.style.zIndex = '1000';
-        
-        const size = 3 + Math.random() * 3;
-        spark.style.width = size + 'px';
-        spark.style.height = size + 'px';
-        
-        document.body.appendChild(spark);
-        
-        const angle = (Math.random() - 0.5) * Math.PI;
-        const velocity = 3 + Math.random() * 4;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity - 2;
-        
-        let currentX = x;
-        let currentY = y;
-        let currentVy = vy;
-        let opacity = 1;
-        
-        function animateSpark() {
-          currentX += vx;
-          currentVy += 0.2;
-          currentY += currentVy;
-          opacity -= 0.05;
           
-          spark.style.left = currentX + 'px';
-          spark.style.top = currentY + 'px';
-          spark.style.opacity = opacity;
-          
-          if (opacity > 0) {
-            requestAnimationFrame(animateSpark);
-          } else {
-            spark.remove();
-          }
-        }
-        
-        setTimeout(() => requestAnimationFrame(animateSpark), i * 20);
+          requestAnimationFrame(animate);
+        }, i * 12);
       }
-    }
-
-    function createHoverSparks(element) {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      
-      const rect = element.getBoundingClientRect();
-      const x = rect.left + 10;
-      const y = rect.top + rect.height / 2;
-      createSparks(x, y, 3);
     }
 
     // ========== TOAST ==========
@@ -1352,22 +1183,20 @@
       setTimeout(() => toast.classList.remove('show'), duration);
     }
 
-    // ========== SHARE FEATURE ==========
+    // ========== SHARE ==========
     async function shareScore(score, resultLine) {
       const url = 'https://infinitlyal-dev.github.io/Butchometer/';
-      const cleanLine = resultLine.replace(/"/g, "'");
-      const text = `I scored ${score} on BUTCHOMETER: "${cleanLine}" — Ten questions. No mercy.`;
-      const fullText = `${text} ${url}`;
+      const text = `I scored ${score} on BUTCHOMETER: "${resultLine}" — Ten questions. No mercy.`;
       
       if (navigator.share) {
         try {
           await navigator.share({ title: 'BUTCHOMETER', text: text, url: url });
           playSound('tick');
         } catch(e) {
-          if (e.name !== 'AbortError') copyToClipboard(fullText);
+          if (e.name !== 'AbortError') copyToClipboard(text + ' ' + url);
         }
       } else {
-        copyToClipboard(fullText);
+        copyToClipboard(text + ' ' + url);
       }
     }
 
@@ -1529,7 +1358,6 @@
       ]
     };
 
-    // ========== RESULT LINES ==========
     const resultLines = {
       low: [
         "You brought a backup phone charger to a barbecue.",
@@ -1568,47 +1396,24 @@
 
     // ========== GAME STATE ==========
     let state = {
-      screen: 'home',
-      mode: null,
-      players: [],
-      playerNames: [''],
-      currentPlayerIndex: 0,
-      currentQuestionIndex: 0,
-      sessionQuestions: [],
-      measuring: false,
-      showResult: false
+      screen: 'home', mode: null, players: [], playerNames: [''],
+      currentPlayerIndex: 0, currentQuestionIndex: 0,
+      sessionQuestions: [], measuring: false, showResult: false
     };
 
-    // ========== LOCAL STORAGE ==========
+    // ========== STORAGE ==========
     const STORAGE_KEY = 'butchometer_recent';
     const STORAGE_PLAYS = 'butchometer_plays';
     const STORAGE_RESULTS = 'butchometer_results';
     
-    function getRecent() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-      catch { return []; }
-    }
-    function getRecentResults() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_RESULTS) || '[]'); }
-      catch { return []; }
-    }
-    function saveRecent(ids) {
-      const recent = getRecent();
-      const updated = [...new Set([...ids, ...recent])].slice(0, 30);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    }
-    function saveRecentResult(line) {
-      const recent = getRecentResults();
-      const updated = [...new Set([line, ...recent])].slice(0, 15);
-      localStorage.setItem(STORAGE_RESULTS, JSON.stringify(updated));
-    }
+    function getRecent() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; } }
+    function getRecentResults() { try { return JSON.parse(localStorage.getItem(STORAGE_RESULTS) || '[]'); } catch { return []; } }
+    function saveRecent(ids) { localStorage.setItem(STORAGE_KEY, JSON.stringify([...new Set([...ids, ...getRecent()])].slice(0, 30))); }
+    function saveRecentResult(line) { localStorage.setItem(STORAGE_RESULTS, JSON.stringify([...new Set([line, ...getRecentResults()])].slice(0, 15))); }
     function incrementPlays() {
       const plays = parseInt(localStorage.getItem(STORAGE_PLAYS) || '0');
       localStorage.setItem(STORAGE_PLAYS, String(plays + 1));
-      if ((plays + 1) % 6 === 0) {
-        localStorage.setItem(STORAGE_KEY, '[]');
-        localStorage.setItem(STORAGE_RESULTS, '[]');
-      }
+      if ((plays + 1) % 6 === 0) { localStorage.setItem(STORAGE_KEY, '[]'); localStorage.setItem(STORAGE_RESULTS, '[]'); }
     }
 
     // ========== QUESTION SELECTION ==========
@@ -1619,32 +1424,31 @@
       
       const categories = { ...questionsByCategory };
       const selected = [];
-      const categoryUsage = {};
-      Object.keys(categories).forEach(cat => categoryUsage[cat] = 0);
+      const usage = {};
+      Object.keys(categories).forEach(c => usage[c] = 0);
       
-      // First 2 from homeLife
       let homePool = shuffle(filter(categories.homeLife));
       if (homePool.length < 2) homePool = shuffle(categories.homeLife);
       selected.push({ ...homePool[0], category: 'homeLife' });
       selected.push({ ...homePool[1], category: 'homeLife' });
-      categoryUsage.homeLife = 2;
+      usage.homeLife = 2;
       
-      const otherCats = Object.keys(categories).filter(c => c !== 'homeLife');
-      let lastCat = 'homeLife';
+      const others = Object.keys(categories).filter(c => c !== 'homeLife');
+      let last = 'homeLife';
       
       for (let i = 2; i < 10; i++) {
-        let available = otherCats.filter(cat => categoryUsage[cat] < 2);
-        if (available.length > 1) available = available.filter(cat => cat !== lastCat);
-        if (available.length === 0) available = otherCats;
+        let avail = others.filter(c => usage[c] < 2);
+        if (avail.length > 1) avail = avail.filter(c => c !== last);
+        if (avail.length === 0) avail = others;
         
-        const cat = available[Math.floor(Math.random() * available.length)];
+        const cat = avail[Math.floor(Math.random() * avail.length)];
         let pool = shuffle(filter(categories[cat]));
         if (pool.length === 0) pool = shuffle(categories[cat]);
         
-        let q = pool.find(q => !selected.some(s => s.id === q.id)) || pool[0];
+        const q = pool.find(q => !selected.some(s => s.id === q.id)) || pool[0];
         selected.push({ ...q, category: cat });
-        categoryUsage[cat]++;
-        lastCat = cat;
+        usage[cat]++;
+        last = cat;
       }
       
       const labels = ['A', 'B', 'C'];
@@ -1670,37 +1474,22 @@
 
     // ========== RENDER ==========
     function render() {
-      const app = document.getElementById('app');
-      app.innerHTML = screens[state.screen]();
-      
-      // Show/hide lava pool
-      if (state.screen === 'quiz') {
-        showLavaPool();
-      } else {
-        hideLavaPool();
-      }
-      
-      // Add title embers on home screen
-      if (state.screen === 'home') {
-        setTimeout(() => {
-          const title = document.querySelector('.forged-title');
-          if (title) createTitleEmbers(title.parentElement);
-        }, 100);
-      }
+      document.getElementById('app').innerHTML = screens[state.screen]();
+      if (state.screen === 'quiz') showLavaPool(); else hideLavaPool();
     }
 
     const screens = {
       home: () => `
         <div class="min-h-screen flex flex-col items-center justify-center p-6 screen-enter">
-          <div class="text-center max-w-lg heat-shimmer relative">
-            <h1 class="forged-title mb-6">BUTCHOMETER</h1>
-            <p class="text-xs text-[var(--text-dim)] mb-16 tracking-[0.25em] uppercase">Ten questions. No mercy.</p>
+          <div class="text-center max-w-lg">
+            <h1 class="forged-title mb-8">BUTCHOMETER</h1>
+            <p class="text-sm text-[var(--text-dim)] mb-14 tracking-widest uppercase">Ten questions. No mercy.</p>
             <div class="flex flex-col gap-4 max-w-xs mx-auto">
-              <button onclick="handleClick(event); selectMode('single');" class="btn py-5 px-8 rounded-lg">
-                <span class="text-sm tracking-[0.2em] text-[var(--text-primary)] font-semibold">SINGLE</span>
+              <button onclick="handleClick(event); selectMode('single');" class="btn py-4 px-8 rounded-lg">
+                <span class="text-sm tracking-widest text-[var(--text-primary)] font-semibold">SINGLE</span>
               </button>
-              <button onclick="handleClick(event); selectMode('multiplayer');" class="btn py-5 px-8 rounded-lg">
-                <span class="text-sm tracking-[0.2em] text-[var(--text-primary)] font-semibold">MULTIPLAYER</span>
+              <button onclick="handleClick(event); selectMode('multiplayer');" class="btn py-4 px-8 rounded-lg">
+                <span class="text-sm tracking-widest text-[var(--text-primary)] font-semibold">MULTIPLAYER</span>
               </button>
             </div>
           </div>
@@ -1709,25 +1498,21 @@
       setup: () => `
         <div class="min-h-screen p-6 screen-enter">
           <div class="max-w-md mx-auto pt-8">
-            <button onclick="handleClick(event); goHome();" class="text-xs text-[var(--text-dim)] hover:text-[var(--orange)] mb-10 block tracking-wide transition-colors">← BACK</button>
-            <h2 class="text-xl mb-6 tracking-[0.12em] text-[var(--orange)] font-bold uppercase">${state.mode === 'single' ? 'Identify Yourself' : 'Name the Accused'}</h2>
+            <button onclick="handleClick(event); goHome();" class="text-sm text-[var(--text-dim)] hover:text-[var(--orange)] mb-10 block tracking-wide">← BACK</button>
+            <h2 class="text-xl mb-6 tracking-wide text-[var(--orange)] font-bold uppercase">${state.mode === 'single' ? 'Identify Yourself' : 'Name the Accused'}</h2>
             <div class="card rounded-xl p-6 mb-6">
               ${state.playerNames.map((n, i) => `
                 <div class="flex gap-3 mb-3">
-                  <input type="text" value="${n}" oninput="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="input flex-1 rounded-lg px-4 py-4 text-sm" maxlength="12">
-                  ${state.mode === 'multiplayer' && state.playerNames.length > 2 ? `
-                    <button onclick="handleClick(event); removePlayer(${i});" class="text-[var(--text-dim)] hover:text-[var(--orange)] px-3 transition-colors text-xl">×</button>
-                  ` : ''}
+                  <input type="text" value="${n}" oninput="updateName(${i}, this.value)" placeholder="Player ${i+1}" class="input flex-1 rounded-lg px-4 py-3 text-sm" maxlength="12">
+                  ${state.mode === 'multiplayer' && state.playerNames.length > 2 ? `<button onclick="handleClick(event); removePlayer(${i});" class="text-[var(--text-dim)] hover:text-[var(--orange)] px-3 text-xl">×</button>` : ''}
                 </div>
               `).join('')}
               ${state.mode === 'multiplayer' && state.playerNames.length < 6 ? `
-                <button onclick="handleClick(event); addPlayer();" class="w-full border-2 border-dashed border-[var(--steel-lighter)] text-[var(--text-dim)] py-4 rounded-lg text-sm hover:border-[var(--orange-dim)] hover:text-[var(--orange)] transition-colors mt-2 tracking-wide font-medium">
-                  + ADD PLAYER
-                </button>
+                <button onclick="handleClick(event); addPlayer();" class="w-full border-2 border-dashed border-[var(--steel-lighter)] text-[var(--text-dim)] py-3 rounded-lg text-sm hover:border-[var(--orange-dim)] hover:text-[var(--orange)] mt-2 tracking-wide font-medium">+ ADD PLAYER</button>
               ` : ''}
             </div>
-            <button onclick="handleClick(event); startGame();" class="btn btn-primary w-full py-5 rounded-lg">
-              <span class="text-sm tracking-[0.2em] text-[var(--text-primary)] font-semibold">BEGIN</span>
+            <button onclick="handleClick(event); startGame();" class="btn btn-primary w-full py-4 rounded-lg">
+              <span class="text-sm tracking-widest text-[var(--text-primary)] font-semibold">BEGIN</span>
             </button>
           </div>
         </div>`,
@@ -1736,35 +1521,27 @@
         const q = state.sessionQuestions[state.currentQuestionIndex];
         const p = state.players[state.currentPlayerIndex];
         const progress = (state.currentQuestionIndex / 10) * 100;
-        const qNum = state.currentQuestionIndex + 1;
         return `
-        <div class="min-h-screen p-4 md:p-6 pb-24 screen-enter">
+        <div class="min-h-screen p-4 md:p-6 pb-32 screen-enter">
           <div class="max-w-2xl mx-auto pt-4">
             <div class="flex justify-between items-center mb-4">
-              <span class="text-xs text-[var(--text-dim)] tracking-wide font-medium">${p?.name || 'PLAYER'}</span>
-              <span class="question-number text-[var(--orange)]">QUESTION ${qNum} OF 10</span>
+              <span class="text-sm text-[var(--text-dim)] tracking-wide font-medium">${p?.name || 'PLAYER'}</span>
+              <span class="question-number text-[var(--orange)]">QUESTION ${state.currentQuestionIndex + 1} OF 10</span>
             </div>
             <div class="progress-track h-2 rounded-full mb-8">
               <div class="progress-fill h-full rounded-full" style="width: ${progress}%"></div>
             </div>
             <div class="card rounded-xl p-6 mb-6 heavy-in">
-              <p class="text-base md:text-lg leading-relaxed">${q?.setup}</p>
+              <p class="question-text">${q?.setup}</p>
             </div>
             <div class="space-y-3" id="answerContainer">
               ${q?.answers.map((a, i) => `
-                <button 
-                  data-points="${a.points}" 
-                  data-label="${a.label}"
-                  onclick="handleAnswerClick(event, ${a.points});" 
-                  onmouseenter="createHoverSparks(this)"
-                  class="answer w-full rounded-xl p-4 text-left slide-in flex items-start" 
-                  style="animation-delay: ${i * 0.08}s"
-                >
+                <button data-points="${a.points}" data-label="${a.label}" onclick="handleAnswerClick(event, ${a.points});" class="answer w-full rounded-xl p-4 text-left slide-in flex items-start" style="animation-delay: ${i * 0.08}s">
                   <span class="answer-label">${a.label}</span>
-                  <span class="text-sm md:text-base leading-relaxed text-[var(--text-primary)] flex-1">${a.text}</span>
+                  <span class="answer-text text-[var(--text-primary)] flex-1">${a.text}</span>
                 </button>`).join('')}
             </div>
-            <p class="text-center text-xs text-[var(--text-muted)] mt-6">Press A, B, or C to answer</p>
+            <p class="text-center text-xs text-[var(--text-muted)] mt-6 tracking-wide">Press A, B, or C to answer</p>
           </div>
         </div>`;
       },
@@ -1775,36 +1552,29 @@
         return `
         <div class="min-h-screen flex flex-col items-center justify-center p-6 screen-enter">
           <div class="text-center max-w-md">
-            <p class="text-xs text-[var(--text-dim)] mb-8 tracking-[0.25em] uppercase font-medium">${p?.name}</p>
-            <div class="relative w-52 h-52 mx-auto mb-10">
+            <p class="text-sm text-[var(--text-dim)] mb-8 tracking-widest uppercase font-medium">${p?.name}</p>
+            <div class="relative w-48 h-48 mx-auto mb-10">
               <div class="gauge w-full h-full rounded-full ${state.measuring ? 'gauge-spin' : ''}"></div>
-              ${!state.measuring ? `
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-7xl font-bold score-display score-reveal">${score}</span>
-                </div>
-              ` : ''}
+              ${!state.measuring ? `<div class="absolute inset-0 flex items-center justify-center"><span class="text-6xl font-bold score-display score-reveal">${score}</span></div>` : ''}
             </div>
             ${state.showResult ? `
               <div class="heavy-in">
                 <p class="text-lg mb-8 leading-relaxed max-w-sm mx-auto">"${p?.resultLine}"</p>
                 <div class="flex flex-col gap-3 max-w-xs mx-auto">
                   ${state.mode === 'multiplayer' && state.currentPlayerIndex < state.players.length - 1 
-                    ? `<button onclick="handleClick(event); nextPlayer();" class="btn btn-primary py-5 px-8 rounded-lg text-sm tracking-[0.15em] font-semibold">NEXT PLAYER</button>`
+                    ? `<button onclick="handleClick(event); nextPlayer();" class="btn btn-primary py-4 px-8 rounded-lg text-sm tracking-widest font-semibold">NEXT PLAYER</button>`
                     : state.mode === 'multiplayer' 
-                    ? `<button onclick="handleClick(event); showLeaderboard();" class="btn btn-primary py-5 px-8 rounded-lg text-sm tracking-[0.15em] font-semibold">FINAL VERDICT</button>`
+                    ? `<button onclick="handleClick(event); showLeaderboard();" class="btn btn-primary py-4 px-8 rounded-lg text-sm tracking-widest font-semibold">FINAL VERDICT</button>`
                     : `
-                      <button onclick="handleClick(event); shareScore(${score}, '${p?.resultLine?.replace(/'/g, "\\'")}');" class="btn btn-primary py-5 px-8 rounded-lg share-btn">
+                      <button onclick="handleClick(event); shareScore(${score}, '${p?.resultLine?.replace(/'/g, "\\'")}');" class="btn btn-primary py-4 px-8 rounded-lg share-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16,6 12,2 8,6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                        <span class="text-sm tracking-[0.12em] font-semibold">SHARE SCORE</span>
+                        <span class="text-sm tracking-wide font-semibold">SHARE SCORE</span>
                       </button>
-                      <button onclick="handleClick(event); goHome();" class="btn py-5 px-8 rounded-lg text-sm tracking-[0.15em] font-semibold">PLAY AGAIN</button>
+                      <button onclick="handleClick(event); goHome();" class="btn py-4 px-8 rounded-lg text-sm tracking-widest font-semibold">PLAY AGAIN</button>
                     `}
                 </div>
-                <p class="text-xs text-[var(--text-muted)] mt-8">Send this to a friend. See how butch they are.</p>
               </div>
-            ` : `
-              <p class="text-sm text-[var(--text-dim)] tracking-[0.2em] font-medium">MEASURING...</p>
-            `}
+            ` : `<p class="text-sm text-[var(--text-dim)] tracking-widest font-medium">MEASURING...</p>`}
           </div>
         </div>`;
       },
@@ -1814,7 +1584,7 @@
         return `
         <div class="min-h-screen p-6 screen-enter">
           <div class="max-w-md mx-auto pt-8">
-            <h2 class="text-2xl mb-8 text-center tracking-[0.15em] text-[var(--orange)] font-bold">FINAL VERDICT</h2>
+            <h2 class="text-2xl mb-8 text-center tracking-wide text-[var(--orange)] font-bold">FINAL VERDICT</h2>
             <div class="space-y-3 mb-10">
               ${sorted.map((p, i) => `
                 <div class="plaque rounded-xl p-5 flex items-center gap-4 slide-in" style="animation-delay: ${i * 0.1}s">
@@ -1827,7 +1597,7 @@
                 </div>
               `).join('')}
             </div>
-            <button onclick="handleClick(event); goHome();" class="btn w-full py-5 rounded-lg text-sm tracking-[0.15em] font-semibold">DONE</button>
+            <button onclick="handleClick(event); goHome();" class="btn w-full py-4 rounded-lg text-sm tracking-widest font-semibold">DONE</button>
           </div>
         </div>`;
       }
@@ -1837,50 +1607,39 @@
     function handleClick(event) {
       initAudio();
       playSound('thunk');
-      if (event) createSparks(event.clientX, event.clientY, 6);
     }
 
     function handleAnswerClick(event, points) {
       initAudio();
       
-      // Sound based on points
-      const intensity = points === 1 ? 0.4 : points === 2 ? 0.7 : 1.0;
-      playSound('eruption', intensity);
+      // Intensity based on points
+      const intensity = points === 1 ? 0.5 : points === 2 ? 0.75 : 1.0;
       
-      // Lava eruption
+      // LAVA ERUPTION SOUND
+      playSound('lavaErupt', intensity);
+      
+      // Visual eruption
       createLavaEruption(points);
       
-      // Local sparks
-      createSparks(event.clientX, event.clientY, 8);
-      
-      // Process
+      // Process answer
       answer(points);
     }
 
     // ========== KEYBOARD SUPPORT ==========
     document.addEventListener('keydown', (e) => {
       if (state.screen !== 'quiz') return;
-      
       const key = e.key.toUpperCase();
       if (['A', 'B', 'C'].includes(key)) {
         const container = document.getElementById('answerContainer');
         if (!container) return;
-        
         const buttons = container.querySelectorAll('button');
-        const index = key.charCodeAt(0) - 65; // A=0, B=1, C=2
-        
+        const index = key.charCodeAt(0) - 65;
         if (buttons[index]) {
           const points = parseInt(buttons[index].dataset.points);
           initAudio();
-          
-          // Fake click position at center
-          const fakeEvent = { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 };
-          
-          const intensity = points === 1 ? 0.4 : points === 2 ? 0.7 : 1.0;
-          playSound('eruption', intensity);
+          const intensity = points === 1 ? 0.5 : points === 2 ? 0.75 : 1.0;
+          playSound('lavaErupt', intensity);
           createLavaEruption(points);
-          createSparks(fakeEvent.clientX, fakeEvent.clientY, 8);
-          
           answer(points);
         }
       }
@@ -1922,15 +1681,13 @@
 
       if (state.currentQuestionIndex < 9) {
         state.currentQuestionIndex++;
-        playSound('tick');
-        render();
+        setTimeout(() => { playSound('tick'); render(); }, 150);
       } else {
         state.players[state.currentPlayerIndex].resultLine = getResultLine(state.players[state.currentPlayerIndex].score);
         state.measuring = true;
         state.showResult = false;
         state.screen = 'results';
-        playSound('spinStart');
-        render();
+        setTimeout(() => { playSound('spinStart'); render(); }, 200);
         
         setTimeout(() => {
           state.measuring = false;
@@ -1943,7 +1700,7 @@
             state.showResult = true;
             render();
           }, 400);
-        }, 2600);
+        }, 2800);
       }
     }
 
@@ -1969,7 +1726,6 @@
     updateMuteIcon();
     createEmbers();
     render();
-    
     document.addEventListener('click', () => initAudio(), { once: true });
     document.addEventListener('touchstart', () => initAudio(), { once: true });
   </script>
