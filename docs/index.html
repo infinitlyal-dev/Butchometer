@@ -37,7 +37,6 @@
 
     .mono { font-family: 'IBM Plex Mono', monospace; }
 
-    /* Diagonal brushed metal texture */
     .texture {
       position: fixed;
       inset: 0;
@@ -54,7 +53,6 @@
       z-index: 0;
     }
 
-    /* Furnace glow at bottom */
     .furnace-glow {
       position: fixed;
       bottom: 0;
@@ -66,7 +64,6 @@
       z-index: 0;
     }
 
-    /* Title - confident, heavy */
     .title {
       font-family: 'IBM Plex Mono', monospace;
       font-weight: 600;
@@ -75,7 +72,6 @@
       color: var(--orange);
     }
 
-    /* Steel plate button - heavy, irreversible feel */
     .btn {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 50%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
@@ -115,7 +111,6 @@
         inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
-    /* Card - metal plate */
     .card {
       background: linear-gradient(180deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
@@ -124,7 +119,6 @@
         inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
-    /* Input - recessed */
     .input {
       background: var(--steel-darkest);
       border: 1px solid var(--steel-mid);
@@ -139,7 +133,6 @@
     }
     .input::placeholder { color: var(--text-muted); }
 
-    /* Answer buttons - tiered visual weight */
     .answer {
       background: linear-gradient(180deg, var(--steel-mid) 0%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
@@ -160,7 +153,6 @@
     .answer-unhinged { border-left-color: var(--orange-dim); }
     .answer-unhinged:hover { border-left-color: var(--orange); }
 
-    /* Progress bar - furnace heat gauge */
     .progress-track {
       background: var(--steel-darkest);
       border: 1px solid var(--steel-mid);
@@ -172,7 +164,6 @@
       transition: width 0.3s ease;
     }
 
-    /* Gauge - industrial meter */
     .gauge {
       background: 
         conic-gradient(
@@ -201,13 +192,11 @@
       100% { transform: rotate(1080deg); }
     }
 
-    /* Score reveal */
     .score-display {
       color: var(--orange);
       text-shadow: 0 0 30px rgba(212,98,26,0.4);
     }
 
-    /* Animations - mechanical, weighted */
     .fade-in { animation: fadeIn 0.35s ease-out forwards; }
     .slide-in { animation: slideIn 0.3s ease-out forwards; }
     .heavy-in { animation: heavyIn 0.4s cubic-bezier(0.2, 0, 0.3, 1) forwards; }
@@ -215,14 +204,12 @@
     @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes heavyIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    /* Screen transition */
     .screen-enter { animation: screenEnter 0.35s ease-out forwards; }
     @keyframes screenEnter { 
       from { opacity: 0; } 
       to { opacity: 1; } 
     }
 
-    /* Plaque for leaderboard */
     .plaque {
       background: linear-gradient(180deg, var(--steel-light) 0%, var(--steel-mid) 50%, var(--steel-dark) 100%);
       border: 1px solid var(--steel-lighter);
@@ -238,633 +225,790 @@
   <div id="app" class="relative z-10 min-h-screen"></div>
 
   <script>
-    // ========== SOUNDS - Industrial, tiered, intentional ==========
+    // ========== SOUNDS ==========
     const sounds = {
-      // UI
       click: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'], volume: 0.12 }),
-      // Answer tiers
       safe: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'], volume: 0.15 }),
       mid: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3'], volume: 0.22 }),
       unhinged: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2580/2580-preview.mp3'], volume: 0.28 }),
-      // Transitions
       whoosh: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2617/2617-preview.mp3'], volume: 0.15 }),
-      // Result reveal
       impact: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2620/2620-preview.mp3'], volume: 0.3 }),
       lock: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2577/2577-preview.mp3'], volume: 0.2 })
     };
     function playSound(name) { if (sounds[name]) sounds[name].play(); }
 
-    // ========== QUESTIONS - MASSIVE POOL FOR REPLAYABILITY ==========
-    const questions = {
-      mild: [
-        { id: 'm1', setup: "It's 6:47 AM. You're standing in the kitchen in your underwear, staring at an empty coffee bag. There's instant in the back of the cupboard. It's been there since the previous tenant.", answers: [
-          { text: "You drive to the nearest café in your pajama pants because you have standards and those standards include not drinking something that dissolves. Instant coffee is for people who've given up on joy.", points: 1 },
+    // ========== QUESTIONS BY CATEGORY ==========
+    // 149 questions across 9 categories
+    // Points: 1 = least butch, 2 = middle, 3 = most butch
+    // Answer order is randomized per question
+
+    const questionsByCategory = {
+      homeLife: [
+        { id: 'HL01', setup: "It's 6:47 AM. You're standing in the kitchen in your underwear, staring at an empty coffee bag. There's instant in the back of the cupboard. It's been there since the previous tenant.", answers: [
+          { text: "You chew the crystals raw, washed down with sink water—ancestors forged empires without fancy brews, and so will you.", points: 3 },
           { text: "You make the instant because caffeine is a chemical and chemicals don't care about your feelings. It tastes like regret but regret is still technically a flavor.", points: 2 },
-          { text: "You eat the crystals dry, straight from the jar, chased with tap water. Your ancestors crossed frozen tundras without espresso machines. This is efficiency, not desperation.", points: 3 }
+          { text: "You drive to the nearest café in your pajama pants because you have standards and those standards include not drinking something that dissolves.", points: 1 }
         ]},
-        { id: 'm2', setup: "There's a spider on the wall. Medium-sized. It hasn't moved in three minutes. You've been watching it like it owes you an explanation for being there.", answers: [
+        { id: 'HL02', setup: "There's a spider on the wall. Medium-sized. It hasn't moved in three minutes. You've been watching it like it owes you an explanation for being there.", answers: [
           { text: "You get a glass and a postcard, trap it with the care of a bomb disposal unit, and release it outside while whispering an apology because all life has value, even life with eight legs.", points: 1 },
-          { text: "You smack it with whatever's nearby because you didn't invite it, it didn't pay to be here, and cohabitation requires consent. The wall wipes clean. Circle of life.", points: 2 },
-          { text: "You leave it. That spider now works for you. You've just hired someone without doing a single interview, and it's already more useful than most employees.", points: 3 }
+          { text: "You ignore it entirely—that spider's now your tenant, earning its keep by catching flies, no rent required.", points: 3 },
+          { text: "You smack it with whatever's nearby because you didn't invite it, it didn't pay to be here, and cohabitation requires consent.", points: 2 }
         ]},
-        { id: 'm3', setup: "You've bought flat-pack furniture. The box says 'easy assembly.' Inside: 47 wooden pieces, an Allen key the size of your thumb, and instructions drawn by someone who hates you.", answers: [
-          { text: "You lay every piece out in order, match them to the diagram, and follow each step exactly because the Swedes have been building furniture longer than your country has existed. Trust the process.", points: 1 },
-          { text: "You look at the pictures, ignore the words, and figure it out as you go because furniture is just shapes that fit together. If there are extra screws at the end, that's just bonus hardware.", points: 2 },
-          { text: "Instructions are a suggestion for people who lack spatial intuition. You build by instinct. If it wobbles, that's not poor construction—that's character. Furniture should feel alive.", points: 3 }
-        ]},
-        { id: 'm4', setup: "There's a container in the back of the fridge. You don't remember putting it there. The lid is bulging with ambition. It could be chili. It could be a cry for help.", answers: [
-          { text: "You throw it away unopened, container and all, because some doors shouldn't be opened. You're not a scientist. You're not equipped for what might be evolving in there.", points: 1 },
-          { text: "You crack it open and give it a sniff because noses exist for exactly this reason. If it smells like food, it's food. If it smells like a question, it's trash.", points: 2 },
-          { text: "You eat it without investigation. Expiration dates are written by lawyers, not chefs. Your immune system didn't get this strong by being protected from aged leftovers.", points: 3 }
-        ]},
-        { id: 'm5', setup: "The check engine light came on five days ago. The car runs fine. The light just sits there, glowing, like a passive-aggressive coworker who won't say what you did wrong.", answers: [
-          { text: "You take it to a mechanic immediately because that light is a warning from engineers who know things you don't. Ignoring warnings is how main characters die in the first act.", points: 1 },
-          { text: "You buy a code reader, check what it says, and make a judgment call. Half the time it's the gas cap. The other half, it's something you can worry about next paycheck.", points: 2 },
-          { text: "You put electrical tape over it. Problem solved. The light is a symptom, not the disease. Cars ran fine before dashboards had opinions, and yours will too.", points: 3 }
-        ]},
-        { id: 'm6', setup: "It's raining. Steady, not heavy. Your car is forty feet away. No umbrella. Your jacket hood is decorative at best—designed by someone who's never met weather.", answers: [
-          { text: "You wait at the door and watch the radar because getting wet is step one of getting sick, and getting sick is step one of canceling plans. Patience is just future comfort.", points: 1 },
-          { text: "You pull the hood up, accept it won't help, and jog to the car because you're not sugar and you're not made of paper. Damp dries. Adults understand this.", points: 2 },
-          { text: "You walk at your normal pace because running from rain is admitting it has power over you. Water falls. You move. The two events are not related.", points: 3 }
-        ]},
-        { id: 'm7', setup: "The jar won't open. You've tried twice. Your grip keeps slipping. Someone is watching from across the room. Your entire identity now depends on pickles.", answers: [
-          { text: "You run hot water over the lid because metal expands when heated and physics doesn't care about pride. Technique beats strength. That's what separates us from gorillas.", points: 1 },
-          { text: "You wrap it in a towel, use your whole body, and give it one genuine effort because sometimes things just need commitment. If it fails, you hand it off. No shame in teamwork.", points: 2 },
-          { text: "You break the jar into a bowl and fish out what you need. You wanted what's inside, not a relationship with glass. Jars are packaging. Packaging is temporary.", points: 3 }
-        ]},
-        { id: 'm8', setup: "Someone touched the thermostat. The house is now 74 degrees. You can feel your electricity bill climbing in real time. Sweat is forming. This is not a temperature—it's a betrayal.", answers: [
+        { id: 'HL03', setup: "Someone touched the thermostat. The house is now 74 degrees. You can feel your electricity bill climbing in real time. Sweat is forming. This is not a temperature—it's a betrayal.", answers: [
+          { text: "You rip off the cover and stash it away—comfort's earned through grit, not knobs; blankets exist for the weak.", points: 3 },
           { text: "You call a household meeting to establish clear thermostat boundaries because adults communicate, and communication prevents the kind of resentment that ends leases.", points: 1 },
-          { text: "You change it back without comment. If they change it again, you change it again. This is a war of attrition, not a conversation. The patient one wins.", points: 2 },
-          { text: "You remove the thermostat cover and hide it somewhere they'll never look. Comfort is earned, not dialed. If they're cold, there are blankets. Adaptation builds character.", points: 3 }
+          { text: "You change it back without comment. If they change it again, you change it again. This is a war of attrition, not a conversation.", points: 2 }
         ]},
-        { id: 'm9', setup: "Your phone battery is at 4%. You're not near a charger. You have one text to send, two emails to check, and a growing sense that this is somehow a personal failing.", answers: [
-          { text: "You ration every second. Low power mode. Screen brightness zero. You compose the text mentally before typing a single letter because efficiency is survival now.", points: 1 },
-          { text: "You send the text, accept the email will wait, and let the phone die with dignity. People survived for millennia without constant communication. You can too. Probably.", points: 2 },
-          { text: "You let it die. If it was important, they'll call back. If they can't reach you, you were busy. Phones are just leashes that vibrate. Freedom starts at 0%.", points: 3 }
+        { id: 'HL04', setup: "Your phone battery is at 4%. You're not near a charger. You have one text to send, two emails to check, and a growing sense that this is somehow a personal failing.", answers: [
+          { text: "You send the text, accept the email will wait, and let the phone die with dignity. People survived for millennia without constant communication. You can too.", points: 2 },
+          { text: "You kill the battery on purpose—if it's vital, they'll track you down; leashes like phones deserve to go dark.", points: 3 },
+          { text: "You ration every second. Low power mode. Screen brightness zero. You compose the text mentally before typing because efficiency is survival now.", points: 1 }
         ]},
-        { id: 'm10', setup: "You're cooking. The smoke alarm goes off. Nothing is burning. The alarm just has opinions about your technique and volume is how it expresses them.", answers: [
-          { text: "You open every window, turn on every fan, and consider this a learning experience about ventilation and the sensitive feelings of safety equipment.", points: 1 },
+        { id: 'HL05', setup: "You're cooking. The smoke alarm goes off. Nothing is burning. The alarm just has opinions about your technique and volume is how it expresses them.", answers: [
           { text: "You fan it with a towel until it stops, muttering that this happens every time, and continue cooking because you're not going to let a ceiling beep dictate dinner.", points: 2 },
-          { text: "You remove the battery. The alarm has been demoted. If there's actual fire, you'll notice. You've noticed things before. Your senses work.", points: 3 }
+          { text: "You yank the battery out—the alarm's fired; real men smell smoke before gadgets whine.", points: 3 },
+          { text: "You open every window, turn on every fan, and consider this a learning experience about ventilation and the sensitive feelings of safety equipment.", points: 1 }
         ]},
-        { id: 'm11', setup: "The WiFi is down. You've restarted the router twice. Nothing. You're standing there, watching blinking lights like they contain meaning. They don't.", answers: [
-          { text: "You call the provider, navigate the automated system, wait on hold for twenty minutes, and speak to a human who asks if you've tried restarting it. You have. You say yes.", points: 1 },
+        { id: 'HL06', setup: "The WiFi is down. You've restarted the router twice. Nothing. You're standing there, watching blinking lights like they contain meaning. They don't.", answers: [
+          { text: "You step outside—WiFi's a chain; break it, and rediscover silence, books, and self-reliance.", points: 3 },
           { text: "You unplug everything, wait thirty seconds like some ancient ritual, plug it back in, and accept that technology is mostly just waiting for things to decide to work.", points: 2 },
-          { text: "You go outside. The WiFi has been holding you hostage anyway. You didn't need that dopamine. Books exist. Silence exists. The router can figure itself out.", points: 3 }
+          { text: "You call the provider, navigate the automated system, wait on hold for twenty minutes, and speak to a human who asks if you've tried restarting it. You have. You say yes.", points: 1 }
         ]},
-        { id: 'm12', setup: "You're at the grocery store. You need one thing. You don't have a basket because you won't need one. Now you're holding six items against your chest like a desperate penguin.", answers: [
-          { text: "You go back and get a basket because pride isn't worth a public display of poor judgment. You underestimated yourself. It happens. Baskets exist for a reason.", points: 1 },
-          { text: "You soldier on, rearranging items, balancing them, refusing to admit defeat because you said one thing and you meant it, even though you lied.", points: 2 },
-          { text: "You drop something. You don't pick it up. If it was important, it would have stayed. Natural selection applies to groceries. The strong items survive.", points: 3 }
-        ]},
-        { id: 'm13', setup: "Your alarm didn't go off. You're awake now. You're also late. Very late. The kind of late where getting ready becomes a negotiation between hygiene and punctuality.", answers: [
-          { text: "You do everything anyway—shower, skincare, actual breakfast—because showing up put-together matters more than showing up on time. First impressions happen once.", points: 1 },
-          { text: "You prioritize strategically. Deodorant: yes. Hair situation: manageable. Coffee: travel mug. You're late but you're not unhinged. There's a difference.", points: 2 },
-          { text: "You leave immediately. Whatever state you're in is the state you arrive in. They'll deal with it. You're there. Presence counts. Grooming is optional.", points: 3 }
-        ]},
-        { id: 'm14', setup: "You're on the phone. It's an automated system. It's asking you to 'briefly describe your issue.' There's a 90% chance it won't understand you and a 100% chance you'll try anyway.", answers: [
-          { text: "You speak slowly, clearly, and use simple keywords because the machine is doing its best and yelling at technology has never helped anyone, including the technology.", points: 1 },
-          { text: "You say 'representative' immediately, repeatedly, louder each time, because you know how this works and you're not wasting your breath on a voice that doesn't care.", points: 2 },
-          { text: "You hang up. You'll handle it another way. Or not at all. Some problems solve themselves if you ignore them long enough. This might be one of those.", points: 3 }
-        ]},
-        { id: 'm15', setup: "The parking spot is small. Very small. The kind of small that makes you wonder if the person who painted it has ever seen a car. You could make it. Probably.", answers: [
-          { text: "You find another spot. A better spot. A spot that doesn't require you to perform geometry in public while strangers judge from their own, larger, easier spots.", points: 1 },
-          { text: "You try it. Multiple angles. Multiple attempts. Some back and forth. You succeed. Nobody clapped but they should have. That was art.", points: 2 },
-          { text: "You park across two spots because whoever designed this lot didn't deserve respect. If tickets exist, tickets are a suggestion. Rules written by cowards.", points: 3 }
-        ]},
-        { id: 'm16', setup: "Someone at work brought donuts. There's one left. It's been there for hours. Multiple people have looked at it. Nobody has taken it. The donut is now a moral dilemma.", answers: [
-          { text: "You leave it because someone else might want it more, and being the person who took the last donut is a reputation you're not willing to carry.", points: 1 },
-          { text: "You cut it in half and take half because compromise is civilization. You wanted it, but not enough to live with the full weight of what taking it means.", points: 2 },
-          { text: "You take the whole thing. Hesitation is why it was still there. You are not hesitation. You are hunger with legs. The donut was always yours.", points: 3 }
-        ]},
-        { id: 'm17', setup: "Your neighbor is playing music. Loudly. It's 10 PM on a Tuesday. Not late enough to be illegal. Just late enough to be annoying. The bass is in your walls now.", answers: [
+        { id: 'HL07', setup: "Your neighbor is playing music. Loudly. It's 10 PM on a Tuesday. Not late enough to be illegal. Just late enough to be annoying. The bass is in your walls now.", answers: [
           { text: "You put on headphones, listen to something calming, and remind yourself that conflict is expensive and you have to live next to this person for the foreseeable future.", points: 1 },
-          { text: "You knock on their door, introduce yourself if you haven't, and mention it politely because most people don't realize how sound carries and most people aren't monsters.", points: 2 },
-          { text: "You play your own music. Louder. Better. This is a conversation now. If they want to communicate through subwoofers, you speak that language fluently.", points: 3 }
+          { text: "You crank your own tunes louder, superior in every way—this ain't talk, it's volume warfare, and you fight to win.", points: 3 },
+          { text: "You knock on their door, introduce yourself if you haven't, and mention it politely because most people don't realize how sound carries.", points: 2 }
         ]},
-        { id: 'm18', setup: "The toilet is running. That sound. That constant, low-grade, psychologically corrosive sound. It's been doing it for two days. The landlord hasn't responded.", answers: [
-          { text: "You message the landlord again, politely, with documentation, because there are proper channels and those channels exist so you don't have to know how toilets work.", points: 1 },
-          { text: "You watch a YouTube video, open the tank, and jiggle things until it stops because most repairs are just jiggling the right thing hard enough.", points: 2 },
-          { text: "You learn to love the sound. It's white noise now. It's part of your home. The toilet is speaking and you have chosen to listen. Growth.", points: 3 }
-        ]},
-        { id: 'm19', setup: "You've been on hold for forty-five minutes. You can't hang up now. That would mean the last forty-five minutes meant nothing. Sunk cost is real and it has your phone number.", answers: [
-          { text: "You stay on the line, put it on speaker, and do other things because eventually someone will answer and when they do, you will be ready and emotionally exhausted.", points: 1 },
-          { text: "You stay, but you draft the sternly-worded email you're going to send regardless of outcome, because this is unacceptable and they're going to know it.", points: 2 },
-          { text: "You hang up. Time is the only resource you can't replace. You'll find another way. Or you won't, and you'll live without whatever this was. Either way, you're free.", points: 3 }
-        ]},
-        { id: 'm20', setup: "Someone is standing too close to you in line. Not touching you. Just... there. In your space. Breathing your air. Existing in a radius that feels personal.", answers: [
-          { text: "You say nothing, suffer in silence, and remind yourself that everyone has different cultural norms and maybe this is normal somewhere and you're the weird one.", points: 1 },
-          { text: "You take a step forward. They take a step forward. You take another step. This is a slow-motion chase now. You're walking to the register incrementally.", points: 2 },
-          { text: "You turn around and make eye contact. You don't say anything. You just look. They understand. They step back. Words are inefficient. Presence is power.", points: 3 }
-        ]},
-        { id: 'm21', setup: "Your shoelace broke. Not at home. Out in the world. You're standing there with a shoe that's now decorative. There's no time to buy laces. There's barely time to process this betrayal.", answers: [
-          { text: "You tie what's left into a very tight, very short knot, walk carefully, and accept that today is the day your shoe became a liability.", points: 1 },
-          { text: "You tuck the lace inside and walk like nothing's wrong because confidence makes up for a lot, including the physics of unsecured footwear.", points: 2 },
-          { text: "You take the other lace out too. Now both shoes match. Problem solved. Symmetry is its own function. Laces were slowing you down anyway.", points: 3 }
-        ]},
-        { id: 'm22', setup: "You're at a restaurant. The waiter brings the wrong order. It's fine. It's actually fine. It's just not what you asked for. It's sitting there, being someone else's food, on your table.", answers: [
-          { text: "You flag them down politely and explain the mix-up because that's what adults do and eating food you didn't want just to avoid awkwardness is not a coping strategy.", points: 1 },
-          { text: "You eat it. It's food. You're hungry. Ordering was a suggestion, not a contract. You adapt. Flexibility is survival. This is fine.", points: 2 },
-          { text: "You eat it and tell them it's delicious. They don't know you didn't order it. You've just had an adventure. Mystery food. You're spontaneous now.", points: 3 }
-        ]},
-        { id: 'm23', setup: "The pen you picked up doesn't work. You're mid-signature. The moment is now. You click it again. Nothing. Once more. A dry scratch. The universe is watching.", answers: [
-          { text: "You calmly ask for another pen because these things happen and making it weird doesn't help anyone, including the pen, which is clearly going through something.", points: 1 },
-          { text: "You scribble aggressively on the corner of the paper until it works because pens respond to pressure and sometimes they need to remember their purpose.", points: 2 },
-          { text: "You sign in pencil. You sign in crayon. You sign in blood if you have to. The method doesn't matter. Commitment does. The document will remember.", points: 3 }
-        ]},
-        { id: 'm24', setup: "Your glasses are dirty. Very dirty. You've been seeing the world through a fog you created yourself. There's no cloth nearby. Just your shirt, which is also not clean.", answers: [
-          { text: "You wait until you can clean them properly because smearing is worse than fog and you're not going to make this problem bigger just because you're impatient.", points: 1 },
+        { id: 'HL08', setup: "Your glasses are dirty. Very dirty. You've been seeing the world through a fog you created yourself. There's no cloth nearby. Just your shirt, which is also not clean.", answers: [
           { text: "You breathe on them and wipe with your shirt because this is what shirts are for now. Function over fashion. You can see. Mostly. Good enough.", points: 2 },
-          { text: "You take them off entirely. The world is soft now. Blurry. Impressionist. This is a vision choice, not a vision problem. Monet lived like this.", points: 3 }
+          { text: "You wait until you can clean them properly because smearing is worse than fog and you're not going to make this problem bigger just because you're impatient.", points: 1 },
+          { text: "You ditch them altogether—the world's better blurred; sharp vision's for those afraid of mystery.", points: 3 }
         ]},
-        { id: 'm25', setup: "There's a fly in your house. One fly. It's been three days. Every time you think it's gone, it returns. It has landed on your food twice. It's winning.", answers: [
+        { id: 'HL09', setup: "There's a fly in your house. One fly. It's been three days. Every time you think it's gone, it returns. It has landed on your food twice. It's winning.", answers: [
+          { text: "You grant it residency—one fly's no army; it stays till it leaves, teaching patience like a silent master.", points: 3 },
           { text: "You open windows strategically and wait because flies have the attention span of flies and eventually it will forget where it is and leave.", points: 1 },
-          { text: "You become a hunter. You wait. You track. You strike with a rolled magazine and miss four times but on the fifth, victory. You've earned this silence.", points: 2 },
-          { text: "You stop caring. One fly isn't an infestation. It's a roommate. It was here before you noticed. It'll leave when it's ready. You coexist now.", points: 3 }
+          { text: "You become a hunter. You wait. You track. You strike with a rolled magazine and miss four times but on the fifth, victory.", points: 2 }
         ]},
-        { id: 'm26', setup: "You've been sitting in a waiting room for forty minutes. Your appointment was at 2. It's now 2:40. Nobody has explained. Nobody seems concerned. Time has become theoretical.", answers: [
-          { text: "You wait patiently because they're probably busy and you don't want to be the person who makes a receptionist's day worse over something they can't control.", points: 1 },
-          { text: "You approach the desk, smile politely, and ask if there's an estimated wait time because you have places to be and information helps you plan.", points: 2 },
-          { text: "You announce, to no one in particular, that your time also has value. Then you sit back down. The statement was made. The room heard it. That's enough.", points: 3 }
-        ]},
-        { id: 'm27', setup: "Your umbrella just inverted. Wind did it. You're standing on a sidewalk holding a useless fabric bowl while water hits your face. Dignity left about three seconds ago.", answers: [
-          { text: "You wrestle it back into shape, accept that you're wet now, and continue walking because umbrellas are not worth a public meltdown.", points: 1 },
-          { text: "You close it, tuck it under your arm, and walk in the rain with purpose because at this point, the umbrella is only making things worse.", points: 2 },
-          { text: "You throw it away. Right there. Into the nearest trash can. You didn't need it. You never needed it. Rain is just weather and you are not weather's victim.", points: 3 }
-        ]},
-        { id: 'm28', setup: "Someone waved at you. You waved back. They were waving at someone behind you. You're standing there, arm still slightly raised, dignity falling like slow-motion confetti.", answers: [
-          { text: "You pretend you were stretching. You commit to the stretch. Full arm extension. Maybe a yawn. Nobody saw. Everybody saw. It doesn't matter now.", points: 1 },
-          { text: "You own it. A brief laugh, a shrug, and you move on because this happens to everyone and making it weird is worse than just being a person who misjudged a wave.", points: 2 },
-          { text: "You finish the wave. Confidently. At no one. Because you started something and you're not a quitter. The wave exists now. Let them wonder why.", points: 3 }
-        ]},
-        { id: 'm29', setup: "You've forgotten someone's name. You've met them three times. They clearly remember yours. They're walking toward you right now. Your brain is empty. Your smile is full.", answers: [
-          { text: "You greet them warmly without using their name and hope the conversation goes nowhere that requires it. Pronouns exist. 'Hey you' is technically a greeting.", points: 1 },
-          { text: "You confess immediately. 'I'm so sorry, I've forgotten your name.' It's awkward but honest and honestly, they've probably forgotten someone's name too.", points: 2 },
-          { text: "You call them 'boss,' 'chief,' 'legend'—something so aggressively casual that names become irrelevant. You've just invented a nickname. That's intimacy now.", points: 3 }
-        ]},
-        { id: 'm30', setup: "The elevator is taking forever. Someone else is waiting too. You've both pressed the button multiple times. Neither of you acknowledges this. The silence is thick.", answers: [
-          { text: "You check your phone, pretend to be busy, and let the silence win because forced small talk in elevator lobbies is a form of social violence.", points: 1 },
-          { text: "You make a comment about the wait. Something neutral. 'Slow today.' They nod. You've connected. That's enough. The elevator arrives. You never speak again.", points: 2 },
-          { text: "You take the stairs. You weren't going to wait for machinery to decide when you move. Legs exist. Cardio is free. The elevator will remember this rejection.", points: 3 }
-        ]},
-        { id: 'm31', setup: "You just realized you've been pronouncing a word wrong. For years. Possibly decades. In front of people. Confidently. Someone just corrected you. Kindly, but still.", answers: [
-          { text: "You thank them, genuinely, because learning is a gift and you're not too proud to accept that you've been wrong about something small for a very long time.", points: 1 },
-          { text: "You nod, file it away, and vow to never say that word out loud again. Some problems are solved through avoidance. This is one of those.", points: 2 },
-          { text: "You continue pronouncing it your way. Language evolves. Your way is valid now because you've been saying it long enough. Persistence creates legitimacy.", points: 3 }
-        ]},
-        { id: 'm32', setup: "You've walked into a room and forgotten why. You're standing there. The room is waiting. You could retrace your steps. You could also just accept the void.", answers: [
+        { id: 'HL10', setup: "You've walked into a room and forgotten why. You're standing there. The room is waiting. You could retrace your steps. You could also just accept the void.", answers: [
+          { text: "You grab whatever's closest—that's your purpose now; brains falter, hands decide.", points: 3 },
           { text: "You walk back to where you started because context helps memory and you're not going to stand in a doorway like a confused sim waiting for instructions.", points: 1 },
-          { text: "You stand still and wait for it to come back. Trust the brain. It knows things. It's just processing. Give it a moment. It earned that moment.", points: 2 },
-          { text: "You pick up the nearest object. That's what you came for now. The original purpose is gone. This is the new purpose. Adapt or stare at walls.", points: 3 }
+          { text: "You stand still and wait for it to come back. Trust the brain. It knows things. It's just processing. Give it a moment.", points: 2 }
         ]},
-        { id: 'm33', setup: "The self-checkout is yelling at you. 'Unexpected item in bagging area.' There is no unexpected item. There's just you, your groceries, and a machine having a breakdown.", answers: [
-          { text: "You wait for an attendant to come fix it because machines make mistakes and you're not about to argue with something that doesn't understand nuance.", points: 1 },
-          { text: "You remove everything, start over, and move slowly this time because the machine wants obedience and you're willing to perform it if it means leaving.", points: 2 },
-          { text: "You press skip. You press skip again. You pay and leave. The machine's feelings are not your responsibility. You came for groceries, not therapy.", points: 3 }
+        { id: 'HL11', setup: "The fitted sheet came off the corner. Again. It's 2 AM. You're lying there, on a mattress that now has a wrinkled fabric tumor. You could fix it. You could also just live like this.", answers: [
+          { text: "You sleep on the bare mattress—sheets are luxuries; true rest needs only a surface and resolve.", points: 3 },
+          { text: "You get up, remake the bed properly, tuck the corners tight, because sleep quality matters.", points: 1 },
+          { text: "You shove it back, roughly, without fully remaking anything, and lie down before it can escape again. Good enough is a sleep strategy.", points: 2 }
         ]},
-        { id: 'm34', setup: "You're at a party. You don't know many people. Someone is talking to you, but you can't hear them over the music. You've already said 'what?' twice. A third feels aggressive.", answers: [
-          { text: "You nod, smile, and hope your face is doing something appropriate because at this point, actually hearing them seems less important than ending this interaction gracefully.", points: 1 },
-          { text: "You lean in close, cup your ear, and commit to understanding because connection matters and you didn't come here to mime enthusiasm at strangers.", points: 2 },
-          { text: "You point at the bar and walk away. Drinks are a universal excuse. If they wanted to be heard, they should've spoken louder. You were trying.", points: 3 }
-        ]},
-        { id: 'm35', setup: "You've just sent a text to the wrong person. The text was about them. The text was not flattering. You're watching the 'delivered' notification like it's a slow-motion car crash.", answers: [
-          { text: "You send an immediate apology, explain the mistake, and hope they're the kind of person who understands that phones are chaos and intentions matter more than accidents.", points: 1 },
-          { text: "You follow it up with 'sorry, wrong person' and nothing else because elaboration makes it worse and the less said, the faster this becomes a memory instead of a crisis.", points: 2 },
-          { text: "You double down. Send another message that makes the first one seem like part of a bit. You're joking now. Everything is a joke. Commit to the chaos.", points: 3 }
-        ]},
-        { id: 'm36', setup: "You bit your tongue. Hard. While eating. You're now in pain, eating the same food that hurt you, trying to pretend nothing happened. Your eyes are watering. It wasn't worth it.", answers: [
-          { text: "You stop eating, take a moment, maybe drink something cold, because your body just attacked itself and that deserves acknowledgment, not continued violence.", points: 1 },
-          { text: "You keep eating but slower, chewing carefully, because stopping feels like defeat and you're not going to let your own mouth win this round.", points: 2 },
-          { text: "You eat faster. Out of spite. The tongue will heal. Hunger doesn't care about pain. You've survived worse. This is just texture now.", points: 3 }
-        ]},
-        { id: 'm37', setup: "The bag ripped. Right there in the parking lot. Oranges are rolling. A can is dented. Someone is watching from their car, not helping, just witnessing your produce-based tragedy.", answers: [
-          { text: "You calmly gather everything, make two trips, and accept that this is what happens when you trust a single bag to hold the weight of your entire shopping list.", points: 1 },
-          { text: "You scoop what you can, leave the casualties, and walk to your car like nothing happened because dignity is a choice and you're choosing it now.", points: 2 },
-          { text: "You maintain eye contact with the watcher while picking up oranges. Slowly. One at a time. They will remember this. That's your victory now.", points: 3 }
-        ]},
-        { id: 'm38', setup: "You said 'you too' when the server said 'enjoy your meal.' It's done. It's out there. You can't take it back. They walked away. You're sitting with what you've done.", answers: [
-          { text: "You let it go because everyone does this and servers hear it constantly and if you apologize now, you're making it weirder than it needs to be.", points: 1 },
-          { text: "You say nothing but tip extra because money is a language and maybe 20% says 'I'm sorry for my mouth' better than words ever could.", points: 2 },
-          { text: "You double down next time they come by. 'I hope you also enjoy your meal later.' Commit. Own the bit. Make it weird on purpose now.", points: 3 }
-        ]},
-        { id: 'm39', setup: "The fitted sheet came off the corner. Again. It's 2 AM. You're lying there, on a mattress that now has a wrinkled fabric tumor. You could fix it. You could also just live like this.", answers: [
-          { text: "You get up, remake the bed properly, tuck the corners tight, because sleep quality matters and you're not going to let a sheet dictate your comfort.", points: 1 },
-          { text: "You shove it back, roughly, without fully remaking anything, and lie down before it can escape again. Good enough is a sleep strategy.", points: 2 },
-          { text: "You ignore it. Sleep on the bare corner. Sheets are a suggestion. Mattresses are the actual surface. The sheet lost its privileges tonight.", points: 3 }
-        ]},
-        { id: 'm40', setup: "The power adapter doesn't quite fit. It fits, but not comfortably. You have to hold it at an angle. If you let go, nothing charges. This is your life now.", answers: [
-          { text: "You get a new adapter or cable because this is a solvable problem and you're not going to spend your days propping electronics like they're on life support.", points: 1 },
+        { id: 'HL12', setup: "The power adapter doesn't quite fit. It fits, but not comfortably. You have to hold it at an angle. If you let go, nothing charges. This is your life now.", answers: [
           { text: "You jam it in, prop something against it, and hope friction and gravity do the rest. This is engineering. MacGyver would understand.", points: 2 },
-          { text: "You charge it at the exact angle required and don't move for two hours. You've adapted to the adapter. It didn't win. You both compromised.", points: 3 }
+          { text: "You get a new adapter or cable because this is a solvable problem and you're not going to spend your days propping electronics like they're on life support.", points: 1 },
+          { text: "You hold it steady for hours—adapters bend to will, not the other way around.", points: 3 }
         ]},
-        { id: 'm41', setup: "You're watching something alone. A plot twist happens. It's huge. You have no one to talk to about it. The cat doesn't care. The walls are unhelpful. This revelation belongs to no one.", answers: [
-          { text: "You text someone who's seen it, carefully avoiding spoilers for anyone who hasn't, because shared joy is real joy and you need another human to know what just happened.", points: 1 },
-          { text: "You sit with it. Process. This moment is yours. Not everything needs external validation. Some experiences are complete without witnesses.", points: 2 },
-          { text: "You tell the cat anyway. In detail. The cat blinks. That's acknowledgment. You've communicated. The twist has been shared. Closure achieved.", points: 3 }
+        { id: 'HL13', setup: "You're watching something alone. A plot twist happens. It's huge. You have no one to talk to about it. The cat doesn't care. The walls are unhelpful.", answers: [
+          { text: "You text someone who's seen it, carefully avoiding spoilers for anyone who hasn't, because shared joy is real joy.", points: 1 },
+          { text: "You explain it to the cat in full—felines understand twists; walls echo wisdom.", points: 3 },
+          { text: "You sit with it. Process. This moment is yours. Not everything needs external validation.", points: 2 }
         ]},
-        { id: 'm42', setup: "The tag on your shirt is scratching. It's been scratching all day. You can't take the shirt off. You can't reach the tag properly. You're in your own personal sensory hell.", answers: [
-          { text: "You find a bathroom, remove the tag carefully with scissors or your keys, because this is a problem that can be solved and suffering is optional.", points: 1 },
-          { text: "You adjust, tuck, and reposition until it stops touching skin directly. Fabric origami. You've solved harder problems. This is just material negotiations.", points: 2 },
-          { text: "You rip it out with your bare hand. Right there. In public if necessary. The tag's time is over. Violence was the answer this whole time.", points: 3 }
-        ]},
-        { id: 'm43', setup: "You stepped in something wet. With socks on. In your own home. It could be anything. You don't want to look. You're standing still, one foot contaminated, the other pure.", answers: [
+        { id: 'HL14', setup: "You stepped in something wet. With socks on. In your own home. It could be anything. You don't want to look. You're standing still, one foot contaminated, the other pure.", answers: [
+          { text: "You march on without glancing—wet's temporary; resolve's eternal.", points: 3 },
           { text: "You investigate, clean it up, put on new socks, and sanitize because pretending it didn't happen doesn't make your floor any less wet.", points: 1 },
-          { text: "You remove the sock, toss it toward laundry, and walk on heel only until you forget this happened. Problem deferred. Mind cleared.", points: 2 },
-          { text: "You don't look down. You keep walking. Whatever it was, it's on the sock now. The sock is the problem. Your foot is innocent. Move forward.", points: 3 }
+          { text: "You remove the sock, toss it toward laundry, and walk on heel only until you forget this happened.", points: 2 }
         ]},
-        { id: 'm44', setup: "You're at a movie. Someone's phone lights up. It's been lighting up for the past ten minutes. They're not silencing it. The glow is ruining everything. Cinema has a traitor.", answers: [
-          { text: "You do nothing because confronting strangers in dark rooms feels dramatic and maybe they'll put it away eventually. Hope is a strategy.", points: 1 },
-          { text: "You lean over and whisper a polite 'excuse me' because you paid for this experience and you're not going to let someone's notifications steal it.", points: 2 },
-          { text: "You stare at them until they feel it. Just stare. No words. When they look up, you're already looking. They know. The phone disappears. Power.", points: 3 }
+        { id: 'HL15', setup: "You tried to catch something that was falling. You missed. It hit the ground. You're standing there, hands out, looking at the object that ignored your reflexes entirely.", answers: [
+          { text: "You kick it. Lightly. As punishment. The object made you look bad. This is consequences.", points: 2 },
+          { text: "You leave it fallen—it chose gravity; some things belong on the ground.", points: 3 },
+          { text: "You pick it up, check for damage, and accept that not every save is possible. Physics doesn't care about your intentions.", points: 1 }
         ]},
-        { id: 'm45', setup: "You tried to catch something that was falling. You missed. It hit the ground. You're standing there, hands out, looking at the object that ignored your reflexes entirely.", answers: [
-          { text: "You pick it up, check for damage, and accept that not every save is possible. Physics doesn't care about your intentions. You tried. That counts.", points: 1 },
-          { text: "You kick it. Lightly. As punishment. The object made you look bad. This is consequences. It understands now. Justice.", points: 2 },
-          { text: "You leave it there. It chose the floor. That's its home now. You offered help and it declined. Some things want to fall. Let them.", points: 3 }
+        { id: 'HL16', setup: "Your earbuds are tangled. Significantly tangled. You put them in your pocket for five minutes and they've formed a knot that would impress a sailor.", answers: [
+          { text: "You patiently untangle them, following each cord, because knots have solutions and rushing only makes them tighter.", points: 1 },
+          { text: "You wear the knot like a badge—sound works fine; perfection's for the feeble.", points: 3 },
+          { text: "You pull at it until something gives because tangles aren't that serious and if something breaks, that's an excuse to buy wireless ones finally.", points: 2 }
         ]},
-        { id: 'm46', setup: "The printer is jammed. Again. You opened it. You see paper. You pulled it. Something tore. Now there's more paper and less clarity about whether you've made things better or much worse.", answers: [
+        { id: 'HL17', setup: "You've had a toothache for five days. Someone suggests a dentist. Dentists are people who went to school specifically to disappoint you while you can't close your mouth.", answers: [
+          { text: "You endure it—teeth are bones, bones mend; spares exist if this one fails.", points: 3 },
+          { text: "You try clove oil, ibuprofen, and hoping because sometimes teeth just need to work through their feelings. Give it a few more days.", points: 2 },
+          { text: "You make the appointment because tooth infections can spread to your brain and dying of stubbornness is a legacy nobody wants.", points: 1 }
+        ]},
+        { id: 'HL18', setup: "It's 3 AM. There's a sound downstairs. Not a normal sound. You don't own a pet. You don't own anything that makes that particular noise.", answers: [
+          { text: "You stay in the room, lock the door, and call someone because this is how people survive horror movies.", points: 1 },
+          { text: "You descend in the dark—whatever lurks picked the wrong domain; you answer intrusions with force.", points: 3 },
+          { text: "You grab something heavy, turn on lights as you go, and investigate like someone who owns this house. It's probably the wind.", points: 2 }
+        ]}
+      ],
+      workResponsibility: [
+        { id: 'WR01', setup: "Your alarm didn't go off. You're awake now. You're also late. Very late. The kind of late where getting ready becomes a negotiation between hygiene and punctuality.", answers: [
+          { text: "You bolt out as is—appearance bows to presence; real work doesn't wait for grooming.", points: 3 },
+          { text: "You do everything anyway—shower, skincare, actual breakfast—because showing up put-together matters more than showing up on time.", points: 1 },
+          { text: "You prioritize strategically. Deodorant: yes. Hair situation: manageable. Coffee: travel mug. You're late but you're not unhinged.", points: 2 }
+        ]},
+        { id: 'WR02', setup: "Someone at work brought donuts. There's one left. It's been there for hours. Multiple people have looked at it. Nobody has taken it. The donut is now a moral dilemma.", answers: [
+          { text: "You claim it whole—hesitation lost it for them; hunger demands action.", points: 3 },
+          { text: "You cut it in half and take half because compromise is civilization.", points: 2 },
+          { text: "You leave it because someone else might want it more, and being the person who took the last donut is a reputation you're not willing to carry.", points: 1 }
+        ]},
+        { id: 'WR03', setup: "The printer is jammed. Again. You opened it. You see paper. You pulled it. Something tore. Now there's more paper and less clarity about whether you've made things better or much worse.", answers: [
           { text: "You close it, restart it, and follow the instructions on the display because printers are sensitive creatures and brute force only creates more problems.", points: 1 },
-          { text: "You pull harder. There's paper in there and it doesn't belong. You'll get it out. Tools if necessary. This printer does not control your day.", points: 2 },
-          { text: "You close it and walk away. If it wants to print, it'll print. If it doesn't, the document wasn't important. Let the machine have its tantrum.", points: 3 }
+          { text: "You abandon it—if it prints, fine; if not, words weren't meant to be.", points: 3 },
+          { text: "You pull harder. There's paper in there and it doesn't belong. You'll get it out. Tools if necessary.", points: 2 }
         ]},
-        { id: 'm47', setup: "Someone spoiled a show for you. Not maliciously. They just assumed you'd seen it. You haven't. Now you know how it ends and they're still talking about it.", answers: [
-          { text: "You say nothing because they didn't mean to and making them feel bad won't un-spoil anything. You'll still watch it. Journeys matter too.", points: 1 },
-          { text: "You interrupt, gently, and tell them you haven't seen it so they'll stop, but without drama because everyone spoils things eventually. It's the internet's fault.", points: 2 },
-          { text: "You spoil something they care about. Right there. Mutually assured destruction. If you're going down, you're taking someone with you. Balance.", points: 3 }
+        { id: 'WR04', setup: "You sent an email. It had a typo. A visible, obvious typo. You noticed it after you hit send. The email is now out there, imperfect, forever.", answers: [
+          { text: "You fire off another with a bolder error—now it's a signature style, not a slip.", points: 3 },
+          { text: "You ignore it. Everyone makes typos. If they can't figure out what you meant from context, that's their problem.", points: 2 },
+          { text: "You send a quick follow-up correcting the typo because clarity matters and you'd rather own the mistake.", points: 1 }
         ]},
-        { id: 'm48', setup: "The light bulb burnt out. It's the one you can't reach easily. It requires a ladder, a chair, something. It's been dark in that corner for three days now. You've adjusted.", answers: [
-          { text: "You get the ladder, change the bulb, and restore light to the neglected corner because darkness spreads and you're not going to let entropy win.", points: 1 },
-          { text: "You stack things. Carefully. Just high enough. You stretch. You wobble. You succeed. OSHA wouldn't approve but OSHA isn't paying your electricity bill.", points: 2 },
-          { text: "You leave it. That corner is evening now. Permanent twilight. You didn't need that light. You were using it out of habit. Darkness is atmosphere.", points: 3 }
+        { id: 'WR05', setup: "Someone asks what you do for work at a party. It's the question that determines how much of the conversation you'll enjoy.", answers: [
+          { text: "You invent a title—tonight, you're a whiskey taster or woodworker; facts are for resumes.", points: 3 },
+          { text: "You answer honestly and try to make it interesting because your job is part of your life and most people are just making conversation.", points: 1 },
+          { text: "You give the short version and redirect by asking what they do, because deflecting with genuine interest is social judo.", points: 2 }
         ]},
-        { id: 'm49', setup: "Your earbuds are tangled. Significantly tangled. You put them in your pocket for five minutes and they've formed a knot that would impress a sailor. You need to listen to something now.", answers: [
-          { text: "You patiently untangle them, following each cord, because knots have solutions and rushing only makes them tighter. Breathe. Unknot. Listen.", points: 1 },
-          { text: "You pull at it until something gives because tangles aren't that serious and if something breaks, that's an excuse to buy wireless ones finally.", points: 2 },
-          { text: "You wear them tangled. They still work. The knot lives between your ears now. Aesthetic. Statement piece. You've invented something.", points: 3 }
+        { id: 'WR06', setup: "You're in a job interview. They ask where you see yourself in five years. You don't know where you see yourself next week. The answer matters. Your brain is empty.", answers: [
+          { text: "You declare 'mastering this role or forging my own path'—futures aren't predicted, they're carved.", points: 3 },
+          { text: "You give a thoughtful, generic answer about growth, learning, and contributing to the team because interviews are performances.", points: 1 },
+          { text: "You answer honestly, somewhat, mentioning that you're focused on the present while staying open to opportunity.", points: 2 }
         ]},
-        { id: 'm50', setup: "You've been holding the door for someone who's farther away than you estimated. They're walking. Not rushing. You're committed now. The door is heavy. Your arm is learning patience.", answers: [
-          { text: "You wait. You smiled when you started this. You're not going to undo the kindness just because they don't walk faster. This is a gift. Gifts don't have conditions.", points: 1 },
-          { text: "You prop it open with your foot and look at your phone so it seems like you're doing two things and not just trapped by your own politeness.", points: 2 },
-          { text: "You let go. They can open their own door. You offered. They declined the urgency. Everyone has arms. Chivalry has limits.", points: 3 }
+        { id: 'WR07', setup: "Someone took credit for your idea in a meeting. In front of everyone. They didn't even pause. Just restated your point like they invented thinking.", answers: [
+          { text: "You let it go for now and plan to address it privately later because public conflict rarely ends well.", points: 1 },
+          { text: "You cut in sharp: 'That's my line, well echoed'—ideas have owners, claim yours without apology.", points: 3 },
+          { text: "You say 'glad you agree with what I mentioned earlier' loud enough for the room to hear.", points: 2 }
+        ]},
+        { id: 'WR08', setup: "You're at a work event. Someone who outranks you is very drunk. They're telling you things. Personal things. Things that change how you'll see them on Monday.", answers: [
+          { text: "You file it away—not for leverage, for truth; knowledge is a tool, wield it wisely.", points: 3 },
+          { text: "You listen, nod, and forget everything tomorrow because discretion is valuable.", points: 1 },
+          { text: "You steer them toward water, a seat, and a safer topic because this isn't good for either of you.", points: 2 }
+        ]},
+        { id: 'WR09', setup: "Your meeting starts in thirty seconds. Your camera is off. You are dressed for comfort, not leadership.", answers: [
+          { text: "You turn the camera on, sit up straight, and commit to looking employed.", points: 1 },
+          { text: "You leave it off and participate verbally. Presence is a mindset.", points: 2 },
+          { text: "You stay muted and let the meeting happen around you.", points: 3 }
+        ]},
+        { id: 'WR10', setup: "Someone messages: 'Hey, quick call?' There is no context. There is never context.", answers: [
+          { text: "You ask what it's about before agreeing.", points: 1 },
+          { text: "You don't respond until the problem solves itself.", points: 3 },
+          { text: "You say yes and prepare for whatever this becomes.", points: 2 }
+        ]},
+        { id: 'WR11', setup: "You are fifteen minutes into a meeting that has produced nothing new.", answers: [
+          { text: "You mentally clock out and observe the process like a sociologist.", points: 3 },
+          { text: "You stay engaged and take notes anyway.", points: 1 },
+          { text: "You multitask quietly and wait it out.", points: 2 }
+        ]},
+        { id: 'WR12', setup: "You double-booked yourself. Both meetings think they're important.", answers: [
+          { text: "You apologize and reschedule one properly.", points: 1 },
+          { text: "You choose one and let the other survive without you.", points: 3 },
+          { text: "You split time and do your best.", points: 2 }
+        ]},
+        { id: 'WR13', setup: "It's after hours. A message comes in. You see it.", answers: [
+          { text: "You ignore it completely. Time is a boundary.", points: 3 },
+          { text: "You respond politely and set expectations.", points: 1 },
+          { text: "You acknowledge it and deal with it tomorrow.", points: 2 }
+        ]},
+        { id: 'WR14', setup: "You open your banking app. You know roughly what's there. Roughly.", answers: [
+          { text: "You don't look. Numbers only gain power when acknowledged.", points: 3 },
+          { text: "You check everything carefully and plan accordingly.", points: 1 },
+          { text: "You glance at the balance and close the app.", points: 2 }
+        ]},
+        { id: 'WR15', setup: "You realize you're paying for something you haven't used in months.", answers: [
+          { text: "You cancel it immediately.", points: 1 },
+          { text: "You accept it as part of modern life.", points: 3 },
+          { text: "You make a note to cancel it later.", points: 2 }
+        ]},
+        { id: 'WR16', setup: "A friend asks to borrow money. You can afford it, but you won't miss it if you don't see it again.", answers: [
+          { text: "You give it outright. Loans ruin relationships.", points: 2 },
+          { text: "You say no and keep things clean.", points: 3 },
+          { text: "You lend it with low expectations.", points: 1 }
+        ]},
+        { id: 'WR17', setup: "You forgot about a bill. It's due tomorrow. There's just enough time to act.", answers: [
+          { text: "You pay it immediately and move on.", points: 1 },
+          { text: "You ignore it. Future-you exists for a reason.", points: 3 },
+          { text: "You schedule it and hope nothing goes wrong.", points: 2 }
+        ]},
+        { id: 'WR18', setup: "Someone starts explaining money to you. You didn't ask.", answers: [
+          { text: "You listen politely.", points: 1 },
+          { text: "You already know what works for you.", points: 3 },
+          { text: "You nod and filter selectively.", points: 2 }
+        ]},
+        { id: 'WR19', setup: "You're on the phone. It's an automated system. It's asking you to 'briefly describe your issue.' There's a 90% chance it won't understand you.", answers: [
+          { text: "You speak slowly, clearly, and use simple keywords because the machine is doing its best.", points: 1 },
+          { text: "You hang up—machines don't solve problems, men do; ignore it till it fades.", points: 3 },
+          { text: "You say 'representative' immediately, repeatedly, louder each time, because you know how this works.", points: 2 }
+        ]},
+        { id: 'WR20', setup: "You've been on hold for forty-five minutes. You can't hang up now. That would mean the last forty-five minutes meant nothing.", answers: [
+          { text: "You drop the call—time's your kingdom; reclaim it, solve elsewhere or let it rot.", points: 3 },
+          { text: "You stay on the line, put it on speaker, and do other things because eventually someone will answer.", points: 1 },
+          { text: "You stay, but you draft the sternly-worded email you're going to send regardless of outcome.", points: 2 }
+        ]},
+        { id: 'WR21', setup: "You bought something you regret. You're in the return line. The receipt is crumpled. The tag is missing. The employee looks like they've already decided how this will end.", answers: [
+          { text: "You explain the situation calmly and accept whatever they decide because policies exist.", points: 1 },
+          { text: "You stand firm, state your return—endurance wears down clerks; yes comes to the steadfast.", points: 3 },
+          { text: "You're polite but firm. You make your case. Returns are a negotiation and you came to negotiate.", points: 2 }
+        ]},
+        { id: 'WR22', setup: "Your credit card bill arrives with a charge you don't recognize from a store you visited last month, but it's only $15 and buried in the details.", answers: [
+          { text: "You call the card company right away to dispute it, providing the date and details.", points: 1 },
+          { text: "You pay it without blinking—money's just paper, and chasing $15 is for people who let banks own their time.", points: 3 },
+          { text: "You check your receipts quickly, confirm it's unfamiliar, and flag it online through the app.", points: 2 }
+        ]},
+        { id: 'WR23', setup: "You're at the ATM withdrawing cash when it spits out an extra $20 by mistake, and no one else is around to notice.", answers: [
+          { text: "You pocket it as the machine's gift—machines make mistakes, men seize opportunities.", points: 3 },
+          { text: "You alert the bank teller inside immediately, handing over the extra bill.", points: 1 },
+          { text: "You count it twice to confirm, then keep it but note the transaction for your records.", points: 2 }
+        ]},
+        { id: 'WR24', setup: "Your tax return software flags a potential deduction you might qualify for, but you're not entirely sure about the rules.", answers: [
+          { text: "You research the IRS guidelines online first and only claim it if everything lines up perfectly.", points: 1 },
+          { text: "You claim it boldly—government takes enough already, and deductions are your way of evening the score.", points: 3 },
+          { text: "You add it provisionally, double-check against your notes, and file with what you have.", points: 2 }
+        ]},
+        { id: 'WR25', setup: "A subscription you forgot about renews automatically for another year, charging your account $99.", answers: [
+          { text: "You contact customer service right then to cancel and request a refund.", points: 1 },
+          { text: "You keep it running—waste is for the weak, now you'll wring every cent out of it like a man with a mission.", points: 3 },
+          { text: "You cancel it immediately through the settings and let the charge stand.", points: 2 }
+        ]},
+        { id: 'WR26', setup: "You're splitting the dinner bill with friends, but one person ordered way more and suggests everyone pays equally via the app.", answers: [
+          { text: "You cover the whole tab yourself—debating pennies is beneath you, real men settle scores with generosity.", points: 3 },
+          { text: "You politely suggest itemizing it to ensure fairness.", points: 1 },
+          { text: "You go along with equal split this time but mentally note to order less next outing.", points: 2 }
         ]}
       ],
-      medium: [
-        { id: 'd1', setup: "You're at a bar. The bartender's waiting. Behind you, someone just ordered a drink with eight ingredients and a smoke bubble. Everyone heard it. Everyone judged.", answers: [
-          { text: "You order what you actually want, foam and all, because drink preferences don't define character and anyone who thinks otherwise peaked in a fraternity.", points: 1 },
-          { text: "You say 'whiskey, neat' because it's efficient, it's honest, and it doesn't require the bartender to become a chemist. You tip well. You move on.", points: 2 },
-          { text: "You point at the top shelf without looking and say 'that one, straight.' You don't ask what it costs. You don't ask what it is. Questions are for people with doubt.", points: 3 }
+      socialPressure: [
+        { id: 'SP01', setup: "The pen you picked up doesn't work. You're mid-signature. The moment is now. You click it again. Nothing. Once more. A dry scratch.", answers: [
+          { text: "You etch with force—ink's optional; commitment carves its own path.", points: 3 },
+          { text: "You calmly ask for another pen because these things happen.", points: 1 },
+          { text: "You scribble aggressively on the corner of the paper until it works because pens respond to pressure.", points: 2 }
         ]},
-        { id: 'd2', setup: "There's a machine at the gym you've never used. It has cables, pulleys, and a diagram that looks like it was designed to confuse NATO. Someone is waiting behind you.", answers: [
-          { text: "You ask a trainer because that's what they're paid for and learning correctly once is faster than learning wrong three times. Ego doesn't build muscle. Form does.", points: 1 },
-          { text: "You study the diagram, pick a low weight, and figure it out through trial and error because that's how humans have learned things since before trainers existed.", points: 2 },
-          { text: "You sit down and start pulling whatever moves. If something's working, you'll feel it. Machines are just weighted furniture. Your body knows what it needs.", points: 3 }
+        { id: 'SP02', setup: "Someone waved at you. You waved back. They were waving at someone behind you. You're standing there, arm still slightly raised, dignity falling like slow-motion confetti.", answers: [
+          { text: "You pretend you were stretching. You commit to the stretch. Full arm extension. Maybe a yawn.", points: 1 },
+          { text: "You wave harder, at nothing—starts are finishes; quitters don't wave.", points: 3 },
+          { text: "You own it. A brief laugh, a shrug, and you move on because this happens to everyone.", points: 2 }
         ]},
-        { id: 'd3', setup: "You're lost. The GPS keeps saying 'recalculating' in a tone that suggests disappointment. Your passenger mentions, gently, that you could ask someone for directions.", answers: [
-          { text: "You pull over and ask a local because humans have navigated each other home for thousands of years and satellites have existed for like forty. Trust the original system.", points: 1 },
-          { text: "You keep driving with confidence because all roads lead somewhere, and eventually you'll recognize something. Getting lost is just aggressive exploration.", points: 2 },
-          { text: "You turn off the GPS entirely. It's confused, not you. You know exactly where you are: in a car, moving forward. Destination is a mindset, not a pin.", points: 3 }
+        { id: 'SP03', setup: "You've forgotten someone's name. You've met them three times. They clearly remember yours. They're walking toward you right now.", answers: [
+          { text: "You dub them 'chief' or 'legend'—names are chains; nicknames forge bonds.", points: 3 },
+          { text: "You greet them warmly without using their name and hope the conversation goes nowhere that requires it.", points: 1 },
+          { text: "You confess immediately. 'I'm so sorry, I've forgotten your name.' It's awkward but honest.", points: 2 }
         ]},
-        { id: 'd4', setup: "Someone offers a handshake and squeezes. Hard. Harder than a greeting requires. They're looking into your eyes like they're trying to read your tax returns.", answers: [
-          { text: "You match their pressure briefly and release because you're confident enough not to turn every hello into a referendum on worth. Secure people don't grip-test.", points: 1 },
-          { text: "You squeeze back proportionally—firm but not aggressive—because you're not a pushover but you're also not going to injure someone over a greeting.", points: 2 },
-          { text: "You don't let go. You have nowhere to be. You cleared your afternoon. They started this, and now you both live here. In this handshake. Permanently.", points: 3 }
+        { id: 'SP04', setup: "You just realized you've been pronouncing a word wrong. For years. Possibly decades. In front of people. Confidently. Someone just corrected you.", answers: [
+          { text: "You thank them, genuinely, because learning is a gift and you're not too proud to accept it.", points: 1 },
+          { text: "You stick to your version—words bend to speakers; tradition starts with one man.", points: 3 },
+          { text: "You nod, file it away, and vow to never say that word out loud again.", points: 2 }
         ]},
-        { id: 'd5', setup: "Someone orders food 'extra spicy' and slides it toward you with a smile. This isn't generosity. This is a trap wearing hospitality's clothing. Your mouth is a civilian.", answers: [
-          { text: "You decline because you know your limits and performing pain for someone else's entertainment isn't dignified. There's no prize for suffering. Just suffering.", points: 1 },
-          { text: "You take a bite, handle what you can, drink water if needed, and maintain composure because trying things is how you grow, even if growing burns.", points: 2 },
-          { text: "You eat the whole thing without flinching, maintain eye contact, and ask if they have anything with actual flavor. You will cry later. Alone. In a cold shower. Like a champion.", points: 3 }
+        { id: 'SP05', setup: "You're at a party. You don't know many people. Someone is talking to you, but you can't hear them over the music. You've already said 'what?' twice.", answers: [
+          { text: "You bail to the bar—drinks speak clearer than shouts; escape's an art.", points: 3 },
+          { text: "You nod, smile, and hope your face is doing something appropriate.", points: 1 },
+          { text: "You lean in close, cup your ear, and commit to understanding because connection matters.", points: 2 }
         ]},
-        { id: 'd6', setup: "Someone cuts directly in front of you in line. No apology. No acknowledgment. They just exist there now, like they invented the concept of standing.", answers: [
-          { text: "You let it go because confrontation raises cortisol and cortisol causes wrinkles. They'll answer for it eventually. The universe keeps receipts.", points: 1 },
-          { text: "You tap their shoulder, gesture at the line behind you, and let the silence deliver your point. No yelling needed. Just geography and eye contact.", points: 2 },
-          { text: "You step in front of them, turn around, and say 'Oh sorry, is there a line?' with the energy of someone who's been rehearsing this moment since childhood.", points: 3 }
+        { id: 'SP06', setup: "You've just sent a text to the wrong person. The text was about them. The text was not flattering. You're watching the 'delivered' notification like it's a slow-motion car crash.", answers: [
+          { text: "You send an immediate apology, explain the mistake, and hope they understand that phones are chaos.", points: 1 },
+          { text: "You amplify it with another zinger—truth hurts, but owning it commands respect.", points: 3 },
+          { text: "You follow it up with 'sorry, wrong person' and nothing else because elaboration makes it worse.", points: 2 }
         ]},
-        { id: 'd7', setup: "You have a splinter. Deep. You can see it under the skin, smug, like it's won something. Someone offers tweezers and a look that says 'you poor thing.'", answers: [
-          { text: "You sterilize the tweezers, work in good light, and extract it carefully because infections exist, hospitals are expensive, and wood belongs in trees, not in you.", points: 1 },
-          { text: "You dig it out with whatever's handy—a knife, a needle, determination—because it's just wood and you're mostly water. You outrank it on the food chain.", points: 2 },
-          { text: "You leave it. Your body will push it out when it's ready, or absorb it and make you stronger. That's basically a wood vitamin. Free construction material.", points: 3 }
+        { id: 'SP07', setup: "The tag on your shirt is scratching. It's been scratching all day. You can't take the shirt off. You can't reach the tag properly. You're in your own personal sensory hell.", answers: [
+          { text: "You tear it free by hand—tags are tyrants; rip them out, claim freedom.", points: 3 },
+          { text: "You find a bathroom, remove the tag carefully with scissors or your keys.", points: 1 },
+          { text: "You adjust, tuck, and reposition until it stops touching skin directly. Fabric origami.", points: 2 }
         ]},
-        { id: 'd8', setup: "Someone is explaining something you already know. In detail. With enthusiasm. They're not close to finishing. Your face is doing a lot of work right now.", answers: [
-          { text: "You listen politely because their intent matters more than the content and interrupting is rude and rudeness creates exactly the kind of energy you don't want to carry.", points: 1 },
-          { text: "You nod strategically, say 'right, right' at intervals, and guide them toward the end because you have limited time on earth and some of it shouldn't be this.", points: 2 },
-          { text: "You say 'I know' and watch the light leave their eyes. They can process that later. You are not a TED talk audience. Your attention is not a public resource.", points: 3 }
+        { id: 'SP08', setup: "Someone spoiled a show for you. Not maliciously. They just assumed you'd seen it. You haven't. Now you know how it ends.", answers: [
+          { text: "You spoil theirs in return—balance demands reciprocity; eye for an eye, plot for a plot.", points: 3 },
+          { text: "You say nothing because they didn't mean to and making them feel bad won't un-spoil anything.", points: 1 },
+          { text: "You interrupt, gently, and tell them you haven't seen it so they'll stop.", points: 2 }
         ]},
-        { id: 'd9', setup: "Your friend asks you to help them move. It's the third time this year. They haven't gotten better at packing. They never have snacks. The furniture is heavier than it looks.", answers: [
-          { text: "You agree because friendship means showing up even when showing up involves carrying a couch up stairs while someone says 'pivot' like they invented comedy.", points: 1 },
-          { text: "You help, but you complain the whole time, because doing the thing and resenting the thing can coexist. That's emotional complexity. That's growth.", points: 2 },
-          { text: "You ask what time the movers arrive. They don't have movers. Now they need to decide what they value more: your friendship or your respect. Choose wisely.", points: 3 }
+        { id: 'SP09', setup: "You've been holding the door for someone who's farther away than you estimated. They're walking. Not rushing. You're committed now. The door is heavy.", answers: [
+          { text: "You wait. You smiled when you started this. You're not going to undo the kindness just because they don't walk faster.", points: 1 },
+          { text: "You release it—they've got arms; chivalry ends where laziness begins.", points: 3 },
+          { text: "You prop it open with your foot and look at your phone so it seems like you're doing two things.", points: 2 }
         ]},
-        { id: 'd10', setup: "You're at brunch. Someone at the table is taking photos of their food. Multiple angles. Adjusting items for better composition. Your eggs are getting cold. The table is a production set.", answers: [
-          { text: "You wait because their joy doesn't diminish yours and if photography is what makes this meal meaningful to them, you can afford thirty seconds of patience.", points: 1 },
-          { text: "You start eating. Quietly. They'll catch up. Your food doesn't need to be documented. It needs to be consumed. That's the entire point of food.", points: 2 },
-          { text: "You reach across the frame, grab your plate, and eat while making eye contact with the camera. If you're going to be in the shot, you're going to be eating in the shot.", points: 3 }
+        { id: 'SP10', setup: "You're at a bar. The bartender's waiting. Behind you, someone just ordered a drink with eight ingredients and a smoke bubble. Everyone heard it. Everyone judged.", answers: [
+          { text: "You point top-shelf, no questions—doubt's for mixers; straight shots command.", points: 3 },
+          { text: "You order what you actually want, foam and all, because drink preferences don't define character.", points: 1 },
+          { text: "You say 'whiskey, neat' because it's efficient, it's honest, and it doesn't require the bartender to become a chemist.", points: 2 }
         ]},
-        { id: 'd11', setup: "Someone is using speakerphone in public. Just having a full conversation. Out loud. Like privacy is a suggestion and everyone nearby requested updates on their plumbing issues.", answers: [
-          { text: "You move. Find another spot. Their volume is not your battle, and you have headphones for exactly this reason. Retreat is a valid strategy.", points: 1 },
-          { text: "You stare, pointedly, until they notice and possibly feel a sliver of social awareness. No words. Just sustained, deliberate eye contact. A silent review.", points: 2 },
-          { text: "You start narrating your own life out loud. At the same volume. Two can perform. If they want an audience, you'll be the opening act.", points: 3 }
+        { id: 'SP11', setup: "Someone offers a handshake and squeezes. Hard. Harder than a greeting requires. They're looking into your eyes like they're trying to read your tax returns.", answers: [
+          { text: "You lock in, unyielding—this ain't release till they yield; handshakes test mettle.", points: 3 },
+          { text: "You match their pressure briefly and release because you're confident enough not to turn every hello into a referendum on worth.", points: 1 },
+          { text: "You squeeze back proportionally—firm but not aggressive—because you're not a pushover but you're also not going to injure someone over a greeting.", points: 2 }
         ]},
-        { id: 'd12', setup: "You're getting a haircut. The barber asks how you want it. You describe what you want. They nod. Twenty minutes later, it's not what you wanted. It's done.", answers: [
-          { text: "You say it's fine, pay, tip normally, and accept that hair grows back and this is a temporary situation you'll learn from by bringing reference photos next time.", points: 1 },
-          { text: "You mention it looks a little different than expected. Maybe they can adjust? You don't love conflict but you also don't love this haircut. Something's gotta give.", points: 2 },
-          { text: "You look at yourself in the mirror and say 'I love it' with terrifying conviction. You will learn to love it. The hair and your delusion will grow together.", points: 3 }
+        { id: 'SP12', setup: "Someone is explaining something you already know. In detail. With enthusiasm. They're not close to finishing. Your face is doing a lot of work right now.", answers: [
+          { text: "You listen politely because their intent matters more than the content.", points: 1 },
+          { text: "You cut them off: 'I know'—light dies, but truth shines; attention's earned.", points: 3 },
+          { text: "You nod strategically, say 'right, right' at intervals, and guide them toward the end.", points: 2 }
         ]},
-        { id: 'd13', setup: "You're on a date. It's going well. The check comes. Neither of you reaches for it immediately. It's sitting there. A small leather rectangle testing everyone's politics.", answers: [
-          { text: "You offer to split it because that's the fair, modern, non-assuming option and you'd rather discuss who pays openly than let money create weird energy.", points: 1 },
-          { text: "You grab it. Quickly. Because you initiated the date and taking someone out means taking them out. If they argue, let them get the next one.", points: 2 },
-          { text: "You don't grab it. You don't look at it. You wait. Not because you won't pay—you would—but because who moves first says something and you want to see what they say.", points: 3 }
+        { id: 'SP13', setup: "You're at a house party. You don't know whose bedroom this is but you just walked in and two people are clearly having a moment.", answers: [
+          { text: "You apologize immediately, close the door, and walk away quickly.", points: 1 },
+          { text: "You stride in, snag an item: 'Needed this'—explanations are chains; mystery rules.", points: 3 },
+          { text: "You ask if the bathroom's in here, get your answer, and leave without acknowledging the tension.", points: 2 }
         ]},
-        { id: 'd14', setup: "You're at a house party. You don't know whose bedroom this is but you just walked in and two people are clearly having a moment. They stopped talking when you entered. You're the interruption.", answers: [
-          { text: "You apologize immediately, close the door, and walk away quickly because you didn't mean to witness whatever emotional subplot you just became a footnote in.", points: 1 },
-          { text: "You ask if the bathroom's in here, get your answer, and leave without acknowledging the tension because pretending nothing happened sometimes makes nothing happen.", points: 2 },
-          { text: "You walk in fully, grab something random off a surface, say 'just needed this,' and leave. You've explained nothing. They can wonder. Mystery enhances parties.", points: 3 }
+        { id: 'SP14', setup: "Someone tells you that you look tired. You're not tired. You're just existing with the face you were given. This is how you look. Apparently that look is 'tired.'", answers: [
+          { text: "You fire back 'You too'—statements rebound; let them taste their words.", points: 3 },
+          { text: "You say 'thanks, I'm fine' and move on because explaining takes more energy than accepting.", points: 1 },
+          { text: "You say 'I'm not tired, this is just my face' with a smile that's equally informative and slightly defensive.", points: 2 }
         ]},
-        { id: 'd15', setup: "You've been texting someone. They haven't responded in three days. You could double text. You could wait. You could spiral. The cursor is blinking. It's judging you.", answers: [
-          { text: "You wait. If they wanted to respond, they would have. Your value isn't determined by response times. Patience is self-respect with a longer deadline.", points: 1 },
-          { text: "You send a casual follow-up. Nothing desperate. Just a 'hey' or a meme. Low stakes. If they're still silent after that, you have your answer.", points: 2 },
-          { text: "You send a message that makes the silence their problem. 'Figured you were busy with witness protection.' Bold. Uncomfortable. But now the ball is somewhere.", points: 3 }
+        { id: 'SP15', setup: "You're playing a party game. Someone challenges you directly. Everyone is watching. It's not serious but it's also not not serious.", answers: [
+          { text: "You crush them utterly—games demand victors; mercy's for losers.", points: 3 },
+          { text: "You play to have fun, not to win, because the moment you care too much about a party game is the moment you've lost something more important.", points: 1 },
+          { text: "You play well. Strategically. You want to win but you keep it light. Competitive but charming.", points: 2 }
         ]},
-        { id: 'd16', setup: "Someone tells you that you look tired. You're not tired. You're just existing with the face you were given. This is how you look. Apparently that look is 'tired.'", answers: [
-          { text: "You say 'thanks, I'm fine' and move on because explaining that you're not tired takes more energy than just accepting that people comment on faces and it means nothing.", points: 1 },
-          { text: "You say 'I'm not tired, this is just my face' with a smile that's equally informative and slightly defensive. Education and boundary in one sentence.", points: 2 },
-          { text: "You say 'you too' with the same energy they used. They didn't ask how you were. They made a statement. Statements can be returned.", points: 3 }
+        { id: 'SP16', setup: "Someone is giving you unsolicited advice. Lots of it. About your life. Which they don't live.", answers: [
+          { text: "You thank them for caring, nod appropriately, and change the subject because they mean well.", points: 1 },
+          { text: "You query their credentials—advice without merit's noise; silence it.", points: 3 },
+          { text: "You say 'I'll think about it,' which translates to 'I will not think about it' but sounds polite.", points: 2 }
         ]},
-        { id: 'd17', setup: "You're playing a party game. Someone challenges you directly. Everyone is watching. It's not serious but it's also not not serious. You can feel the room picking sides.", answers: [
-          { text: "You play to have fun, not to win, because the moment you care too much about a party game is the moment you've lost something more important than points.", points: 1 },
-          { text: "You play well. Strategically. You want to win but you keep it light. Competitive but charming. The balance exists and you're walking it like a tightrope.", points: 2 },
-          { text: "You destroy them. Comprehensively. Without apology. Games have rules and those rules include losing. If they didn't want to be beaten, they shouldn't have challenged you.", points: 3 }
+        { id: 'SP17', setup: "You're in a group photo. Someone yells 'one more!' You've already smiled. You're still smiling. It's been fifteen seconds. Your face is a hostage now.", answers: [
+          { text: "You drop the grin—capture truth; forced joy's a lie.", points: 3 },
+          { text: "You hold it. Because group photos matter to someone, and that someone's happiness is worth a few seconds of facial endurance.", points: 1 },
+          { text: "You relax between shots, saving energy, and only fully commit when you see the phone actually taking the picture.", points: 2 }
         ]},
-        { id: 'd18', setup: "Someone is giving you unsolicited advice. Lots of it. About your life. Which they don't live. They seem to think they've solved problems you haven't asked them to review.", answers: [
-          { text: "You thank them for caring, nod appropriately, and change the subject because they mean well and meaning well is worth acknowledging even when the advice isn't.", points: 1 },
-          { text: "You say 'I'll think about it,' which translates to 'I will not think about it' but sounds polite enough to end this line of conversation gracefully.", points: 2 },
-          { text: "You ask what qualifies them to advise on this. Not aggressively. Just curiously. Watch them realize they've been offering answers to questions they don't understand.", points: 3 }
+        { id: 'SP18', setup: "You're at a wedding. The DJ plays that song. The one everyone runs to the dance floor for. You don't like it. But everyone is going.", answers: [
+          { text: "You go because weddings are about celebration and sometimes celebration means doing things you wouldn't do alone.", points: 1 },
+          { text: "You hold the bar—dancing's folly; adults observe from afar.", points: 3 },
+          { text: "You stay but you bob your head, you clap when appropriate, you are present without moving.", points: 2 }
         ]},
-        { id: 'd19', setup: "You sent an email. It had a typo. A visible, obvious typo. You noticed it after you hit send. The email is now out there, imperfect, forever. Someone will see it.", answers: [
-          { text: "You send a quick follow-up correcting the typo because clarity matters and you'd rather own the mistake than have someone misunderstand what you meant.", points: 1 },
-          { text: "You ignore it. Everyone makes typos. If they can't figure out what you meant from context, that's their problem. Move forward. The email is sent.", points: 2 },
-          { text: "You send another email with a worse typo on purpose. Now the first one looks deliberate. You've created a pattern. Patterns are style. You're a stylist now.", points: 3 }
+        { id: 'SP19', setup: "Someone you vaguely know is walking toward you on the sidewalk. Too far for conversation, too close to pretend you didn't see them.", answers: [
+          { text: "You wave early, smile, say a brief hello as you pass, and keep walking.", points: 1 },
+          { text: "You stare unblinking from afar—share the unease; connection through grit.", points: 3 },
+          { text: "You look at your phone. Suddenly. Urgently. As if something important just happened.", points: 2 }
         ]},
-        { id: 'd20', setup: "You're in a group photo. Someone yells 'one more!' You've already smiled. You're still smiling. It's been fifteen seconds. Your face is a hostage now.", answers: [
-          { text: "You hold it. Because group photos matter to someone, and that someone's happiness is worth a few seconds of facial endurance. Smile through it.", points: 1 },
-          { text: "You relax between shots, saving energy, and only fully commit when you see the phone actually taking the picture. Strategic smiling. Efficiency.", points: 2 },
-          { text: "You stop smiling entirely. Let them capture your actual face. If they wanted joy, they shouldn't have asked for seventeen versions of the same moment.", points: 3 }
+        { id: 'SP20', setup: "Someone just called you the wrong name. Twice. Correcting them now would be awkward. Not correcting them is also awkward.", answers: [
+          { text: "You adopt the error—you're that now; reinvention's free.", points: 3 },
+          { text: "You correct them now, gently. 'It's actually [name].' Done. No need to make it weird.", points: 1 },
+          { text: "You introduce yourself to someone else in front of them. Loudly. With your correct name.", points: 2 }
         ]},
-        { id: 'd21', setup: "Someone asks what you do for work at a party. It's the question that determines how much of the conversation you'll enjoy. You could answer normally. You could not.", answers: [
-          { text: "You answer honestly and try to make it interesting because your job is part of your life and life is complicated and most people are just making conversation.", points: 1 },
-          { text: "You give the short version and redirect by asking what they do, because deflecting with genuine interest is social judo and it works every time.", points: 2 },
-          { text: "You lie. You make something up. Tonight you're a marine biologist or a retired spy. Work is boring. Fiction isn't. They don't need accuracy. They need entertainment.", points: 3 }
+        { id: 'SP21', setup: "You're telling a story at dinner. Midway through, you realize it's not landing. Faces are polite but blank. You're committed now.", answers: [
+          { text: "You halt abrupt: 'Forget it'—unfinished tales intrigue; end on your terms.", points: 3 },
+          { text: "You finish it anyway, gracefully, and move on because everyone tells a bad story sometimes.", points: 1 },
+          { text: "You acknowledge it. 'This sounded better in my head.' The table laughs. Pivot successful.", points: 2 }
         ]},
-        { id: 'd22', setup: "You're at a wedding. The DJ plays that song. The one everyone runs to the dance floor for. You don't like it. But everyone is going. Your seat is becoming conspicuously empty.", answers: [
-          { text: "You go because weddings are about celebration and sometimes celebration means doing things you wouldn't do alone. For the couple. For the vibe. For one song.", points: 1 },
-          { text: "You stay but you bob your head, you clap when appropriate, you are present without moving. Support comes in many forms and yours is stationary.", points: 2 },
-          { text: "You stay and you don't pretend. If they wanted you on the floor, they'd play something worth moving to. Until then, you're at the bar. Where adults go.", points: 3 }
+        { id: 'SP22', setup: "A stranger compliments you. Something specific. Your jacket, your energy, your presence. You weren't expecting it.", answers: [
+          { text: "You say 'thank you, that's kind' because accepting compliments gracefully is a skill.", points: 1 },
+          { text: "You affirm 'I know'—truth acknowledged; confidence echoes.", points: 3 },
+          { text: "You deflect with a compliment back. Classic redirect. Nobody has to sit in the discomfort of receiving alone.", points: 2 }
         ]},
-        { id: 'd23', setup: "Someone you vaguely know is walking toward you on the sidewalk. Too far for conversation, too close to pretend you didn't see them. The awkward middle distance approaches.", answers: [
-          { text: "You wave early, smile, say a brief hello as you pass, and keep walking because acknowledging people is civilized and silence would be weirder than the discomfort.", points: 1 },
-          { text: "You look at your phone. Suddenly. Urgently. As if something important just happened. It didn't. But now you have a reason not to make eye contact.", points: 2 },
-          { text: "You maintain eye contact from way too far away. Unblinking. Make them feel whatever you're feeling. Shared discomfort is connection. Of a sort.", points: 3 }
+        { id: 'SP23', setup: "You're being introduced to someone's new partner for the first time. They're watching you closely. This handshake has audition energy.", answers: [
+          { text: "You're warm, open, and give them the benefit of the doubt because first impressions go both ways.", points: 1 },
+          { text: "You lock eyes a second longer—seen fully; newcomers earn entry through gaze.", points: 3 },
+          { text: "You're polite but neutral. Friendly enough to pass, reserved enough to observe.", points: 2 }
         ]},
-        { id: 'd24', setup: "Your ex is at this event. You didn't know they'd be here. They're across the room. You've made eye contact. It was brief but it was enough. The night just got more complicated.", answers: [
-          { text: "You nod, a civil acknowledgment, and then ignore them for the rest of the night because you're an adult and adults can coexist in rooms without drama.", points: 1 },
-          { text: "You approach, say hi briefly, and have a short, polite exchange that proves you've both moved on and neither of you needs to make this weird.", points: 2 },
-          { text: "You look incredible and you act like you haven't seen them. Not because you're pretending. Because revenge isn't about acknowledgment. It's about thriving loudly.", points: 3 }
+        { id: 'SP24', setup: "Someone at the party just announced they're vegan. Unprompted. While you're eating. The meat on your plate is now evidence.", answers: [
+          { text: "You bite deep, eyes fixed—sharing's mutual; meat speaks volumes.", points: 3 },
+          { text: "You acknowledge their choice respectfully and continue eating.", points: 1 },
+          { text: "You nod and say 'cool' without elaboration because engaging will extend this.", points: 2 }
         ]},
-        { id: 'd25', setup: "You're trying to parallel park. There's a person on the sidewalk watching. Just standing there. Observing. Like your parking is entertainment. It's not going well.", answers: [
-          { text: "You ignore them. Focus on the mirrors. Take your time. Everyone was bad at parking once. Judgment is free and so is getting it right eventually.", points: 1 },
-          { text: "You nail it. Or close enough. You get out and don't look at them because looking at them means admitting they mattered. They didn't. You're parked.", points: 2 },
-          { text: "You get out, look at the watcher, and say 'sorry about your afternoon.' They're the ones standing on a sidewalk watching strangers park. You're the busy one here.", points: 3 }
+        { id: 'SP25', setup: "Someone just overshared. Immediately. First conversation. Topics that usually take months to unlock.", answers: [
+          { text: "You listen kindly because sometimes people just need to be heard.", points: 1 },
+          { text: "You match with your own tale—energy returned; bonds or regrets shared equal.", points: 3 },
+          { text: "You respond with enough to acknowledge them but not enough to invite more.", points: 2 }
         ]},
-        { id: 'd26', setup: "Your friend is being hit on by someone they're not interested in. They're looking at you. A rescue is being requested. Silently. Through desperate eye contact.", answers: [
-          { text: "You walk over casually, introduce yourself to the person, and shift the conversation until your friend can escape naturally. No drama. Just logistics.", points: 1 },
-          { text: "You swoop in with an urgent fake emergency. 'We have to go NOW.' It's not subtle. It doesn't need to be. Extract first. Explain never.", points: 2 },
-          { text: "You make eye contact with your friend and slowly shake your head. No rescue. This is character building. They got into this. They'll figure it out. That's friendship.", points: 3 }
+        { id: 'SP26', setup: "You're at the bar. Someone sends a drink. You didn't want a drink. You didn't want their attention. The bartender points them out.", answers: [
+          { text: "You redirect it to another—games twist; expectations shatter.", points: 3 },
+          { text: "You say thank you, don't drink it, and don't engage further.", points: 1 },
+          { text: "You accept the drink, nod thanks from a distance, and keep your space.", points: 2 }
         ]},
-        { id: 'd27', setup: "Someone just asked if you're seeing anyone. At a family gathering. In front of everyone. Your relationship status is now a public agenda item.", answers: [
-          { text: "You answer honestly and briefly because they asked and you're not going to make it weird. It's just a question. They probably mean well. Probably.", points: 1 },
-          { text: "You deflect with humor. 'Still waiting on someone who can keep up.' Confident. Vague. Closes the line of questioning without creating more of it.", points: 2 },
-          { text: "You ask them the same question. Even if you know the answer. Even if they're married. Make them feel what you're feeling. Discomfort is shareable.", points: 3 }
+        { id: 'SP27', setup: "Someone at a party confidently states something you know is completely, provably, almost impressively wrong.", answers: [
+          { text: "You let it go because correcting strangers at parties is exhausting and being right isn't always the same as being useful.", points: 1 },
+          { text: "You dismantle it publicly, facts armed—truth bows to no crowd.", points: 3 },
+          { text: "You offer a gentle 'actually' and present the correct information with a tone that suggests you're helping.", points: 2 }
         ]},
-        { id: 'd28', setup: "You're in a job interview. They ask where you see yourself in five years. You don't know where you see yourself next week. The answer matters. Your brain is empty.", answers: [
-          { text: "You give a thoughtful, generic answer about growth, learning, and contributing to the team because interviews are performances and this is the script everyone expects.", points: 1 },
-          { text: "You answer honestly, somewhat, mentioning that you're focused on the present while staying open to opportunity. It's vague but it sounds intentional.", points: 2 },
-          { text: "You say 'doing this job well, or doing something better.' Let them interpret. You're not here to predict the future. You're here to work. They asked. You answered.", points: 3 }
+        { id: 'SP28', setup: "Someone offers to fight you. Not aggressively—almost casually. Like a question. Like they want to see what you're made of.", answers: [
+          { text: "You decline because violence isn't a personality and you have nothing to prove.", points: 1 },
+          { text: "You accept swift—tests reveal strength; let's dance.", points: 3 },
+          { text: "You ask what the rules are. Clarify terms. If this is happening, it's happening with structure.", points: 2 }
         ]},
-        { id: 'd29', setup: "You're at the gym. Someone is using the machine you want. They've been on it for a while. They're resting more than lifting. You could wait. You could also not.", answers: [
-          { text: "You wait nearby, do something else, and let them finish because everyone has their own pace and hovering is passive-aggressive cardio.", points: 1 },
-          { text: "You ask how many sets they have left. Politely. It's a normal gym question. It lets them know you're waiting without making it confrontational.", points: 2 },
-          { text: "You ask to work in. Confidently. Like it's normal. Because it is normal. And if they say no, you've established that you asked and they're now the weird one.", points: 3 }
+        { id: 'SP29', setup: "Someone you're arguing with says 'you always do this.' It's the phrase that turns a disagreement into a referendum on your entire personality.", answers: [
+          { text: "You agree: 'Damn right I do'—arguments crumble without resistance.", points: 3 },
+          { text: "You take a breath and ask what 'this' is specifically because vague accusations need precision.", points: 1 },
+          { text: "You push back. 'Always' is never true. You cite exceptions. You introduce nuance.", points: 2 }
         ]},
-        { id: 'd30', setup: "Someone took credit for your idea in a meeting. In front of everyone. They didn't even pause. Just restated your point like they invented thinking.", answers: [
-          { text: "You let it go for now and plan to address it privately later because public conflict rarely ends well and your dignity isn't worth a meeting room showdown.", points: 1 },
-          { text: "You say 'glad you agree with what I mentioned earlier' loud enough for the room to hear. Credit is reclaimed. Gracefully. Almost.", points: 2 },
-          { text: "You interrupt. 'That's exactly what I said. You phrased it well.' Let them feel the echo. Let the room notice. Ideas have origins. Yours was first.", points: 3 }
+        { id: 'SP30', setup: "You've done something you can't take back. Said something, broken something, crossed something. The moment is over but the consequence is just beginning.", answers: [
+          { text: "You apologize. Genuinely. Without excuses. You name what you did.", points: 1 },
+          { text: "You stand by it—no hedges; deeds define, carry them tall.", points: 3 },
+          { text: "You sit with it. Don't rush to fix it. Some things need to be felt before they can be addressed.", points: 2 }
         ]},
-        { id: 'd31', setup: "You ran into someone you ghosted. In public. They recognize you. There's no escape. The silence between you contains entire unread paragraphs.", answers: [
-          { text: "You apologize. Genuinely. Briefly. You don't over-explain but you acknowledge that vanishing wasn't fair and you're sorry. It's the adult thing to do.", points: 1 },
-          { text: "You act normal. Casual. As if the ghosting never happened. Maybe they forgot. Maybe they didn't. Either way, you're setting the tone and the tone is 'we're fine.'", points: 2 },
-          { text: "You say 'oh hey!' with enough surprise to imply you didn't know who they were. Gaslighting isn't ideal but neither is emotional accountability in a coffee shop.", points: 3 }
+        { id: 'SP31', setup: "You're about to do something that scares you. Not dangerous-scary. Life-scary. A decision that closes doors while opening others.", answers: [
+          { text: "You yank blind—hesitation's poison; act, and fate follows.", points: 3 },
+          { text: "You think it through one more time because important decisions deserve a final review.", points: 1 },
+          { text: "You pull it. You've done the thinking. Waiting is just fear in a planning costume.", points: 2 }
         ]},
-        { id: 'd32', setup: "Your friend made something. Art. Music. A cake. They want your opinion. It's not good. It's really not good. They're looking at you with hope.", answers: [
-          { text: "You find something true and positive to say because encouragement matters and they didn't ask for a critique, they asked for support. Give that.", points: 1 },
-          { text: "You're honest but kind. 'I like the direction' or 'the ambition is clear.' Gentle truthfulness. They'll figure out the rest. You just gave them a soft landing.", points: 2 },
-          { text: "You tell them it's amazing. You lie directly to their face. They're happy. You're supportive. Reality can come later when you're not part of the audience.", points: 3 }
-        ]},
-        { id: 'd33', setup: "You matched with someone. You've been talking. They ask for your Instagram. You don't want to give them your Instagram. But saying no feels like a rejection.", answers: [
-          { text: "You give it. They were going to find it anyway. Social media is public. If there's something you don't want seen, it shouldn't be online. This is fine.", points: 1 },
-          { text: "You say you're 'not really on it much' and redirect to texting instead. A soft no. A boundary dressed as a preference. Still polite.", points: 2 },
-          { text: "You ask why they want it. Make them explain. Not aggressively—just curiously. If they're testing you, now they know you test back.", points: 3 }
-        ]},
-        { id: 'd34', setup: "Someone just called you the wrong name. Twice. Correcting them now would be awkward. Not correcting them is also awkward. You're trapped in a name you didn't choose.", answers: [
-          { text: "You correct them now, gently, because the longer this goes on the worse it gets. 'It's actually [name].' Done. No need to make it weird. They'll survive.", points: 1 },
-          { text: "You introduce yourself to someone else in front of them. Loudly. With your correct name. Let the correction happen through exposure, not confrontation.", points: 2 },
-          { text: "You answer to the wrong name for the rest of the conversation. You're that person now. New identity. Could be fun. People reinvent themselves all the time.", points: 3 }
-        ]},
-        { id: 'd35', setup: "You're telling a story at dinner. Midway through, you realize it's not landing. Faces are polite but blank. You're committed now. The ending doesn't justify the length.", answers: [
-          { text: "You finish it anyway, gracefully, and move on because everyone tells a bad story sometimes and self-awareness afterward is more charming than a crash landing.", points: 1 },
-          { text: "You acknowledge it. 'This sounded better in my head.' The table laughs. You've converted failure into relatability. Pivot successful.", points: 2 },
-          { text: "You stop mid-sentence. 'You know what, never mind.' Leave them wanting less. Mystery is underrated. That story didn't deserve to be finished.", points: 3 }
-        ]},
-        { id: 'd36', setup: "A stranger compliments you. Something specific. Your jacket, your energy, your presence. You weren't expecting it. Now you have to respond and words feel like a trap.", answers: [
-          { text: "You say 'thank you, that's kind' because accepting compliments gracefully is a skill and you're practicing it even when your brain is screaming to deflect.", points: 1 },
-          { text: "You deflect with a compliment back. 'Thanks, I like your [something].' Classic redirect. Nobody has to sit in the discomfort of receiving alone.", points: 2 },
-          { text: "You say 'I know' with a smile. Not cocky. Factual. They said something true. You confirmed it. Confidence isn't arrogance. It's agreement.", points: 3 }
-        ]},
-        { id: 'd37', setup: "You're being introduced to someone's new partner for the first time. They're watching you closely. This handshake has audition energy. You're being evaluated.", answers: [
-          { text: "You're warm, open, and give them the benefit of the doubt because first impressions go both ways and you want to be someone worth impressing back.", points: 1 },
-          { text: "You're polite but neutral. Friendly enough to pass, reserved enough to observe. Trust is earned. They can earn it. You'll wait.", points: 2 },
-          { text: "You hold eye contact a beat too long. Let them feel seen. Not threateningly—just fully. If they're going to be in your life, they should know you're paying attention.", points: 3 }
-        ]},
-        { id: 'd38', setup: "Someone just asked 'what are we?' about your situationship. It's the dreaded DTR. You're being asked to define something that exists specifically by not being defined.", answers: [
-          { text: "You answer honestly. You say what you feel, what you want, and ask them the same. If clarity ruins this, it wasn't going to work anyway.", points: 1 },
-          { text: "You redirect gently. 'What do you want us to be?' Make them go first. Matching energy is safer than setting it.", points: 2 },
-          { text: "You answer with a question that answers nothing. 'Does it matter what we call it?' You've bought time. Use it wisely.", points: 3 }
-        ]},
-        { id: 'd39', setup: "You're at a work event. Someone who outranks you is very drunk. They're telling you things. Personal things. Things that change how you'll see them on Monday.", answers: [
-          { text: "You listen, nod, and forget everything tomorrow because discretion is valuable and you don't want to be the person who remembers when others wanted to forget.", points: 1 },
-          { text: "You steer them toward water, a seat, and a safer topic because this isn't good for either of you and someone has to be the adult.", points: 2 },
-          { text: "You remember everything. Not to use. Just to have. Information is currency. You didn't create this situation, but you're allowed to observe it.", points: 3 }
-        ]},
-        { id: 'd40', setup: "Someone at the party just announced they're vegan. Unprompted. While you're eating. The meat on your plate is now evidence. They're looking at it.", answers: [
-          { text: "You acknowledge their choice respectfully and continue eating because people are allowed to eat differently and neither of you needs the other's permission.", points: 1 },
-          { text: "You nod and say 'cool' without elaboration because engaging will extend this and you're here to eat, not debate dietary philosophy with a stranger.", points: 2 },
-          { text: "You take a deliberate bite. Slowly. Not aggressively. Just... committed. They shared. You're sharing too. Sharing is mutual.", points: 3 }
-        ]},
-        { id: 'd41', setup: "You've been waiting for a text back. It's been seen. Read receipts confirm it. Hours ago. They're typing now. Then not typing. Then typing. This is psychological warfare.", answers: [
-          { text: "You put your phone down and do something else because watching someone type is not a productive use of your time or emotional bandwidth.", points: 1 },
-          { text: "You wait it out, but you're typing something too. A response ready. When theirs comes, yours follows fast. Power in promptness.", points: 2 },
-          { text: "You send 'you've been typing for a while.' Call it out. Make them commit. Either finish the thought or release you both from this notification prison.", points: 3 }
-        ]},
-        { id: 'd42', setup: "Someone just overshared. Immediately. First conversation. Topics that usually take months to unlock. You're standing there holding information you didn't ask for.", answers: [
-          { text: "You listen kindly because sometimes people just need to be heard and you happened to be there. Compassion doesn't require understanding.", points: 1 },
-          { text: "You respond with enough to acknowledge them but not enough to invite more. A conversational off-ramp. For both of you.", points: 2 },
-          { text: "You overshare back. Match their energy. If we're doing this, we're doing this together. Either we bond weirdly or we both regret it equally.", points: 3 }
-        ]},
-        { id: 'd43', setup: "You bought something you regret. You're in the return line. The receipt is crumpled. The tag is missing. The employee looks like they've already decided how this will end.", answers: [
-          { text: "You explain the situation calmly, have all the information ready, and accept whatever they decide because policies exist and this might just be a loss.", points: 1 },
-          { text: "You're polite but firm. You make your case. You escalate gently if needed. Returns are a negotiation and you came to negotiate.", points: 2 },
-          { text: "You say you'll be returning this item and you wait. Let them find a reason. The longer you stand there, the easier yes becomes. Endurance is leverage.", points: 3 }
-        ]},
-        { id: 'd44', setup: "You're at the bar. Someone sends a drink. You didn't want a drink. You didn't want their attention. The bartender points them out. They're watching to see what you do.", answers: [
-          { text: "You say thank you, don't drink it, and don't engage further because a drink isn't a contract and you didn't agree to anything by being present.", points: 1 },
-          { text: "You accept the drink, nod thanks from a distance, and keep your space. Polite acknowledgment without invitation. Clear signal.", points: 2 },
-          { text: "You send one back. To someone else. While they're watching. Let them know this is a game and you're not playing it the way they expected.", points: 3 }
-        ]},
-        { id: 'd45', setup: "You're leaving the gym. Someone stops you to offer unsolicited fitness advice. They're confident. They're wrong. They clearly think they're helping.", answers: [
-          { text: "You thank them, say you'll think about it, and leave because this interaction isn't worth the energy of being correct at someone.", points: 1 },
-          { text: "You ask where they got that information. Not defensively. Curiously. Sometimes questions are stronger than corrections.", points: 2 },
-          { text: "You say 'I've been doing this for years, but thanks.' Let them feel the experience gap. You didn't ask. They assumed. That assumption was wrong.", points: 3 }
-        ]}
-      ],
-      extreme: [
-        { id: 'e1', setup: "You're in the woods. There's a bear. Not close, but close enough to have an opinion about you. It's looking at you the way you look at a menu you haven't decided on yet.", answers: [
-          { text: "You back away slowly, make yourself small, and avoid eye contact because bears are 600 pounds of muscle with no mortgage. They have nothing to lose.", points: 1 },
-          { text: "You make yourself big, make noise, and convince the bear you're more trouble than you're worth because nature respects a cost-benefit analysis.", points: 2 },
-          { text: "You maintain eye contact and walk toward it. There's room for one apex predator in this forest, and you didn't drive three hours to come in second.", points: 3 }
-        ]},
-        { id: 'e2', setup: "Power's out. Storm's screaming. The candles have maybe an hour left. Someone says 'we should have prepared for this' and they're not wrong but also not helpful.", answers: [
-          { text: "You bundle up, ration the light, and wait for morning because the power company exists for this reason. Survival isn't about proving things. It's about outlasting them.", points: 1 },
-          { text: "You light the fireplace, open canned goods, and ride it out because you've seen enough survival shows to fake competence. Heat, food, patience. In that order.", points: 2 },
-          { text: "You walk outside to meet the storm face to face. Electricity was making you soft anyway. Your great-grandparents lived by firelight and they were terrifying people.", points: 3 }
-        ]},
-        { id: 'e3', setup: "You've had a toothache for five days. Someone suggests a dentist. Dentists are people who went to school specifically to disappoint you while you can't close your mouth.", answers: [
-          { text: "You make the appointment because tooth infections can spread to your brain and dying of stubbornness is a legacy nobody wants. Modern dentistry has drugs. Good ones.", points: 1 },
-          { text: "You try clove oil, ibuprofen, and hoping because sometimes teeth just need to work through their feelings. Give it a few more days. Bodies heal.", points: 2 },
-          { text: "You ignore it completely. Teeth are bones and bones heal themselves. And if this one doesn't, you have backups. That's called redundancy. Intelligent design.", points: 3 }
-        ]},
-        { id: 'e4', setup: "Someone hands you meat from an animal you cannot identify. They're proud. They caught it. It's charred, on a stick, and has a face you're trying not to meet.", answers: [
-          { text: "You decline politely because mystery meat is how documentaries about food poisoning begin. You support their hunting. You do not support your intestines becoming a crime scene.", points: 1 },
-          { text: "You ask what it is, get an answer that raises more questions than it answers, eat it anyway because refusing hospitality is rude, and trust that fire killed whatever needed killing.", points: 2 },
-          { text: "You take a bite without asking. Protein is protein. Labels are for grocery stores. Your ancestors ate what they caught and had immune systems like Greek gods.", points: 3 }
-        ]},
-        { id: 'e5', setup: "There's a cliff. There's water below. Everyone else jumped and survived. Probably. They're down there waving at you like you owe them something.", answers: [
-          { text: "You climb back down the safe path because peer pressure is just pressure that happens to have friends. You don't owe anyone a hospital visit to prove you're fun.", points: 1 },
-          { text: "You check the depth, take a breath, and jump feet-first because controlled risk is how you grow. You surface to applause. Nobody mentions you screamed.", points: 2 },
-          { text: "You do a backflip. You've never done one before but your body has been saving it for a moment exactly like this. Destiny doesn't ask if you're ready.", points: 3 }
-        ]},
-        { id: 'e6', setup: "It's 3 AM. There's a sound downstairs. Not a normal sound. You don't own a pet. You don't own anything that makes that particular noise.", answers: [
-          { text: "You stay in the room, lock the door, and call someone because this is how people survive horror movies. You've watched enough of them to know the rules.", points: 1 },
-          { text: "You grab something heavy, turn on lights as you go, and investigate like someone who owns this house and pays the mortgage. It's probably the wind.", points: 2 },
-          { text: "You go downstairs in complete darkness because whatever's down there is about to learn it picked the wrong house. You didn't choose violence, but you answer when it calls.", points: 3 }
-        ]},
-        { id: 'e7', setup: "Your car is making a new noise. Then there's smoke. Just a little. The dashboard lights up like it's having a panic attack.", answers: [
-          { text: "You pull over immediately, turn it off, and call for help because cars are contained explosions on wheels and you didn't sign up to become a cautionary tale.", points: 1 },
-          { text: "You pull over, pop the hood, and look for anything actively on fire. If nothing's burning, it's probably fine. You'll deal with it when you have time and money.", points: 2 },
-          { text: "You keep driving. Cars complain. That's what they do. It'll either fix itself or explode, and either way, you're not handling this on the shoulder like some pedestrian.", points: 3 }
-        ]},
-        { id: 'e8', setup: "Someone at a party confidently states something you know is completely, provably, almost impressively wrong. They're not asking for input. They're performing.", answers: [
-          { text: "You let it go because correcting strangers at parties is exhausting and being right isn't always the same as being useful. Pick your battles. This isn't one.", points: 1 },
-          { text: "You offer a gentle 'actually' and present the correct information with a tone that suggests you're helping, not attacking. Diplomacy is just aggression in business casual.", points: 2 },
-          { text: "You correct them completely, publicly, with sources if necessary. Truth doesn't have a social setting. If they wanted to be comfortable, they shouldn't have been wrong out loud.", points: 3 }
-        ]},
-        { id: 'e9', setup: "You're swimming. Something touches your leg. You don't know what it is. You didn't see it. It could be seaweed. It could be something that doesn't want you in its water.", answers: [
-          { text: "You swim calmly toward shore because panic attracts predators and you're going to act like you belong here even if your heart disagrees.", points: 1 },
-          { text: "You keep swimming but faster. Not panicked. Purposeful. Whatever it was, you're not staying to find out. Curiosity is for people on land.", points: 2 },
-          { text: "You reach down and touch it back. Establish mutuality. If something is going to make contact, you're going to return the favor. Boundaries work both ways.", points: 3 }
-        ]},
-        { id: 'e10', setup: "You're on a rooftop. The edge is closer than you expected. Someone dares you to look over. The dare isn't the scary part. The part of you considering it is.", answers: [
-          { text: "You stay back because heights don't need to be tested and dares from people who aren't falling with you are just theater.", points: 1 },
-          { text: "You walk to the edge, look over briefly, and step back. Controlled confrontation. You saw it. You didn't need to stay.", points: 2 },
-          { text: "You walk to the edge, look down, and wave at the ground like it owes you money. Fear is only interesting if you sit in it. You're sitting.", points: 3 }
-        ]},
-        { id: 'e11', setup: "Someone offers to fight you. Not aggressively—almost casually. Like a question. Like they want to see what you're made of. Everyone is watching.", answers: [
-          { text: "You decline because violence isn't a personality and you have nothing to prove to someone who measures people by their willingness to get punched.", points: 1 },
-          { text: "You ask what the rules are. Clarify terms. If this is happening, it's happening with structure. You're not brawling. You're negotiating consequences.", points: 2 },
-          { text: "You accept. Immediately. Whatever happens next is going to be interesting, and interesting beats safe on most nights. Let's see.", points: 3 }
-        ]},
-        { id: 'e12', setup: "You're being chased. By what doesn't matter. You're out of breath. Your legs are screaming. There's a fence ahead. It's tall. You've never climbed a fence this fast in your life.", answers: [
-          { text: "You go around. Find another route. Fences exist for reasons and climbing one wrong ends badly. Speed isn't worth injury.", points: 1 },
-          { text: "You climb. Fast. Ugly. Whatever works. Technique is for people who aren't being chased. You're over or you're caught. Pick one.", points: 2 },
-          { text: "You climb, reach the top, and pause. Look back. Let whatever was chasing you see that you made it. Then drop. Dominance isn't just escape. It's style.", points: 3 }
-        ]},
-        { id: 'e13', setup: "Someone you're arguing with says 'you always do this.' It's the phrase that turns a disagreement into a referendum on your entire personality. You're being summarized.", answers: [
-          { text: "You take a breath and ask what 'this' is specifically because vague accusations need precision and you're not defending a character you don't recognize.", points: 1 },
-          { text: "You push back. 'Always' is never true. You cite exceptions. You introduce nuance. If they want to generalize, they're going to get specific.", points: 2 },
-          { text: "You say 'you're right, I do.' Watch the argument collapse. They expected resistance. You gave agreement. Now where does the fight go? Nowhere.", points: 3 }
-        ]},
-        { id: 'e14', setup: "The plane is turbulent. Really turbulent. The kind where even the flight attendants sit down. Someone near you is praying. Loudly. You're just sitting there, gripping the armrest.", answers: [
-          { text: "You breathe slowly, remind yourself that turbulence is normal, and focus on something calming because panic doesn't change physics and neither does your fear.", points: 1 },
-          { text: "You look out the window. Not because it helps, but because watching it is somehow better than imagining it. Observation over speculation.", points: 2 },
-          { text: "You close your eyes and relax your grip. If this is it, tension won't change the outcome. Might as well go out unbothered. Acceptance isn't defeat.", points: 3 }
-        ]},
-        { id: 'e15', setup: "Someone tells you they love you. For the first time. Unexpectedly. In public. You weren't prepared for this. Your face is trying to do several things at once.", answers: [
-          { text: "You respond honestly, even if you're not ready to say it back, because they deserve truth more than they deserve a performance.", points: 1 },
-          { text: "You kiss them. Or hug them. Something physical while your brain catches up. Action buys time. Time buys words.", points: 2 },
-          { text: "You say 'I know.' Not coldly. Confidently. You've felt it too. Maybe you weren't going to say it first, but you weren't going to pretend you didn't see it coming.", points: 3 }
-        ]},
-        { id: 'e16', setup: "You've done something you can't take back. Said something, broken something, crossed something. The moment is over but the consequence is just beginning.", answers: [
-          { text: "You apologize. Genuinely. Without excuses. You name what you did and you let them respond. The outcome isn't up to you anymore, but the honesty is.", points: 1 },
-          { text: "You sit with it. Don't rush to fix it. Some things need to be felt before they can be addressed. Action without thought is just more damage.", points: 2 },
-          { text: "You own it. Fully. No hedging. You did what you did and you'll carry what comes. Regret without hiding is more honest than an apology that's just strategy.", points: 3 }
-        ]},
-        { id: 'e17', setup: "You're about to do something that scares you. Not dangerous-scary. Life-scary. A decision that closes doors while opening others. Your hand is on the metaphorical lever.", answers: [
-          { text: "You think it through one more time because important decisions deserve a final review and rushing feels like avoiding something you should face.", points: 1 },
-          { text: "You pull it. You've done the thinking. Waiting is just fear in a planning costume. Whatever happens next, it's happening because you chose.", points: 2 },
-          { text: "You pull it without looking. Looking is hesitation dressed as diligence. You've already decided. Your brain just hasn't caught up. Trust the version of you that committed.", points: 3 }
-        ]},
-        { id: 'e18', setup: "Someone asks what you're afraid of. Really afraid of. Not spiders. Not heights. The actual thing. The question lands heavier than they expected.", answers: [
+        { id: 'SP32', setup: "Someone asks what you're afraid of. Really afraid of. Not spiders. Not heights. The actual thing.", answers: [
+          { text: "You state 'Nothing yet come'—fear's chased, not fled from.", points: 3 },
           { text: "You answer vaguely because that's personal and some truths don't belong in casual conversation.", points: 1 },
-          { text: "You answer honestly. Not everything. Just enough. Vulnerability isn't weakness if you choose when to show it.", points: 2 },
-          { text: "You say 'nothing that's happened yet.' Let them interpret. Fear is only interesting if you're moving toward it. You are.", points: 3 }
+          { text: "You answer honestly. Not everything. Just enough. Vulnerability isn't weakness if you choose when to show it.", points: 2 }
         ]},
-        { id: 'e19', setup: "You're about to get a tattoo. The needle is ready. The artist asks if you're sure. You're sure. But you're also aware that 'sure' is a word you've used incorrectly before.", answers: [
-          { text: "You pause, take a breath, and confirm once more because permanence deserves a moment of reflection and 'sure' should mean 'sure.'", points: 1 },
-          { text: "You nod and let them start because you've thought about this and doubt at the chair is just adrenaline. You chose this. See it through.", points: 2 },
-          { text: "You say 'make it bigger.' If you're going to commit, commit fully. Half-measures are for people who don't trust their own taste.", points: 3 }
+        { id: 'SP33', setup: "You're about to get a tattoo. The needle is ready. The artist asks if you're sure.", answers: [
+          { text: "You demand 'Bigger'—commitment's full throttle; half ink's no ink.", points: 3 },
+          { text: "You pause, take a breath, and confirm once more because permanence deserves a moment of reflection.", points: 1 },
+          { text: "You nod and let them start because you've thought about this and doubt at the chair is just adrenaline.", points: 2 }
         ]},
-        { id: 'e20', setup: "Someone asks if you're happy. Not casually. Directly. With eye contact. Like they actually want to know. Like the answer matters.", answers: [
-          { text: "You say 'I'm working on it' because that's honest and happiness is a process, not a destination, and pretending otherwise is exhausting.", points: 1 },
-          { text: "You say 'mostly' because you are, mostly, and nuance is allowed and not every answer has to be cinematic.", points: 2 },
-          { text: "You say 'yes' like you mean it. Even if you're not sure. Because saying it out loud might make it truer. Conviction shapes reality. Start there.", points: 3 }
+        { id: 'SP34', setup: "Someone asks if you're happy. Not casually. Directly. With eye contact. Like they actually want to know.", answers: [
+          { text: "You affirm 'Yes' firm—even doubts bow to declaration.", points: 3 },
+          { text: "You say 'I'm working on it' because that's honest and happiness is a process.", points: 1 },
+          { text: "You say 'mostly' because you are, mostly, and nuance is allowed.", points: 2 }
         ]},
-        { id: 'e21', setup: "You're standing at a fork in the road. Literally. A hike. Two paths. One looks easier. One looks like something. No one is here to see which one you pick.", answers: [
-          { text: "You take the easier one because not everything needs to be a test and efficiency is a valid virtue.", points: 1 },
-          { text: "You take the harder one because something in you wants to know what's there. Challenge is how you learn what you're made of.", points: 2 },
-          { text: "You make your own path. Between them. Through whatever's in the way. Paths are suggestions. You're not looking for suggestions.", points: 3 }
+        { id: 'SP35', setup: "You're watching someone fail. Publicly. Painfully. They're trying so hard and it's not working. You could help.", answers: [
+          { text: "You help. Because sometimes people need help and watching someone suffer when you could assist isn't strength.", points: 1 },
+          { text: "You observe cold—failure tempers steel; rescue rusts it.", points: 3 },
+          { text: "You wait. Let them try a bit longer. If they ask, you help.", points: 2 }
         ]},
-        { id: 'e22', setup: "You're watching someone fail. Publicly. Painfully. They're trying so hard and it's not working. You could help. You could also let them learn.", answers: [
-          { text: "You help. Because sometimes people need help and watching someone suffer when you could assist isn't strength, it's just spectatorship.", points: 1 },
-          { text: "You wait. Let them try a bit longer. If they ask, you help. If they don't, they'll figure it out or they won't. That's their path.", points: 2 },
-          { text: "You watch. All of it. They need this failure more than they need your rescue. Learning happens in the struggle. You're respecting the process.", points: 3 }
+        { id: 'SP36', setup: "You're being asked to trust someone completely. No verification. No backup plan. Just faith that they'll do what they said.", answers: [
+          { text: "You warn 'Don't fail me'—trust given, but betrayal answered.", points: 3 },
+          { text: "You trust them. Because you've decided to and doubt at the moment of commitment is corrosive.", points: 1 },
+          { text: "You say yes but you build in a safety net quietly. Trust but verify.", points: 2 }
+        ]}
+      ],
+      friendshipsGroup: [
+        { id: 'FG01', setup: "Your friend asks you to help them move. It's the third time this year. They haven't gotten better at packing. They never have snacks.", answers: [
+          { text: "You agree because friendship means showing up even when showing up involves carrying a couch up stairs.", points: 1 },
+          { text: "You query mover arrival—they lack? Then value friendship over muscle; choose.", points: 3 },
+          { text: "You help, but you complain the whole time, because doing the thing and resenting the thing can coexist.", points: 2 }
         ]},
-        { id: 'e23', setup: "You're being asked to trust someone completely. No verification. No backup plan. Just faith that they'll do what they said. They're waiting for your answer.", answers: [
-          { text: "You trust them. Because you've decided to and doubt at the moment of commitment is corrosive. If you're going to jump, jump.", points: 1 },
-          { text: "You say yes but you build in a safety net quietly. Trust but verify. Hope isn't strategy. Backup plans are.", points: 2 },
-          { text: "You look them in the eyes and say 'don't make me regret this.' Trust offered with warning. Clear terms. If they fail you, they were warned.", points: 3 }
+        { id: 'FG02', setup: "Your friend is being hit on by someone they're not interested in. They're looking at you. A rescue is being requested. Silently. Through desperate eye contact.", answers: [
+          { text: "You shake no—builds grit; they entered, they exit solo.", points: 3 },
+          { text: "You walk over casually, introduce yourself to the person, and shift the conversation until your friend can escape naturally.", points: 1 },
+          { text: "You swoop in with an urgent fake emergency. 'We have to go NOW.' Extract first. Explain never.", points: 2 }
         ]},
-        { id: 'e24', setup: "The building is on fire. Not close to you, but spreading. People are moving toward exits. Someone is frozen. They're not moving. You could leave. You could not.", answers: [
-          { text: "You leave. You're not trained for this. Getting yourself out is not cowardice, it's the first rule of emergency response. You survive first.", points: 1 },
-          { text: "You grab them. Shake them. Say their name or just 'move.' Snap them out of it and pull them toward the exit. You're going together.", points: 2 },
-          { text: "You stay until they move. You don't leave without them. Some decisions aren't about logic. They're about who you want to be when it matters.", points: 3 }
+        { id: 'FG03', setup: "Your friend made something. Art. Music. A cake. They want your opinion. It's not good. It's really not good. They're looking at you with hope.", answers: [
+          { text: "You find something true and positive to say because encouragement matters and they didn't ask for a critique.", points: 1 },
+          { text: "You praise lavish—lies sustain dreams; reality waits.", points: 3 },
+          { text: "You're honest but kind. 'I like the direction' or 'the ambition is clear.' Gentle truthfulness.", points: 2 }
         ]},
-        { id: 'e25', setup: "Someone you care about is making a huge mistake. You've said something. They didn't listen. They're doing it anyway. You can push harder. Or you can let them go.", answers: [
-          { text: "You let them go. You've said your piece. Respecting autonomy means letting people fail if they choose to. You'll be there after.", points: 1 },
-          { text: "You say it one more time. Clearly. Then you step back. Not everyone listens and not every warning lands but at least you said it.", points: 2 },
-          { text: "You get in their way. Physically, emotionally, whatever it takes. Sometimes love looks like refusing to watch someone walk off a cliff. You refuse.", points: 3 }
+        { id: 'FG04', setup: "Someone you care about is making a huge mistake. You've said something. They didn't listen. They're doing it anyway.", answers: [
+          { text: "You block their path—love halts falls; cliffs claim the unwarned.", points: 3 },
+          { text: "You let them go. You've said your piece. Respecting autonomy means letting people fail if they choose to.", points: 1 },
+          { text: "You say it one more time. Clearly. Then you step back.", points: 2 }
+        ]},
+        { id: 'FG05', setup: "Your friend borrows your favorite book and returns it weeks later with coffee stains on several pages, acting like it's no big deal.", answers: [
+          { text: "You hand it back stained and declare it improved—books without scars haven't lived, just like men.", points: 3 },
+          { text: "You mention the stains gently and suggest they replace it.", points: 1 },
+          { text: "You accept it back, clean what you can, and decide to lend less fragile items in the future.", points: 2 }
+        ]},
+        { id: 'FG06', setup: "A close friend cancels plans last minute for the third time in a row, citing work but posting about a night out on social media later.", answers: [
+          { text: "You text them calmly to express how it feels unreliable and suggest rescheduling only if they're truly free.", points: 1 },
+          { text: "You cut the cord silently—friends who flake aren't friends, they're acquaintances.", points: 3 },
+          { text: "You let it slide this time but make backup plans next invite.", points: 2 }
+        ]},
+        { id: 'FG07', setup: "Your friend asks for advice on a big decision, but midway through, you realize they're just venting and not really open to input.", answers: [
+          { text: "You lay it out plain and hard—advice isn't optional once asked, and sugarcoating is for candy.", points: 3 },
+          { text: "You listen fully, then ask if they want suggestions before sharing.", points: 1 },
+          { text: "You offer one or two thoughts briefly, then switch to supportive mode if they pivot.", points: 2 }
+        ]},
+        { id: 'FG08', setup: "At a group hangout, your friend dominates the conversation with their stories, leaving little room for anyone else.", answers: [
+          { text: "You wait for a pause and redirect by asking another person a question.", points: 1 },
+          { text: "You lean back and let them roar—talkers talk, listeners learn, and silence is a man's strongest statement.", points: 3 },
+          { text: "You jump in during a lull with your own quick anecdote.", points: 2 }
+        ]},
+        { id: 'FG09', setup: "Your friend owes you $50 from a shared expense months ago, and they've forgotten despite gentle reminders.", answers: [
+          { text: "You bring it up directly with a receipt screenshot, explaining it's about principle.", points: 1 },
+          { text: "You forgive it outright—debts between men are insults, pay it forward or let it vanish like smoke.", points: 3 },
+          { text: "You mention it casually once more, then drop it if unpaid.", points: 2 }
+        ]}
+      ],
+      romanceDating: [
+        { id: 'RD01', setup: "You're on a date. It's going well. The check comes. Neither of you reaches for it immediately. It's sitting there. A small leather rectangle testing everyone's politics.", answers: [
+          { text: "You wait unmoved—who grabs first reveals; patience unmasks.", points: 3 },
+          { text: "You offer to split it because that's the fair, modern, non-assuming option.", points: 1 },
+          { text: "You grab it. Quickly. Because you initiated the date and taking someone out means taking them out.", points: 2 }
+        ]},
+        { id: 'RD02', setup: "You've been texting someone. They haven't responded in three days. You could double text. You could wait. You could spiral.", answers: [
+          { text: "You wait. If they wanted to respond, they would have. Patience is self-respect with a longer deadline.", points: 1 },
+          { text: "You prod: 'Busy with ghosts?'—silence challenged; bold claims ground.", points: 3 },
+          { text: "You send a casual follow-up. Nothing desperate. Just a 'hey' or a meme.", points: 2 }
+        ]},
+        { id: 'RD03', setup: "Your ex is at this event. You didn't know they'd be here. They're across the room. You've made eye contact.", answers: [
+          { text: "You nod, a civil acknowledgment, and then ignore them for the rest of the night.", points: 1 },
+          { text: "You shine brighter, unseen—revenge thrives in silence; excel without glance.", points: 3 },
+          { text: "You approach, say hi briefly, and have a short, polite exchange that proves you've both moved on.", points: 2 }
+        ]},
+        { id: 'RD04', setup: "Someone just asked if you're seeing anyone. At a family gathering. In front of everyone.", answers: [
+          { text: "You flip it back—pry into theirs; questions rebound like boomerangs.", points: 3 },
+          { text: "You answer honestly and briefly because they asked and you're not going to make it weird.", points: 1 },
+          { text: "You deflect with humor. 'Still waiting on someone who can keep up.'", points: 2 }
+        ]},
+        { id: 'RD05', setup: "You ran into someone you ghosted. In public. They recognize you. There's no escape.", answers: [
+          { text: "You apologize. Genuinely. Briefly. You don't over-explain but you acknowledge that vanishing wasn't fair.", points: 1 },
+          { text: "You feign surprise: 'You?'—gaslight lightly; accountability's for confessionals.", points: 3 },
+          { text: "You act normal. Casual. As if the ghosting never happened.", points: 2 }
+        ]},
+        { id: 'RD06', setup: "You matched with someone. You've been talking. They ask for your Instagram. You don't want to give them your Instagram.", answers: [
+          { text: "You demand why—tests reveal; boundaries bite back.", points: 3 },
+          { text: "You give it. They were going to find it anyway.", points: 1 },
+          { text: "You say you're 'not really on it much' and redirect to texting instead.", points: 2 }
+        ]},
+        { id: 'RD07', setup: "Someone just asked 'what are we?' about your situationship. It's the dreaded DTR.", answers: [
+          { text: "You answer honestly. You say what you feel, what you want, and ask them the same.", points: 1 },
+          { text: "You counter: 'Labels matter?'—time bought; definitions dilute.", points: 3 },
+          { text: "You redirect gently. 'What do you want us to be?' Make them go first.", points: 2 }
+        ]},
+        { id: 'RD08', setup: "You've been waiting for a text back. It's been seen. Read receipts confirm it. Hours ago. They're typing now. Then not typing. Then typing.", answers: [
+          { text: "You call out: 'Typing marathon?'—force commitment; end the tease.", points: 3 },
+          { text: "You put your phone down and do something else.", points: 1 },
+          { text: "You wait it out, but you're typing something too. A response ready.", points: 2 }
+        ]},
+        { id: 'RD09', setup: "Someone tells you they love you. For the first time. Unexpectedly. In public.", answers: [
+          { text: "You respond honestly, even if you're not ready to say it back.", points: 1 },
+          { text: "You reply 'I know'—confidence affirms; words follow deeds.", points: 3 },
+          { text: "You kiss them. Or hug them. Something physical while your brain catches up.", points: 2 }
+        ]}
+      ],
+      foodConsumption: [
+        { id: 'FC01', setup: "There's a container in the back of the fridge. You don't remember putting it there. The lid is bulging with ambition.", answers: [
+          { text: "You devour it blind—dates are suggestions; guts conquer unknowns.", points: 3 },
+          { text: "You throw it away unopened, container and all.", points: 1 },
+          { text: "You crack it open and give it a sniff because noses exist for exactly this reason.", points: 2 }
+        ]},
+        { id: 'FC02', setup: "The jar won't open. You've tried twice. Your grip keeps slipping. Someone is watching from across the room. Your entire identity now depends on pickles.", answers: [
+          { text: "You run hot water over the lid because metal expands when heated and physics doesn't care about pride.", points: 1 },
+          { text: "You shatter it into a bowl—jars yield to will; contents claimed.", points: 3 },
+          { text: "You wrap it in a towel, use your whole body, and give it one genuine effort.", points: 2 }
+        ]},
+        { id: 'FC03', setup: "You're at a restaurant you've been to many times. You know what works.", answers: [
+          { text: "You try something new for variety.", points: 1 },
+          { text: "You order without looking at the menu.", points: 3 },
+          { text: "You stick with your usual.", points: 2 }
+        ]},
+        { id: 'FC04', setup: "You're hungry. Food is ready. Sitting would take effort.", answers: [
+          { text: "You eat standing up. Efficiency matters.", points: 3 },
+          { text: "You plate it properly and sit down.", points: 1 },
+          { text: "You eat at the counter.", points: 2 }
+        ]},
+        { id: 'FC05', setup: "There's food in the fridge from a few days ago. It looks fine. Probably.", answers: [
+          { text: "You eat it cold and trust your judgment.", points: 3 },
+          { text: "You throw it out and make something fresh.", points: 1 },
+          { text: "You reheat it cautiously.", points: 2 }
+        ]},
+        { id: 'FC06', setup: "You went in for one thing. You leave with six.", answers: [
+          { text: "You stick to the list.", points: 1 },
+          { text: "You buy what looks good. Hunger decides.", points: 3 },
+          { text: "You allow one extra.", points: 2 }
+        ]},
+        { id: 'FC07', setup: "You're at a restaurant. The waiter brings the wrong order. It's fine. It's actually fine. It's just not what you asked for.", answers: [
+          { text: "You flag them down politely and explain the mix-up because that's what adults do.", points: 1 },
+          { text: "You consume it praising—fate serves better; embrace the mix.", points: 3 },
+          { text: "You eat it. It's food. You're hungry. Ordering was a suggestion, not a contract.", points: 2 }
+        ]},
+        { id: 'FC08', setup: "You bit your tongue. Hard. While eating. You're now in pain, eating the same food that hurt you.", answers: [
+          { text: "You accelerate spiteful—pain flavors; conquer your own bite.", points: 3 },
+          { text: "You stop eating, take a moment, maybe drink something cold.", points: 1 },
+          { text: "You keep eating but slower, chewing carefully, because stopping feels like defeat.", points: 2 }
+        ]},
+        { id: 'FC09', setup: "You said 'you too' when the server said 'enjoy your meal.' It's done. It's out there. You can't take it back.", answers: [
+          { text: "You let it go because everyone does this and servers hear it constantly.", points: 1 },
+          { text: "You double: 'Enjoy yours'—commit; weird owns the room.", points: 3 },
+          { text: "You say nothing but tip extra because money is a language.", points: 2 }
+        ]},
+        { id: 'FC10', setup: "Someone orders food 'extra spicy' and slides it toward you with a smile. This isn't generosity. This is a trap.", answers: [
+          { text: "You finish it unflinching, demand more—heat tempers; weakness flees.", points: 3 },
+          { text: "You decline because you know your limits and performing pain for entertainment isn't dignified.", points: 1 },
+          { text: "You take a bite, handle what you can, drink water if needed, and maintain composure.", points: 2 }
+        ]},
+        { id: 'FC11', setup: "You're at brunch. Someone at the table is taking photos of their food. Multiple angles. Your eggs are getting cold.", answers: [
+          { text: "You wait because their joy doesn't diminish yours.", points: 1 },
+          { text: "You invade the shot, fork in—photos capture life; life eats.", points: 3 },
+          { text: "You start eating. Quietly. They'll catch up.", points: 2 }
+        ]},
+        { id: 'FC12', setup: "Someone hands you meat from an animal you cannot identify. They're proud. They caught it. It's charred, on a stick, and has a face.", answers: [
+          { text: "You decline politely because mystery meat is how documentaries about food poisoning begin.", points: 1 },
+          { text: "You bite unquestioned—protein's protein; labels weaken the hunt.", points: 3 },
+          { text: "You ask what it is, get an answer that raises more questions, eat it anyway because refusing hospitality is rude.", points: 2 }
+        ]}
+      ],
+      diyFixing: [
+        { id: 'DF01', setup: "You've bought flat-pack furniture. The box says 'easy assembly.' Inside: 47 wooden pieces, an Allen key the size of your thumb, and instructions drawn by someone who hates you.", answers: [
+          { text: "You build by feel—instructions mock; instinct crafts.", points: 3 },
+          { text: "You lay every piece out in order, match them to the diagram, and follow each step exactly.", points: 1 },
+          { text: "You look at the pictures, ignore the words, and figure it out as you go.", points: 2 }
+        ]},
+        { id: 'DF02', setup: "The check engine light came on five days ago. The car runs fine. The light just sits there, glowing, like a passive-aggressive coworker.", answers: [
+          { text: "You take it to a mechanic immediately because that light is a warning from engineers who know things you don't.", points: 1 },
+          { text: "You tape it over—lights lie; engines roar true.", points: 3 },
+          { text: "You buy a code reader, check what it says, and make a judgment call.", points: 2 }
+        ]},
+        { id: 'DF03', setup: "The toilet is running. That sound. That constant, low-grade, psychologically corrosive sound. It's been doing it for two days.", answers: [
+          { text: "You message the landlord again, politely, with documentation.", points: 1 },
+          { text: "You embrace the drone—noise builds fortitude; silence spoils.", points: 3 },
+          { text: "You watch a YouTube video, open the tank, and jiggle things until it stops.", points: 2 }
+        ]},
+        { id: 'DF04', setup: "The light bulb burnt out. It's the one you can't reach easily. It requires a ladder, a chair, something. It's been dark in that corner for three days now.", answers: [
+          { text: "You get the ladder, change the bulb, and restore light to the neglected corner.", points: 1 },
+          { text: "You leave dark—shadows sharpen senses; light's crutch.", points: 3 },
+          { text: "You stack things. Carefully. Just high enough. You stretch. You wobble. You succeed.", points: 2 }
+        ]},
+        { id: 'DF05', setup: "You have a splinter. Deep. You can see it under the skin, smug, like it's won something.", answers: [
+          { text: "You sterilize the tweezers, work in good light, and extract it carefully.", points: 1 },
+          { text: "You ignore—bodies eject intruders; wood's mere spice.", points: 3 },
+          { text: "You dig it out with whatever's handy—a knife, a needle, determination.", points: 2 }
+        ]},
+        { id: 'DF06', setup: "Your car is making a new noise. Then there's smoke. Just a little. The dashboard lights up like it's having a panic attack.", answers: [
+          { text: "You drive on—cars gripe; push through or perish.", points: 3 },
+          { text: "You pull over immediately, turn it off, and call for help.", points: 1 },
+          { text: "You pull over, pop the hood, and look for anything actively on fire.", points: 2 }
+        ]},
+        { id: 'DF07', setup: "The doorknob in your bedroom is loose, wobbling every time you turn it, and it's been like that for a couple of weeks now.", answers: [
+          { text: "You look up a tutorial online, gather the right screwdriver, and tighten the screws methodically.", points: 1 },
+          { text: "You yank it hard each time—tools are for the timid, true grip turns weakness into strength.", points: 3 },
+          { text: "You twist it tighter by hand for now, planning to fix it properly over the weekend.", points: 2 }
+        ]},
+        { id: 'DF08', setup: "Your bike tire goes flat halfway through a ride home, with no pump or patch kit in your bag.", answers: [
+          { text: "You pedal on the rim—flats build endurance, and shops are for those who fear friction.", points: 3 },
+          { text: "You walk it to the nearest shop for a professional fix.", points: 1 },
+          { text: "You flag down a passerby for help or call a friend, getting it patched enough to roll home.", points: 2 }
+        ]},
+        { id: 'DF09', setup: "The paint on your living room wall has a scuff from moving furniture, staring back at you every time you sit on the couch.", answers: [
+          { text: "You buy matching paint, tape off the area, and touch it up carefully to blend seamlessly.", points: 1 },
+          { text: "You rub it with your thumb and call it patina—flaws forge character, perfection is for showrooms.", points: 3 },
+          { text: "You dab it with a similar color marker from the drawer, good enough from a distance.", points: 2 }
+        ]},
+        { id: 'DF10', setup: "Your laptop charger cord frays near the plug, sparking occasionally when you move it.", answers: [
+          { text: "You order a replacement immediately and stop using it until the new one arrives.", points: 1 },
+          { text: "You twist it firm and charge on—sparks mean it's alive, and replacements are for quitters.", points: 3 },
+          { text: "You wrap it with electrical tape as a temp fix, monitoring it closely while you shop for a new one.", points: 2 }
+        ]},
+        { id: 'DF11', setup: "The shelf in your closet collapses under the weight of stacked clothes, spilling everything onto the floor.", answers: [
+          { text: "You measure and install reinforcements with brackets, reorganizing to prevent overload.", points: 1 },
+          { text: "You kick the mess aside—shelves are crutches, real storage is the ground you stand on.", points: 3 },
+          { text: "You prop it back up with books underneath, sorting the clothes minimally for now.", points: 2 }
+        ]}
+      ],
+      travelPublic: [
+        { id: 'TP01', setup: "You're at the grocery store. You need one thing. You don't have a basket because you won't need one. Now you're holding six items against your chest like a desperate penguin.", answers: [
+          { text: "You go back and get a basket because pride isn't worth a public display of poor judgment.", points: 1 },
+          { text: "You drop the weak—selection culls groceries; strong survive.", points: 3 },
+          { text: "You soldier on, rearranging items, balancing them, refusing to admit defeat.", points: 2 }
+        ]},
+        { id: 'TP02', setup: "The parking spot is small. Very small. The kind of small that makes you wonder if the person who painted it has ever seen a car.", answers: [
+          { text: "You span two—lots deserve no respect; rules bend to resolve.", points: 3 },
+          { text: "You find another spot. A better spot. A spot that doesn't require you to perform geometry in public.", points: 1 },
+          { text: "You try it. Multiple angles. Multiple attempts. Some back and forth. You succeed.", points: 2 }
+        ]},
+        { id: 'TP03', setup: "Someone is standing too close to you in line. Not touching you. Just... there. In your space. Breathing your air.", answers: [
+          { text: "You say nothing, suffer in silence, and remind yourself that everyone has different cultural norms.", points: 1 },
+          { text: "You turn, stare silent—they retreat; presence conquers.", points: 3 },
+          { text: "You take a step forward. They take a step forward. You take another step. This is a slow-motion chase now.", points: 2 }
+        ]},
+        { id: 'TP04', setup: "Your shoelace broke. Not at home. Out in the world. You're standing there with a shoe that's now decorative.", answers: [
+          { text: "You strip the other—symmetry rules; laces hinder speed.", points: 3 },
+          { text: "You tie what's left into a very tight, very short knot, walk carefully.", points: 1 },
+          { text: "You tuck the lace inside and walk like nothing's wrong because confidence makes up for a lot.", points: 2 }
+        ]},
+        { id: 'TP05', setup: "You've been sitting in a waiting room for forty minutes. Your appointment was at 2. It's now 2:40. Nobody has explained.", answers: [
+          { text: "You wait patiently because they're probably busy and you don't want to make a receptionist's day worse.", points: 1 },
+          { text: "You proclaim time's value—rooms hear; patience snaps.", points: 3 },
+          { text: "You approach the desk, smile politely, and ask if there's an estimated wait time.", points: 2 }
+        ]},
+        { id: 'TP06', setup: "The elevator is taking forever. Someone else is waiting too. You've both pressed the button multiple times. Neither of you acknowledges this.", answers: [
+          { text: "You take stairs—machines delay; legs command.", points: 3 },
+          { text: "You check your phone, pretend to be busy, and let the silence win.", points: 1 },
+          { text: "You make a comment about the wait. Something neutral. 'Slow today.' They nod. You've connected.", points: 2 }
+        ]},
+        { id: 'TP07', setup: "The self-checkout is yelling at you. 'Unexpected item in bagging area.' There is no unexpected item.", answers: [
+          { text: "You wait for an attendant to come fix it because machines make mistakes.", points: 1 },
+          { text: "You override, pay, depart—machines serve, not rule.", points: 3 },
+          { text: "You remove everything, start over, and move slowly this time because the machine wants obedience.", points: 2 }
+        ]},
+        { id: 'TP08', setup: "The bag ripped. Right there in the parking lot. Oranges are rolling. A can is dented. Someone is watching from their car, not helping.", answers: [
+          { text: "You calmly gather everything, make two trips, and accept that this is what happens when you trust a single bag.", points: 1 },
+          { text: "You lock eyes with watcher, collect slow—they remember; victory in gaze.", points: 3 },
+          { text: "You scoop what you can, leave the casualties, and walk to your car like nothing happened.", points: 2 }
+        ]},
+        { id: 'TP09', setup: "You're at a movie. Someone's phone lights up. It's been lighting up for the past ten minutes. They're not silencing it.", answers: [
+          { text: "You do nothing because confronting strangers in dark rooms feels dramatic.", points: 1 },
+          { text: "You stare till they wilt—words waste; eyes enforce.", points: 3 },
+          { text: "You lean over and whisper a polite 'excuse me' because you paid for this experience.", points: 2 }
+        ]},
+        { id: 'TP10', setup: "There's a machine at the gym you've never used. It has cables, pulleys, and a diagram that looks like it was designed to confuse NATO.", answers: [
+          { text: "You pull instinctive—machines bow to instinct; bodies lead.", points: 3 },
+          { text: "You ask a trainer because that's what they're paid for.", points: 1 },
+          { text: "You study the diagram, pick a low weight, and figure it out through trial and error.", points: 2 }
+        ]},
+        { id: 'TP11', setup: "You're lost. The GPS keeps saying 'recalculating' in a tone that suggests disappointment.", answers: [
+          { text: "You pull over and ask a local because humans have navigated each other home for thousands of years.", points: 1 },
+          { text: "You kill the GPS—confusion's yours, not tech's; forge ahead.", points: 3 },
+          { text: "You keep driving with confidence because all roads lead somewhere.", points: 2 }
+        ]},
+        { id: 'TP12', setup: "Someone cuts directly in front of you in line. No apology. No acknowledgment.", answers: [
+          { text: "You let it go because confrontation raises cortisol and cortisol causes wrinkles.", points: 1 },
+          { text: "You step ahead: 'Line?'—cutters learn from cuts.", points: 3 },
+          { text: "You tap their shoulder, gesture at the line behind you, and let the silence deliver your point.", points: 2 }
+        ]},
+        { id: 'TP13', setup: "Someone is using speakerphone in public. Just having a full conversation. Out loud.", answers: [
+          { text: "You move. Find another spot. Their volume is not your battle.", points: 1 },
+          { text: "You narrate loud—performers need acts; join the stage.", points: 3 },
+          { text: "You stare, pointedly, until they notice and possibly feel a sliver of social awareness.", points: 2 }
+        ]},
+        { id: 'TP14', setup: "You're getting a haircut. The barber asks how you want it. You describe what you want. They nod. Twenty minutes later, it's not what you wanted.", answers: [
+          { text: "You say it's fine, pay, tip normally, and accept that hair grows back.", points: 1 },
+          { text: "You declare love fierce—hair adapts; delusion grows it.", points: 3 },
+          { text: "You mention it looks a little different than expected. Maybe they can adjust?", points: 2 }
+        ]},
+        { id: 'TP15', setup: "You're trying to parallel park. There's a person on the sidewalk watching. Just standing there. Observing.", answers: [
+          { text: "You ignore them. Focus on the mirrors. Take your time.", points: 1 },
+          { text: "You exit, address: 'Sorry your day'—watchers watch; doers park.", points: 3 },
+          { text: "You nail it. Or close enough. You get out and don't look at them.", points: 2 }
+        ]},
+        { id: 'TP16', setup: "You're at the gym. Someone is using the machine you want. They've been on it for a while. They're resting more than lifting.", answers: [
+          { text: "You wait nearby, do something else, and let them finish.", points: 1 },
+          { text: "You demand to alternate—waiting's weak; claim your iron.", points: 3 },
+          { text: "You ask how many sets they have left. Politely.", points: 2 }
+        ]},
+        { id: 'TP17', setup: "You're leaving the gym. Someone stops you to offer unsolicited fitness advice. They're confident. They're wrong.", answers: [
+          { text: "You thank them, say you'll think about it, and leave.", points: 1 },
+          { text: "You state 'Years in, thanks'—gap felt; assumptions crushed.", points: 3 },
+          { text: "You ask where they got that information. Not defensively. Curiously.", points: 2 }
+        ]},
+        { id: 'TP18', setup: "The plane is turbulent. Really turbulent. The kind where even the flight attendants sit down.", answers: [
+          { text: "You breathe slowly, remind yourself that turbulence is normal.", points: 1 },
+          { text: "You loosen, eyes shut—fate calls; meet it relaxed.", points: 3 },
+          { text: "You look out the window. Not because it helps, but because watching it is somehow better than imagining it.", points: 2 }
+        ]}
+      ],
+      outdoorsAnimals: [
+        { id: 'OA01', setup: "It's raining. Steady, not heavy. Your car is forty feet away. No umbrella. Your jacket hood is decorative at best.", answers: [
+          { text: "You wait at the door and watch the radar because getting wet is step one of getting sick.", points: 1 },
+          { text: "You stride normal—rain's mere water; fear it not.", points: 3 },
+          { text: "You pull the hood up, accept it won't help, and jog to the car.", points: 2 }
+        ]},
+        { id: 'OA02', setup: "Your umbrella just inverted. Wind did it. You're standing on a sidewalk holding a useless fabric bowl while water hits your face.", answers: [
+          { text: "You discard it—umbrellas fail; face storms bare.", points: 3 },
+          { text: "You wrestle it back into shape, accept that you're wet now, and continue walking.", points: 1 },
+          { text: "You close it, tuck it under your arm, and walk in the rain with purpose.", points: 2 }
+        ]},
+        { id: 'OA03', setup: "You're in the woods. There's a bear. Not close, but close enough to have an opinion about you.", answers: [
+          { text: "You back away slowly, make yourself small, and avoid eye contact.", points: 1 },
+          { text: "You advance staring—one apex rules; claim the woods.", points: 3 },
+          { text: "You make yourself big, make noise, and convince the bear you're more trouble than you're worth.", points: 2 }
+        ]},
+        { id: 'OA04', setup: "Power's out. Storm's screaming. The candles have maybe an hour left.", answers: [
+          { text: "You bundle up, ration the light, and wait for morning.", points: 1 },
+          { text: "You confront the gale outside—storms test; softness crumbles.", points: 3 },
+          { text: "You light the fireplace, open canned goods, and ride it out.", points: 2 }
+        ]},
+        { id: 'OA05', setup: "There's a cliff. There's water below. Everyone else jumped and survived. Probably. They're down there waving at you.", answers: [
+          { text: "You climb back down the safe path because peer pressure is just pressure that happens to have friends.", points: 1 },
+          { text: "You flip back—body saves flair; destiny calls bold.", points: 3 },
+          { text: "You check the depth, take a breath, and jump feet-first because controlled risk is how you grow.", points: 2 }
+        ]},
+        { id: 'OA06', setup: "You're swimming. Something touches your leg. You don't know what it is. You didn't see it.", answers: [
+          { text: "You swim calmly toward shore because panic attracts predators.", points: 1 },
+          { text: "You grasp back—contact mutual; depths respect reach.", points: 3 },
+          { text: "You keep swimming but faster. Not panicked. Purposeful.", points: 2 }
+        ]},
+        { id: 'OA07', setup: "You're on a rooftop. The edge is closer than you expected. Someone dares you to look over.", answers: [
+          { text: "You stay back because heights don't need to be tested.", points: 1 },
+          { text: "You peer, wave down—fear's guest; host it firm.", points: 3 },
+          { text: "You walk to the edge, look over briefly, and step back.", points: 2 }
+        ]},
+        { id: 'OA08', setup: "You're being chased. By what doesn't matter. You're out of breath. Your legs are screaming. There's a fence ahead. It's tall.", answers: [
+          { text: "You go around. Find another route. Fences exist for reasons.", points: 1 },
+          { text: "You summit, pause, glare back—escape styled; dominance shown.", points: 3 },
+          { text: "You climb. Fast. Ugly. Whatever works.", points: 2 }
+        ]},
+        { id: 'OA09', setup: "You're standing at a fork in the road. Literally. A hike. Two paths. One looks easier. One looks like something.", answers: [
+          { text: "You take the easier one because not everything needs to be a test.", points: 1 },
+          { text: "You blaze between—paths suggest; pioneers cut.", points: 3 },
+          { text: "You take the harder one because something in you wants to know what's there.", points: 2 }
+        ]},
+        { id: 'OA10', setup: "The building is on fire. Not close to you, but spreading. People are moving toward exits. Someone is frozen. They're not moving.", answers: [
+          { text: "You leave. You're not trained for this. Getting yourself out is not cowardice.", points: 1 },
+          { text: "You linger till they stir—none left; fires claim quitters.", points: 3 },
+          { text: "You grab them. Shake them. Say their name or just 'move.' You're going together.", points: 2 }
         ]}
       ]
     };
 
-    // ========== RESULT LINES - Sharp, specific, quotable ==========
+    // ========== RESULT LINES ==========
     const resultLines = {
       low: [
         "You brought a backup phone charger to a barbecue.",
@@ -963,7 +1107,7 @@
       showResult: false
     };
 
-    // ========== LOCAL STORAGE - Cooldown tracking for 120+ questions ==========
+    // ========== LOCAL STORAGE ==========
     const STORAGE_KEY = 'butchometer_recent';
     const STORAGE_PLAYS = 'butchometer_plays';
     const STORAGE_RESULTS = 'butchometer_results';
@@ -978,50 +1122,114 @@
     }
     function saveRecent(ids) {
       const recent = getRecent();
-      // Track last 100 questions to support large pool
-      const updated = [...new Set([...ids, ...recent])].slice(0, 100);
+      const updated = [...new Set([...ids, ...recent])].slice(0, 140);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     }
     function saveRecentResult(line) {
       const recent = getRecentResults();
-      const updated = [...new Set([line, ...recent])].slice(0, 30);
+      const updated = [...new Set([line, ...recent])].slice(0, 40);
       localStorage.setItem(STORAGE_RESULTS, JSON.stringify(updated));
     }
     function incrementPlays() {
       const plays = parseInt(localStorage.getItem(STORAGE_PLAYS) || '0');
       localStorage.setItem(STORAGE_PLAYS, String(plays + 1));
-      // Clear cooldown after ~85% pool exhausted (every 10 plays with this pool size)
-      if ((plays + 1) % 10 === 0) {
+      if ((plays + 1) % 15 === 0) {
         localStorage.setItem(STORAGE_KEY, '[]');
         localStorage.setItem(STORAGE_RESULTS, '[]');
       }
     }
 
+    // ========== QUESTION SELECTION ==========
+    // New rules:
+    // 1. First 2 questions ALWAYS from Home Life
+    // 2. Categories randomized after Q1-Q2
+    // 3. No back-to-back category repeats
+    // 4. Max 2 questions per category per session
+    // 5. Full pool cycling before repeats
+    
     function pickQuestions() {
       const recent = getRecent();
       const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
       const filter = arr => arr.filter(q => !recent.includes(q.id));
       
-      let mild = shuffle(filter(questions.mild));
-      let medium = shuffle(filter(questions.medium));
-      let extreme = shuffle(filter(questions.extreme));
+      const categories = {
+        homeLife: questionsByCategory.homeLife,
+        workResponsibility: questionsByCategory.workResponsibility,
+        socialPressure: questionsByCategory.socialPressure,
+        friendshipsGroup: questionsByCategory.friendshipsGroup,
+        romanceDating: questionsByCategory.romanceDating,
+        foodConsumption: questionsByCategory.foodConsumption,
+        diyFixing: questionsByCategory.diyFixing,
+        travelPublic: questionsByCategory.travelPublic,
+        outdoorsAnimals: questionsByCategory.outdoorsAnimals
+      };
       
-      // Fallback if too many filtered - with 120+ questions, this should be rare
-      if (mild.length < 4) mild = shuffle(questions.mild);
-      if (medium.length < 3) medium = shuffle(questions.medium);
-      if (extreme.length < 3) extreme = shuffle(questions.extreme);
+      const selected = [];
+      const categoryUsage = {};
+      let lastCategory = null;
       
-      const selected = [...mild.slice(0, 4), ...medium.slice(0, 3), ...extreme.slice(0, 3)];
-      saveRecent(selected.map(q => q.id));
-      return selected;
+      // Initialize category usage tracking
+      Object.keys(categories).forEach(cat => categoryUsage[cat] = 0);
+      
+      // First 2 questions: ALWAYS Home Life
+      let homeLifePool = shuffle(filter(categories.homeLife));
+      if (homeLifePool.length < 2) homeLifePool = shuffle(categories.homeLife);
+      
+      selected.push({ ...homeLifePool[0], category: 'homeLife' });
+      selected.push({ ...homeLifePool[1], category: 'homeLife' });
+      categoryUsage.homeLife = 2;
+      lastCategory = 'homeLife';
+      
+      // Remaining 8 questions: randomized categories with rules
+      const otherCategories = Object.keys(categories).filter(c => c !== 'homeLife');
+      
+      for (let i = 2; i < 10; i++) {
+        // Get available categories (not at max, and not same as last if possible)
+        let availableCats = otherCategories.filter(cat => categoryUsage[cat] < 2);
+        
+        // Avoid back-to-back same category if possible
+        if (availableCats.length > 1 && lastCategory !== 'homeLife') {
+          availableCats = availableCats.filter(cat => cat !== lastCategory);
+        }
+        
+        if (availableCats.length === 0) {
+          availableCats = otherCategories.filter(cat => categoryUsage[cat] < 2);
+        }
+        if (availableCats.length === 0) {
+          availableCats = otherCategories;
+        }
+        
+        // Pick random category
+        const chosenCat = availableCats[Math.floor(Math.random() * availableCats.length)];
+        
+        // Pick question from that category
+        let pool = shuffle(filter(categories[chosenCat]));
+        if (pool.length === 0) pool = shuffle(categories[chosenCat]);
+        
+        // Find a question not already selected
+        let question = pool.find(q => !selected.some(s => s.id === q.id));
+        if (!question) question = pool[0];
+        
+        selected.push({ ...question, category: chosenCat });
+        categoryUsage[chosenCat]++;
+        lastCategory = chosenCat;
+      }
+      
+      // Shuffle answers for each question
+      const finalQuestions = selected.map(q => ({
+        ...q,
+        answers: shuffle([...q.answers])
+      }));
+      
+      saveRecent(finalQuestions.map(q => q.id));
+      return finalQuestions;
     }
 
     function getResultLine(score) {
-      const bracket = score <= 10 ? 'low' : score <= 20 ? 'mid' : 'high';
+      const bracket = score <= 13 ? 'low' : score <= 22 ? 'mid' : 'high';
       const lines = resultLines[bracket];
       const recentResults = getRecentResults();
       
-      // Filter out recently used result lines
       let available = lines.filter(l => !recentResults.includes(l));
       if (available.length === 0) available = lines;
       
